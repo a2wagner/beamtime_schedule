@@ -1,0 +1,76 @@
+@extends('layouts.default')
+
+@section('title')
+Edit User {{ $user->username }}
+@stop
+
+@section('content')
+<div class="col-lg-6 col-lg-offset-2">
+
+    @if ($user->count())
+    <div class="page-header">
+        <h2>Edit account information</h2>
+    </div>
+    {{ Form::open(['route' => 'users.update']) }}
+        <div>
+            {{ Form::label('first_name', 'First name: ') }}
+            {{ Form::text('first_name', $user->first_name) }}
+            {{ $errors->first('first_name', '<span class=error>:message</span>') }}
+        </div>
+        <div>
+            {{ Form::label('last_name', 'Last name: ') }}
+            {{ Form::text('last_name', $user->last_name) }}
+            {{ $errors->first('last_name', '<span class=error>:message</span>') }}
+        </div>
+        <div>
+            {{ Form::label('username', 'User name: ') }}
+            {{ Form::text('username', $user->username, array('id' => 'disabledInput', 'disabled' => '')) }}
+            {{ $errors->first('username', '<span class=error>:message</span>') }}
+        </div>
+
+        <div>
+            {{ Form::label('email', 'Email: ') }}
+            {{ Form::text('email', $user->email) }}
+            {{ $errors->first('email', '<span class=error>:message</span>') }}
+        </div>
+
+        <div>
+            {{ Form::label('phone_institute', 'Phone number institute: ') }}
+            {{ Form::text('phone_institute', $user->phone_institute) }}
+            {{ $errors->first('phone_institute', '<span class=error>:message</span>') }}
+        </div>
+        <div>
+            {{ Form::label('phone_private', 'Phone number private: ') }}
+            {{ Form::text('phone_private', $user->phone_private) }}
+            {{ $errors->first('phone_private', '<span class=error>:message</span>') }}
+        </div>
+        <div>
+            {{ Form::label('phone_mobile', 'Phone number mobile: ') }}
+            {{ Form::text('phone_mobile', $user->phone_mobile) }}
+            {{ $errors->first('phone_mobile', '<span class=error>:message</span>') }}
+        </div>
+
+        <div>
+            {{ Form::label('rating', 'Rating: ') }}
+            {{ Form::select('rating', array('1' => 'I\'m totally new', '2' => 'I did only a few shifts', '3' => 'I know how to do shifts', '4' => 'I\'m experienced', '5' => 'I\'m an expert'), $user->rating); }}
+            {{ $errors->first('rating', '<span class=error>:message</span>') }}
+        </div>
+
+        <div>
+            {{ Form::submit('Change profile data') }}
+        </div>
+    {{ Form::close() }}
+
+    <div class="page-header">
+        <h2>Delete your account</h2>
+    </div>
+
+        {{ Form::open(['route' => 'users.destroy']) }}
+            {{ Form::submit('Delete Account', array('class' => 'btn btn-danger', 'onSubmit' => "return confirm('Are you sure to delete your account $user->username?'")) }}
+        {{ Form::close() }}
+    @else
+        <h1>User not found</h1>
+    @endif
+</div>
+@stop
+
