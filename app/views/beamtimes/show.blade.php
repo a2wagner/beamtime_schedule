@@ -100,13 +100,13 @@ $(document).ready(function() {
           @endif</td>
           {{ $td }}@if (!$shift->maintenance && $now < new DateTime($shift->start))  {{-- only show un-/subscribe buttons if shift is not during maintenance and not in the future --}}
           @if (!$shift->users->find(Auth::user()->id))
-          {{ Form::model($shift, ['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'role' => 'form']) }}
+          {{ Form::open(['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'role' => 'form']) }}
               {{ Form::hidden('action', 'subscribe') }}
               {{-- Form::submit('Subscribe', array('class' => 'btn btn-primary btn-sm')) --}}
               <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Subscribe"><i class="fa fa-check fa-lg"></i></button>
           {{ Form::close() }}
           @else
-          {{ Form::model($shift, ['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'style' => 'float: left; margin-right: 5px;', 'role' => 'form']) }}
+          {{ Form::open(['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'style' => 'float: left; margin-right: 5px;', 'role' => 'form']) }}
               {{ Form::hidden('action', 'unsubscribe') }}
               {{-- Form::submit('Unsubscribe', array('class' => 'btn btn-default btn-sm')) --}}
               <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Unsubscribe"><i class="fa fa-times fa-lg"></i></button>
