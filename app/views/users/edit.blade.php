@@ -46,35 +46,33 @@ function hide()
         <h2>Edit Account Information</h2>
     </div>
 
-    {{ Form::open(['route' => array('users.update', $user->id), 'method' => 'PATCH', 'class' => 'form-horizontal']) }}
-    {{-- maybe try using form model binding: http://laravel.com/docs/html#form-model-binding --}}
-    {{-- more infos: http://scotch.io/tutorials/simple-laravel-crud-with-resource-controllers   http://stackoverflow.com/questions/22844022/laravel-use-same-form-for-create-and-edit --}}
+    {{ Form::model($user, ['route' => array('users.update', $user->id), 'method' => 'PATCH', 'class' => 'form-horizontal']) }}
         <fieldset>
             <div class="form-group {{{ $errors->has('first_name') ? 'has-error' : '' }}}">
                 {{ Form::label('first_name', 'First&nbsp;name: ', array('class' => 'col-lg-2 control-label')) }}
                 <div class="col-lg-10">
-                    {{ Form::text('first_name', $user->first_name, array('class' => 'form-control', 'autofocus' => 'autofocus')) }}
+                    {{ Form::text('first_name', Input::old('first_name'), array('class' => 'form-control', 'autofocus' => 'autofocus')) }}
                     {{ $errors->first('first_name') }}
                 </div>
             </div>
             <div class="form-group {{{ $errors->has('last_name') ? 'has-error' : '' }}}">
                 {{ Form::label('last_name', 'Last&nbsp;name: ', array('class' => 'col-lg-2 control-label')) }}
                 <div class="col-lg-10">
-                    {{ Form::text('last_name', $user->last_name, array('class' => 'form-control')) }}
+                    {{ Form::text('last_name', Input::old('last_name'), array('class' => 'form-control')) }}
                     {{ $errors->first('last_name') }}
                 </div>
             </div>
             <div class="form-group">
                 {{ Form::label('username', 'Username: ', array('class' => 'col-lg-2 control-label')) }}
                 <div class="col-lg-10">
-                    {{ Form::text('username', $user->username, array('class' => 'form-control', 'id' => 'disabledInput', 'disabled' => '')) }}
+                    {{ Form::text('username', Input::old('username'), array('class' => 'form-control', 'id' => 'disabledInput', 'disabled' => '')) }}
                 </div>
             </div>
 
             <div class="form-group {{{ $errors->has('email') ? 'has-error' : '' }}}">
                 {{ Form::label('email', 'Email: ', array('class' => 'col-lg-2 control-label')) }}
                 <div class="col-lg-10">
-                    {{ Form::email('email', $user->email, array('class' => 'form-control')) }}
+                    {{ Form::email('email', Input::old('email'), array('class' => 'form-control')) }}
                     {{ $errors->first('email') }}
                 </div>
             </div>
@@ -82,7 +80,7 @@ function hide()
             <div class="form-group {{{ $errors->has('workgroup_id') ? 'has-error' : '' }}}">
                 {{ Form::label('workgroup_id', 'Workgroup: ', array('class' => 'col-lg-2 control-label')) }}
                 <div class="col-lg-10">
-    	            {{ Form::select('workgroup_id', $workgroups, $user->workgroup_id, ['class' => 'form-control']) }}
+    	            {{ Form::select('workgroup_id', $workgroups, Input::old('workgroup_id'), ['class' => 'form-control']) }}
                     {{ $errors->first('workgroup_id') }}
                 </div>
             </div>
@@ -90,21 +88,21 @@ function hide()
             <div class="form-group {{{ $errors->has('phone_institute') ? 'has-error' : '' }}}">
                 {{ Form::label('phone_institute', 'Phone institute: ', array('class' => 'col-lg-2 control-label')) }}
                 <div class="col-lg-10">
-                    {{ Form::text('phone_institute', $user->phone_institute, array('class' => 'form-control')) }}
+                    {{ Form::text('phone_institute', Input::old('phone_institute'), array('class' => 'form-control')) }}
                     {{ $errors->first('phone_institute') }}
                 </div>
             </div>
             <div class="form-group {{{ $errors->has('phone_private') ? 'has-error' : '' }}}">
                 {{ Form::label('phone_private', 'Phone private: ', array('class' => 'col-lg-2 control-label')) }}
                 <div class="col-lg-10">
-                    {{ Form::text('phone_private', $user->phone_private, array('class' => 'form-control')) }}
+                    {{ Form::text('phone_private', Input::old('phone_private'), array('class' => 'form-control')) }}
                     {{ $errors->first('phone_private') }}
                 </div>
             </div>
             <div class="form-group {{{ $errors->has('phone_mobile') ? 'has-error' : '' }}}">
                 {{ Form::label('phone_mobile', 'Phone mobile: ', array('class' => 'col-lg-2 control-label')) }}
                 <div class="col-lg-10">
-                    {{ Form::text('phone_mobile', $user->phone_mobile, array('class' => 'form-control')) }}
+                    {{ Form::text('phone_mobile', Input::old('phone_mobile'), array('class' => 'form-control')) }}
                     {{ $errors->first('phone_mobile') }}
                 </div>
             </div>
@@ -117,7 +115,7 @@ function hide()
                         '2' => 'I did only a few shifts', 
                         '3' => 'I know how to do shifts', 
                         '4' => 'I\'m experienced', 
-                        '5' => 'I\'m an expert'), $user->rating, ['class' => 'form-control']) }}
+                        '5' => 'I\'m an expert'), Input::old('rating'), ['class' => 'form-control']) }}
                     {{ $errors->first('rating') }}
                 </div>
             </div>
