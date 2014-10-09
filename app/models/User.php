@@ -7,6 +7,17 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 
 class User extends Eloquent implements UserInterface, RemindableInterface {
 
+	/* PHP can't parse non-trivial expressions in initializers. For this reason it isn't possible to do someting like array_only(...) in a public static $something definition. To circumvent this the variables which will hold arrays for special rule sets will only be defined and then parsed in the __construct() method. The parent __construct() method has to be called for correct functionality. */
+	public function __construct($attributes = array(), $exists = false)
+	{
+		parent::__construct($attributes, $exists);  // Initialize the model according to the parent class functionality
+
+		// change the rules according to editing users where we don't need the username or any password confirmation
+		self::$rules_edit = array_except(static::$rules, array('username', 'password', 'password_confirmation'));
+		// keep only the password related fields and add an entry which will be used to check if the old password is correct
+		self::$rules_pwChange = array_add(array_only(static::$rules, array('password', 'password_confirmation')), 'password_old', 'required');
+	}
+
 	//protected $fillable = ['first_name', 'last_name', 'user_name', 'email', 'password', 'rating'];
 	// fillable leads to problems with forms because not listed variables can't be filled via forms (mass assignment security); use black list instead white list
 	protected $guarded = ['id', 'isAdmin', 'enabled'];
@@ -21,6 +32,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'password_confirmation' => 'required|same:password',
 		'rating' => 'required'
 	];
+
+	public static $rules_edit;
+	public static $rules_pwChange;
 
 	public $errors;
 

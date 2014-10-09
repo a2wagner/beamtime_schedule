@@ -206,18 +206,36 @@ class UsersController extends \BaseController {
 		// allow only admin or the current user to edit the user information
 		if (Auth::user()->isAdmin || Auth::user()->id == $id) {
 			$user = $this->user->whereId($id)->first();
-			// copy only field values to the data array which are allowed to be changed
-			$data = array_only(Input::all(), array('first_name', 'last_name', 'email', 'workgroup_id', 'phone_institute', 'phone_private', 'phone_mobile', 'rating'));
-			// now change the rules according to the current use where we don't need the username or any password confirmation
-			$rules = User::$rules;
-			$rules = array_except($rules, array('username', 'password', 'password_confirmation'));
-			// change the email rule because we sometimes want to "change" our email to the value which already exists in the database -> force excluding this by adding the id
-			$rules['email'] = 'required|min:7|email|unique:users,email,'.$id;
-			$validator = Validator::make($data, $rules);
-			if ($validator->fails()){
-				return Redirect::back()->withInput()->withErrors($validator);}
-			$user->fill($data)->save();
-			return Redirect::back()->with('success', 'Profile data edited successfully');
+			$data = array();
+			$validator = NULL;
+			/* Use the PATCH HTTP request for editing profile information and the PUT method for changing the password */
+			if (Input::get('_method') === "PATCH") {
+				// copy only field values to the data array which are allowed to be changed
+				$data = array_only(Input::all(), array('first_name', 'last_name', 'email', 'workgroup_id', 'phone_institute', 'phone_private', 'phone_mobile', 'rating'));
+				// get the defined rules for this action
+				$rules = User::$rules_edit;
+				// change the email rule because we sometimes want to "change" our email to the value which already exists in the database -> force excluding this by adding the id
+				$rules['email'] = 'required|min:7|email|unique:users,email,'.$id;
+				$validator = Validator::make($data, $rules);
+				if ($validator->fails()){
+					return Redirect::back()->withInput()->withErrors($validator);}
+				$user->fill($data)->save();
+				return Redirect::back()->with('success', 'Profile data edited successfully');
+			} else if (Input::get('_method') === "PUT") {
+				$data = array_only(Input::all(), array('password_old', 'password', 'password_confirmation'));
+				$rules = User::$rules_pwChange;
+				// check if the old password matches the current user's password hash
+				if (!Hash::check($data['password_old'], $user->password))
+					return Redirect::back()->with('error', 'Wrong password!');
+				$validator = Validator::make($data, $rules);
+				if ($validator->fails()){
+					return Redirect::back()->withErrors($validator);}
+				// if everything is fine, hash the new password
+				$user->password = Hash::make($data['password']);
+				$user->save();
+				return Redirect::back()->with('success', 'Password changed successfully');
+			} else
+				return "Error 404, wrong HTTP request!";
 		}
 
 		return Redirect::back()->with('error', 'You are not allowed to edit this user');

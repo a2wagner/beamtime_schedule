@@ -133,13 +133,13 @@ function hide()
         <h2>Change your password</h2>
     </div>
 
-    {{ Form::open(['route' => 'users.update', 'class' => 'form-horizontal']) }}
+    {{ Form::open(['route' => array('users.update', $user->id), 'method' => 'PUT', 'class' => 'form-horizontal']) }}
         <fieldset>
-            <div class="form-group {{{ $errors->has('password') ? 'has-error' : '' }}}">
-                {{ Form::label('password', 'Old Password: ', array('class' => 'col-lg-2 control-label')) }}
+            <div class="form-group {{{ $errors->has('password_old') ? 'has-error' : '' }}}">
+                {{ Form::label('password_old', 'Old Password: ', array('class' => 'col-lg-2 control-label')) }}
                 <div class="col-lg-10">
-                    {{ Form::password('password', array('class' => 'form-control')) }}
-                    {{ $errors->first('password') }}
+                    {{ Form::password('password_old', array('class' => 'form-control')) }}
+                    {{ $errors->first('password_old') }}
                 </div>
             </div>
             <div class="form-group {{{ $errors->has('password') ? 'has-error' : '' }}}">
