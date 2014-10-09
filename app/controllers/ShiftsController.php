@@ -76,12 +76,12 @@ class ShiftsController extends \BaseController {
 	{
 		$msg = '';
 		$shift = Shift::find($id);
-		if (Input::get('action') == 'subscribe') {
+		if (Input::get('action') === 'subscribe') {
 			$shift->users()->attach(Auth::user()->id);
 			// shorter
 			//Shift::find($shift_id)->users()->attach($user_id);
 			$msg = 'Subscribed to shift';
-		} elseif (Input::get('action') == 'unsubscribe') {
+		} elseif (Input::get('action') === 'unsubscribe') {
 			$shift->users()->detach(Auth::user()->id);
 			$msg = 'Unsubscribed from shift';
 		}
