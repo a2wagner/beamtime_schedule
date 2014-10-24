@@ -23,6 +23,9 @@ Route::get('users/{username}/edit', 'UsersController@edit');
 Route::get('users/create', 'UsersController@create');
 Route::get('users/{username}/delete', 'UsersController@destroy');*/
 
+// place this users/enable route before the other users routes because otherwise the route users/{user} is defined before and hence a user enable is searched who doesn't exist and cause an error
+Route::get('users/enable', array('as' => 'users.new', 'uses' => 'UsersController@view'))->before('auth');
+Route::patch('users/{users}/enable', array('as' => 'users.enable', 'uses' => 'UsersController@enable'))->before('auth');
 Route::resource('users', 'UsersController');
 
 // aliases for session handling

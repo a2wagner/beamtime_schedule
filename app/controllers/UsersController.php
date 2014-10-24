@@ -266,7 +266,42 @@ class UsersController extends \BaseController {
 		$user->delete();
 
 		// redirect to the users overview
-		return Redirect::to('users')->with('success', 'User ' . $name . ' deleted successfully');
+		return Redirect::to('/users')->with('success', 'User ' . $name . ' deleted successfully');
+	}
+
+
+	/**
+	 * Show a page of new registered users to enable them if logged-in user has admin privileges
+	 *
+	 * @return Response
+	 */
+	public function view()
+	{
+		if (Auth::user()->isAdmin) {
+			$users = $this->user->where('enabled', '=', 0)->get();
+
+			return View::make('users.enable', ['users' => $users]);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Enable the user with specific id $id
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function enable($id)
+	{
+		if (Auth::user()->isAdmin) {
+				$user = $this->user->find($id);
+				$user->enabled = true;
+				$user->save();
+
+				return Redirect::route('users.new', ['users' => $this->user->where('enabled', '=', 0)->get()])->with('success', 'User ' . $user->username . ' enabled successfully');
+		} else
+			return Redirect::to('/users');
 	}
 
 
