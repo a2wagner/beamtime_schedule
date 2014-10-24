@@ -24,9 +24,9 @@
       var httpMethod = link.data('method').toUpperCase();
       var form;
 
-      // If the data-method attribute is not PUT or DELETE,
+      // If the data-method attribute is not PUT, PATCH or DELETE,
       // then we don't know what to do. Just ignore.
-      if ( $.inArray(httpMethod, ['PUT', 'DELETE']) === - 1 ) {
+      if ( $.inArray(httpMethod, ['PUT', 'PATCH', 'DELETE']) === - 1 ) {
         return;
       }
 
