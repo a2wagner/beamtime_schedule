@@ -73,7 +73,14 @@ http://www.justskins.com/forums/finding-a-date-closest-40535.html#post121244
           <?php  // calculate progress of the current beamtime
           	$diff = $now->diff($start);
           ?>
-          <td class="text-success">Running for {{{ $diff->format('%a days and %h hours') }}}</td>
+          <td class="text-success">Running for <?php  // show time span for how long beamtime is running more precise
+          	if ($diff->d > 0)
+          		echo $diff->format('%a days and %h hours.');
+          	elseif ($diff->d === 0 && $diff->h > 0)
+          		echo $diff->format('%h hours and %i minutes.');
+          	else
+          		echo $diff->format('%i minutes.');
+          ?></td>
           @endif
           @if (Auth::user()->isAdmin)
           <td class="text-center">
