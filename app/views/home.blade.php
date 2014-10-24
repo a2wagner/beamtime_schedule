@@ -61,7 +61,16 @@
           ?>
           @if ($now < $start)
           <?php $diff = $now->diff($start); ?>
-          <td class="text-primary">Starting in {{{ $diff->format('%a days and %h hours') }}}</td>
+          <td class="text-primary">Beamtime will start <?php  // show time difference until beamtime starts according to the time span
+          	if ($diff->d > 0)
+          		echo $diff->format('in %a days and %h hours.');
+          	elseif ($diff->d === 0 && $diff->h > 0)
+          		echo $diff->format('in %h hours and %i minutes.');
+          	elseif ($diff->h === 0 && $diff->i > 2)
+          		echo $diff->format('in %i minutes.');
+          	else
+          		echo 'shortly.';
+          ?></td>
           @elseif ($now > $end)
           <?php $diff = $now->diff($end); ?>
           <td class="text-muted">Ended {{{ $diff->format('%a days ago') }}}</td>

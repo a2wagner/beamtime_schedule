@@ -58,7 +58,14 @@ http://www.justskins.com/forums/finding-a-date-closest-40535.html#post121244
           ?>
           @if ($now < $start)
           <?php $diff = $now->diff($start); ?>
-          <td class="text-primary">Starting in {{{ $diff->format('%a days and %h hours') }}}</td>
+          <td class="text-primary">Beamtime will start in <?php  // show time difference until beamtime starts according to the time span
+          	if ($diff->d > 0)
+          		echo $diff->format('%a days and %h hours.');
+          	elseif ($diff->d === 0 && $diff->h > 0)
+          		echo $diff->format('%h hours and %i minutes.');
+          	else
+          		echo $diff->format('%i minutes.');
+          ?></td>
           @elseif ($now > $end)
           <?php $diff = $now->diff($end); ?>
           <td class="text-muted">Ended {{{ $diff->format('%a days ago') }}}</td>
