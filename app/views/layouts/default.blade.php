@@ -60,18 +60,17 @@
                           <ul class="dropdown-menu">
                             <li><a href="/beamtimes"><i class="fa fa-bars fa-fw"></i> Overview</a></li>
                             <li><a href="/beamtimes/create"><i class="fa fa-plus fa-fw"></i> Create</a></li>
-                            <li><a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Statistics</a></li> {{-- for some reason i have to use fa-bar-chart-o, just fa-bar-chart wouldn't get displayed... --}}
+                            <li><a href="#"><span class="glyphicon glyphicon-stats fa-fw"></span> Statistics</a></li>
                             <li class="divider"></li>
                             <li><a href="#">Some other stuff</a></li>
                           </ul>
                         </li>
-                        <li class="btn-group">
-                          <a href="/users" class="btn btn-default fa"><i class="fa fa-users fa-fw"></i> Users</a>
-                          <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+                        <li class="dropdown">
+                          <a href="#" class="dropdown-toggle fa fa-users" data-toggle="dropdown"> Users <span class="fa fa-caret-down"></span></a>
                           <ul class="dropdown-menu">
                             <li><a href="/users"><i class="fa fa-bars fa-fw"></i> All Users</a></li>
                             <li><a href="/users/enable"><i class="fa fa-check-square-o fa-fw"></i> Enable Users</a></li>
-                            <li><a href="#">Some other stuff</a></li>
+                            <li><a href="#"><i class="fa fa-wrench fa-fw"></i> Manage Admins</a></li>
                           </ul>
                         </li>
                         @else
