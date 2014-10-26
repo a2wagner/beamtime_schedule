@@ -40,38 +40,47 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
+                    <a class="navbar-brand" rel="home" href="" title="A2 Beamtimes">
+                      <img style="max-width: 65px; margin-top: -10px;" src="/img/a2logo_light_mid.png">
+                    </a>
 
-                    @if (Auth::check())
-                    <ul class="nav navbar-nav">
-                      @if (Auth::user()->isAdmin)
-                      <li class="dropdown">
-                        {{-- Add a part of the style information from navbar-brand to the style tag and rename navbar-brand to brand to match the size of the dropdown menu to the actual button size --}}
-                        <a href="#" class="brand dropdown-toggle" data-toggle="dropdown" style="font-size: 19px; line-height: 21px;">A2 Beamtimes <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                          <li><a href="/beamtimes">Overview</a></li>
-                          <li><a href="/beamtimes/create">Create</a></li>
-                          <li><a href="#">Some other stuff</a></li>
-                        </ul>
-                      </li>
-                      @else
-                      <li>
-                        <a class="navbar-brand" href="/beamtimes">A2 Beamtimes</a>
-                      </li>
-                      @endif
-                    </ul>
-                    @else
-                    <span class="navbar-brand">A2 Beamtimes</span>
+                    @if (!Auth::check())
+                    <span class="navbar-brand">A2 Beamtime Scheduler</span>
                     @endif
                 </div>
                 <!-- Everything you want hidden at 940px or less, place within here -->
                 <div class="collapse navbar-collapse navbar-responsive-collapse">
                     <ul class="nav navbar-nav">
-                        <li>{{ HTML::link('', ' Home', ['class' => 'fa fa-home']) }}</li>
                         @if (Auth::guest())
                         <li>{{ HTML::link('login', ' Login', ['class' => 'fa fa-sign-in']) }}</li>
                         @else
-                        <li>{{ HTML::link('users/'.Auth::user()->username.'/edit', ' Edit Profile', ['class' => 'fa fa-edit']) }}</li>
+                        @if (Auth::user()->isAdmin)
+                        <li class="dropdown">
+                          <a href="#" class="dropdown-toggle fa fa-calendar" data-toggle="dropdown"> Beamtimes <span class="fa fa-caret-down"></span></a>
+                          <ul class="dropdown-menu">
+                            <li><a href="/beamtimes"><i class="fa fa-bars fa-fw"></i> Overview</a></li>
+                            <li><a href="/beamtimes/create"><i class="fa fa-plus fa-fw"></i> Create</a></li>
+                            <li><a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Statistics</a></li> {{-- for some reason i have to use fa-bar-chart-o, just fa-bar-chart wouldn't get displayed... --}}
+                            <li class="divider"></li>
+                            <li><a href="#">Some other stuff</a></li>
+                          </ul>
+                        </li>
+                        <li class="btn-group">
+                          <a href="/users" class="btn btn-default fa"><i class="fa fa-users fa-fw"></i> Users</a>
+                          <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+                          <ul class="dropdown-menu">
+                            <li><a href="/users"><i class="fa fa-bars fa-fw"></i> All Users</a></li>
+                            <li><a href="/users/enable"><i class="fa fa-check-square-o fa-fw"></i> Enable Users</a></li>
+                            <li><a href="#">Some other stuff</a></li>
+                          </ul>
+                        </li>
+                        @else
+                        <li>
+                          <a class="fa fa-calendar" href="/beamtimes"> Beamtimes</a>
+                        </li>
                         <li>{{ HTML::link('users', ' All Users', ['class' => 'fa fa-users']) }}</li>
+                        @endif
+                        <li>{{ HTML::link('users/'.Auth::user()->username.'/edit', ' Edit Profile', ['class' => 'fa fa-edit']) }}</li>
                     </ul>
                     {{ Form::open(['route' => 'users.index', 'method' => 'get', 'class' => 'navbar-form navbar-left']) }}
                       <div class="form-group input-group">
