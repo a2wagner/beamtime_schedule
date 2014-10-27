@@ -40,7 +40,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" rel="home" href="" title="A2 Beamtimes">
+                    <a class="navbar-brand" rel="home" href="/" title="A2 Beamtimes">
                       <img style="max-width: 65px; margin-top: -10px;" src="/img/a2logo_light_mid.png">
                     </a>
 
