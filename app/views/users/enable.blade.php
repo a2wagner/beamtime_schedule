@@ -56,8 +56,16 @@ Enable Users
     </table>
     </div>
     @else
-    <h3 class="text-danger">There are no new users currently</h3>
+    <h3 class="text-info">There are no new users currently</h3>
     @endif
+</div>
+@else
+<div class="col-lg-10 col-lg-offset-1">
+    <div class="page-header">
+        <h2>User Management</h2>
+    </div>
+
+    <h3 class="text-warning">It seems you're not on the page you've been looking for. You may want to go to an {{ link_to("/users", "overview of all registered shift workers") }} instead.</h3>
 </div>
 @endif
 @stop
