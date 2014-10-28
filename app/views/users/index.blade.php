@@ -50,9 +50,9 @@ Registered Users
           <td>{{ $user->phone_mobile }}</td>
           @if (Auth::user()->isAdmin)
           <td class="text-center">
-            <a class='btn btn-primary btn-xs' href="users/{{{$user->username}}}/edit"><span class="fa fa-pencil"></span> Edit</a> 
+            <a class='btn btn-primary btn-xs' href="/users/{{{$user->username}}}/edit"><span class="fa fa-pencil"></span> Edit</a> 
             <a href="/users/{{{$user->id}}}" data-method="delete" data-confirm="Are you sure you want to delete this user?" class="btn btn-danger btn-xs"><span class="fa fa-times"></span> Del</a> 
-            <a class='btn btn-success btn-xs' href="#"><span class="fa fa-envelope"></span> Mail</a>
+            <a class='btn btn-success btn-xs' href="mailto:{{{$user->email}}}"><span class="fa fa-envelope"></span> Mail</a>
           </td>
           @endif
         </tr>
