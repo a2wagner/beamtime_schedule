@@ -70,7 +70,7 @@
                           <ul class="dropdown-menu">
                             <li><a href="/users"><i class="fa fa-bars fa-fw"></i> All Users</a></li>
                             <li><a href="/users/enable"><i class="fa fa-check-square-o fa-fw"></i> Enable Users</a></li>
-                            <li><a href="#"><i class="fa fa-wrench fa-fw"></i> Manage Admins</a></li>
+                            <li><a href="/users/admins"><i class="fa fa-wrench fa-fw"></i> Manage Admins</a></li>
                           </ul>
                         </li>
                         @else

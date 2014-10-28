@@ -275,12 +275,29 @@ class UsersController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function view()
+	public function viewNew()
 	{
 		if (Auth::user()->isAdmin) {
 			$users = $this->user->where('enabled', '=', 0)->get();
 
 			return View::make('users.enable', ['users' => $users]);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Show a page of all users where the isAdmin flag can be toggled if logged-in user has admin privileges
+	 *
+	 * @return Response
+	 */
+	public function viewAdmins()
+	{
+		if (Auth::user()->isAdmin) {
+			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
+			$users = $this->user->orderBy('isAdmin', 'desc')->orderBy('last_name', 'asc')->get();
+
+			return View::make('users.admins', ['users' => $users]);
 		} else
 			return Redirect::to('/users');
 	}
@@ -300,6 +317,31 @@ class UsersController extends \BaseController {
 				$user->save();
 
 				return Redirect::route('users.new', ['users' => $this->user->where('enabled', '=', 0)->get()])->with('success', 'User ' . $user->username . ' enabled successfully');
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Toggle isAdmin flag for user with the id $id
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function toggleAdmin($id)
+	{
+		if (Auth::user()->isAdmin) {
+				$user = $this->user->find($id);
+				$user->isAdmin = !$user->isAdmin;
+				$user->save();
+
+				$msg = 'User ' . $user->first_name . ' ' . $user->last_name;
+				if ($user->isAdmin)
+					$msg .= ' is now an admin';
+				else
+					$msg .= ' is no longer an admin';
+
+				return Redirect::route('users.admins', ['users' => $this->user->all()])->with('success', $msg);
 		} else
 			return Redirect::to('/users');
 	}
