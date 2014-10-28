@@ -73,8 +73,8 @@ class CreateDatabase extends Migration {
 			$table->increments('id');
 			$table->integer('shift_id')->unsigned()->index();
 			$table->integer('user_id')->unsigned()->index();
-			$table->foreign('shift_id')->references('id')->on('shifts');
-			$table->foreign('user_id')->references('id')->on('users');
+			$table->foreign('shift_id')->references('id')->on('shifts')->onDelete('cascade')->onUpdate('cascade');
+			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 		});
 	}
 
