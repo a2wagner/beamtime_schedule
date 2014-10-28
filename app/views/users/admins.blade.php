@@ -40,7 +40,17 @@ Registered Users
           <td>{{ $user->email }}</td>
           <td class="text-center">
             @if ($user->isAdmin)
+            {{-- prevent the last remaining admin from removing his admin privileges --}}
+            <?php
+		    	$admins = $users->filter(function($user)
+		    	{
+		    		if ($user->isAdmin)
+		    			return true;
+		    	});
+            ?>
+            @if ($admins->count() > 1)
             <a href="/users/{{{$user->id}}}/admin" data-method="patch" class="btn btn-warning btn-xs"><span class="fa fa-times-circle"></span> Remove Admin</a>
+            @endif
             @else
             <a href="/users/{{{$user->id}}}/admin" data-method="patch" class="btn btn-success btn-xs"><span class="fa fa-check-circle"></span> Add Admin</a>
             @endif
