@@ -21,6 +21,14 @@ Registered Users
     </div>
     
     @if ($users->count())
+    <?php
+    	/* filter all users for admins */
+    	$admins = $users->filter(function($user)
+    	{
+    		if ($user->isAdmin)
+    			return true;
+    	});
+    ?>
     <div class="table-responsive">
     <table class="table table-striped table-hover">
       <thead>
@@ -41,13 +49,6 @@ Registered Users
           <td class="text-center">
             @if ($user->isAdmin)
             {{-- prevent the last remaining admin from removing his admin privileges --}}
-            <?php
-		    	$admins = $users->filter(function($user)
-		    	{
-		    		if ($user->isAdmin)
-		    			return true;
-		    	});
-            ?>
             @if ($admins->count() > 1)
             <a href="/users/{{{$user->id}}}/admin" data-method="patch" class="btn btn-warning btn-xs"><span class="fa fa-times-circle"></span> Remove Admin</a>
             @endif
