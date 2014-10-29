@@ -163,22 +163,34 @@ class BeamtimesController extends \BaseController {
 		foreach ($shifts as $shift) {
 			$id = $shift->id;
 			$shift->remark = $remarks[$id];
-			// check for maintenance now
-			if (is_int(array_search($id, Input::get('maintenance')))) {  // array_search() returns the index of the value if it was found, so check if the returned value is an int which is true in case of maintenance
-				// if there is maintenance during this shift, set the shift workers to zero
-				$shift->n_crew = 0;
-				$shift->maintenance = true;
-				// if users are subscribed to this shift, remove them
-				if (!$shift->users->count())
-					$shift->users()->detach();
-			} else {
-				// else set the given number of shift workers for this shift
-				if (!array_key_exists($id, $n))  // in case no radio button was selected, prevent an error and set the number of shift workers to 2
-					$shift->n_crew = 2;
-				else  // otherwise assign the selected value
-					$shift->n_crew = $n[$id];
-				$shift->maintenance = false;
-			}
+
+			/* check for maintenance now */
+			if (Input::get('maintenance')) {  // prevents an error if no maintenance shifts are set
+				if (is_int(array_search($id, Input::get('maintenance')))) {  // array_search() returns the index of the value if it was found, so check if the returned value is an int which is true in case of maintenance
+					// if there is maintenance during this shift, set the shift workers to zero
+					$shift->n_crew = 0;
+					$shift->maintenance = true;
+					// if users are subscribed to this shift, remove them
+					if (!$shift->users->isEmpty())
+						$shift->users()->detach();
+				} else {
+					// else set the given number of shift workers for this shift
+					if (!array_key_exists($id, $n))  // in case no radio button was selected, prevent an error and set the number of shift workers to 2
+						$shift->n_crew = 2;
+					else  // otherwise assign the selected value
+						$shift->n_crew = $n[$id];
+					$shift->maintenance = false;
+				}
+			} else  // If there are no maintenance shifts, then it could be the case that maintenance shifts were removed. So check if there are still maintenance shifts and set them to normal shifts.
+				if ($shift->maintenance) {
+					// set the given number of shift workers for this shift
+					if (!array_key_exists($id, $n))  // in case no radio button was selected, prevent an error and set the number of shift workers to 2
+						$shift->n_crew = 2;
+					else  // otherwise assign the selected value
+						$shift->n_crew = $n[$id];
+					$shift->maintenance = false;
+				}
+
 			//$shift->fill(['n_crew' => current(each($n)), 'remarks' => current(each($remarks))]);
 			$shift->save();
 		}
