@@ -1,5 +1,2 @@
-/*
-!.gitignore
-!/app
-!/public
-!README.md
+composer.lock
+/vendor
