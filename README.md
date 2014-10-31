@@ -47,22 +47,53 @@ The database can be accessed from your local machine via 127.0.0.1 on port 33060
 
 ## Intalling on a server
 
-If you want to install Laravel and this app on a server, follow the instructions from the [Laravel Docs](http://laravel.com/docs/installation). When Laravel is installed, this repository can be used to replace the existing files in the app-directory of the Laravel installation. The [Laravel 4 Generators by Jeffrey Way](https://github.com/JeffreyWay/Laravel-4-Generators) were used in this project to create skeleton classes, to use them the composer.json has to be edited regarding the description from the linked Github repository. Before the first use run ``composer update --dev`` (or composer.phar, depends on the installation method used). 
+If you want to install Laravel and this app on a server, follow the instructions from the [Laravel Docs](http://laravel.com/docs/installation). When Laravel is installed, most files of this repository can be used to replace the existing files in the root directory of the Laravel installation. To do this, remove the follwing already existing folders and files: 
+
+* app/
+* public/
+* composer.json
+
+Now we only want to use specific files from the repository, a so-called **sparse checkout**, for this the minimum required version of Git is 1.7.0. Initialize a new git repository in the root of the Laravel installation: ``git init``. Now we add the remote origin we want to use: ``git remote add -f origin https://github.com/a2wagner/beamtime_schedule.git``. Now we have a repository with this remote. Now do ``git config core.sparsecheckout true`` which gives us the possibility to list exact the files we want to use from this repository in the file .git/info/sparse-checkout"". 
+To add all required files, run the following:
+```
+echo "app/" >> .git/info/sparse-checkout
+echo "public/" >> .git/info/sparse-checkout
+echo "composer.json" >> .git/info/sparse-checkout
+```
+The rest of the files should be used from the Laravel installation. Last but not least, we have to update the files from the remote: ``git pull origin master``.
+
+In case you already have an existing local repository which you want to make sparse, enable the git config option and edit everything as above and finally re-read the repository tree using ``git read-tree -m -u HEAD``. 
+
+Now we have all required files for this project. 
+
+### Final set up
+
+The [Laravel 4 Generators by Jeffrey Way](https://github.com/JeffreyWay/Laravel-4-Generators) were used in this project to create skeleton classes, to use them the composer.json has already been edited regarding the description from the linked Github repository. Before the first use run ``composer update --dev`` (or composer.phar, depends on the installation method used) like above. 
 
 In the ``app/config/database.php`` the section regarding the used database system has to be adapted. In this case MySQL is used. To create the database, login to mysql with ``mysql -u root -p`` and insert your password. Inside the mysql client execute the command ``CREATE DATABASE beamtime;`` and ``quit`` afterwards. Edit the database name in ``app/config/database.php`` accordingly. The already prepared database has to be migrated via ``php artisan migrate``. The workgroups can be filled in the database using ``php artisan db:seed``. 
 
 In the ``app/config/app.php`` the url has to be adapted. 
 To create a unique encryption key for Laravel, run ``php artisan key:generate``. 
 
+Now we're done and the site should be accessible on the server .
+
+
+### Updating
+
+To get the updates from the remote, save the current state of your installation with ``git stash``. Then you can pull the changes, ``git pull``. To get the local changes back, run the command ``git stash pop``. 
 
 ### Troubleshooting
 
-On (at least Debian-like) systems it will show an error because the permissions still need to be set on the folders used for caching:
+* On (at least Debian-like) systems it will show an error because the permissions still need to be set on the folders used for caching:
 
-* ``chgrp -R www-data /var/www/laravel``
-* ``chmod -R 775 /var/www/laravel/app/storage``
+	- ``chgrp -R www-data /var/www/laravel``
+	- ``chmod -R 775 /var/www/laravel/app/storage``
 
-After this everything should run smoothly. 
+	After this everything should run smoothly. 
+
+* If you can't run php commands from your console, you're possibly lacking the "php5-cli" package or similar. 
+
+* In case you change something like paths in the Homestead.yaml, you may see the error "No input file specified". To change the paths etc. in the VM you have to run ``vagrant provision`` to apply the changes to the VM. 
 
 
 ## License
