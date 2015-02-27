@@ -23,6 +23,7 @@ class LDAP
 	 * Create an instance of the LDAP class which is used to access the LDAP server
 	 *
 	 * @param
+	 * @return void
 	 */
 	public function __construct()
 	{
@@ -47,6 +48,7 @@ class LDAP
 	 * Destructor for an instance of this LDAP class, close the LDAP connection
 	 *
 	 * @param
+	 * @return void
 	 */
 	public function __destruct()
 	{
@@ -79,9 +81,10 @@ class LDAP
 	/**
 	 * Check if the given username exists as uid entry on the LDAP server
 	 *
+	 * @param string $username
 	 * @return boolean
 	 */
-	public function search_user($user)
+	public function user_exists($user)
 	{
 		//TODO
 	}
@@ -89,9 +92,22 @@ class LDAP
 	/**
 	 * Try to authenticate the given credentials against the LDAP server
 	 *
+	 * @param string $username
+	 * @param string $password
 	 * @return boolean
 	 */
 	public function authenticate($user, $pw)
+	{
+		//TODO
+	}
+
+	/**
+	 * Search for an user (uid) on the LDAP server and return the resulting array
+	 *
+	 * @param string $username
+	 * @return array user query result
+	 */
+	public function search_user($user)
 	{
 		//TODO
 	}
