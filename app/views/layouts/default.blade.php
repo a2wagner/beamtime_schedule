@@ -115,6 +115,20 @@
                 {{{ $message }}}
             </div>
             @endif
+            @if ($message = Session::get('warning'))
+            <div class="alert alert-warning alert-dismissable fade in hidden-print">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <h4>Warning</h4>
+                {{{ $message }}}
+            </div>
+            @endif
+            @if ($message = Session::get('info'))
+            <div class="alert alert-info alert-dismissable fade in hidden-print">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <h4>Info</h4>
+                {{{ $message }}}
+            </div>
+            @endif
 
             <!-- Content -->
             @yield('content')
