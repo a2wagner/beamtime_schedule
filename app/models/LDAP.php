@@ -86,7 +86,17 @@ class LDAP
 	 */
 	public function user_exists($user)
 	{
-		//TODO
+		$search = null;
+		try {
+			$search = ldap_search($this->ldap_conn, $this->config['base_dn'], $this->config['uid'] . '=' . $user);
+		} catch (ErrorException $e) {
+			return false;
+		}
+		$result = ldap_get_entries($this->ldap_conn, $search);
+		if ($result['count'] == 1)
+			return true;
+		else
+			return false;
 	}
 
 	/**
@@ -98,7 +108,7 @@ class LDAP
 	 */
 	public function authenticate($user, $pw)
 	{
-		//TODO
+		return @ldap_bind($this->ldap_conn, $user, $pw);
 	}
 
 	/**
@@ -109,7 +119,22 @@ class LDAP
 	 */
 	public function search_user($user)
 	{
-		//TODO
+		$search = null;
+		try {
+			$search = ldap_search($this->ldap_conn, $this->config['base_dn'], $this->config['uid'] . '=' . $user);
+		} catch (ErrorException $e) {
+			echo ldap_error($this->ldap_conn);
+			return null;
+		}
+		//dd($search);
+		$result = ldap_get_entries($this->ldap_conn, $search);
+		//dd($result);
+		if (count($result['count']) == 1)
+			return $result[0];
+		else if (!$result['count'])
+			return null;  // $user not found
+		else
+			throw new Exception("More than one user '" . $user . "' found! This should not happen...");
 	}
 
 	//TODO more functions, get properties, ...?
