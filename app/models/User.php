@@ -110,4 +110,28 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return false;
 	}
 
+	/**
+	 * Send a mail to the current user
+	 *
+	 * @param string $subject
+	 * @param string $message
+	 * @param array $cc
+	 * @return boolean
+	 */
+	public function mail($subject, $msg, $cc = null)
+	{
+		$header = "MIME-Version: 1.0\r\n";
+		$header.= "Content-type: text/html; charset=utf-8\r\n";
+		$header.= "X-Mailer: PHP " . phpversion() . "\r\n";
+		$header.= "From: \"A2 Beamtime Scheduler\"<admin@" . Request::getHost() . ">\r\n";
+		$header.= "Reply-To: noreply@" . Request::getHost() . "\r\n";
+		if (is_array($cc))
+			$header .= "Cc: " . implode(", ", $cc) . "\r\n";
+
+		// use wordwrap() if lines are longer than 70 characters
+		$msg = wordwrap($msg, 70);
+
+		return @mail($this->email, $subject, $msg, $header);
+	}
+
 }
