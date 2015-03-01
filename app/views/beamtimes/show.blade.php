@@ -71,7 +71,7 @@ $(document).ready(function() {
         </tr>
       </thead>
       <tbody>
-        <?php $i = 0; $day = ""; ?>
+        <?php $day = ""; ?>
         @foreach ($shifts as $shift)
         @if ($day !== date("l, d.m.Y", strtotime($shift->start)))
         <?php $day = date("l, d.m.Y", strtotime($shift->start)); ?>
@@ -83,7 +83,7 @@ $(document).ready(function() {
         @endif
         <tr>
           <?php $td = ""; if ($n = $shift->users->count() > 0) $td = '<td rowspan="' . $n . '">'; else $td = '<td>'; ?>
-          {{ $td }}{{ ++$i }}</td>
+          {{ $td }}</td>
           {{ $td }}{{ $shift->start }}</td>
           {{ $td }}{{ $shift->duration }} hours</td>
           {{-- check if users subscribed to this shift and it's not maintenance --}}
