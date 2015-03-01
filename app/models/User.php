@@ -120,7 +120,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 */
 	public function mail($subject, $msg, $cc = null)
 	{
-		return Mail::send_single($this->email, $subject, $msg, $cc);
+		$mail = new Sendmail();
+
+		return $mail->send_single($this->email, $subject, $msg, $cc);
 	}
 
 }
