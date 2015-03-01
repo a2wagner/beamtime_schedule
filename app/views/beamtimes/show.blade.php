@@ -138,7 +138,7 @@ $(document).ready(function() {
     </table>
     </div>
     <div>
-      Total {{ $shifts->count() }} shifts, {{ $shifts->sum('n_crew') }} individual shifts, button iCal export...
+      Total {{ $shifts->count() }} shifts ({{ $shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }} open), {{ $shifts->sum('n_crew') }} individual shifts ({{ $shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) }} open), TODO: button iCal export...
     </div>
     @else
     <h3 class="text-danger">Beamtime not found!</h3>
