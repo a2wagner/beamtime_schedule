@@ -105,13 +105,17 @@ $(document).ready(function() {
           @elseif ($shift->users->sum('rating') < 8 ) <a href="#" class="btn btn-primary btn-sm disabled">Okay</a>
           @else <a href="#" class="btn btn-success btn-sm disabled">Perfect</a>
           @endif</td>
-          {{ $td }}@if (!$shift->maintenance && $now < new DateTime($shift->start))  {{-- only show un-/subscribe buttons if shift is not during maintenance and not in the future --}}
+          {{ $td }}
+          {{-- only show un-/subscribe buttons if shift is not during maintenance and not in the future --}}
+          @if (!$shift->maintenance && $now < new DateTime($shift->start))
           @if (!$shift->users->find(Auth::user()->id))
+          @if ($shift->users->count() < $shift->n_crew)  {{-- only allow subscription if the shift's not full already --}}
           {{ Form::open(['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'role' => 'form']) }}
               {{ Form::hidden('action', 'subscribe') }}
               {{-- Form::submit('Subscribe', array('class' => 'btn btn-primary btn-sm')) --}}
               <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Subscribe"><i class="fa fa-check fa-lg"></i></button>
           {{ Form::close() }}
+          @endif
           @else
           {{ Form::open(['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'style' => 'float: left; margin-right: 5px;', 'role' => 'form']) }}
               {{ Form::hidden('action', 'unsubscribe') }}
@@ -123,7 +127,8 @@ $(document).ready(function() {
               <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Swap Shift"><i class="fa fa-exchange fa-lg"></i></button>
           {{ Form::close() }}
           @endif
-          @endif</td>
+          @endif  {{-- maintenance and future check --}}
+          </td>
           {{-- Form::open(['route' => 'shifts.update', 'class' => 'form-horizontal print-hidden', 'role' => 'form']) --}}
               {{-- <td>@if (Auth::user()->isAdmin || run_coordinator) zusätzliche buttons --}}
               {{-- is run coordinator?  --> vlt in methode auslagern, isRun_coordinator(beamtime_id) ? --}}
