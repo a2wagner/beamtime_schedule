@@ -2,14 +2,14 @@
 
 use \Exception;
 
-class Mail
+class Sendmail
 {
 	/**
 	 * SMTP RFC standard line ending
 	 *
 	 * @var string
 	 */
-	protected const $CRLF = '\r\n';
+	const CRLF = '\r\n';
 
 	/**
 	 * Create an instance of the Mail class
@@ -54,10 +54,10 @@ class Mail
 	public function send_single($to, $subject, $msg, $cc = null)
 	{
 		// check if the email address is valid
-		if (!@is_valid($to))
+		if (!@$this->is_valid($to))
 			return false;
 
-		return send($to, $subject, $msg, $cc);
+		return $this->send($to, $subject, $msg, $cc);
 	}
 
 	/**
@@ -77,12 +77,12 @@ class Mail
 
 		// check if the email addresses are valid
 		foreach ($recipients as $mail)
-			if (!@is_valid($mail))
+			if (!@$this->is_valid($mail))
 				return false;
 
 		$to = implode(", ", $recipients);
 
-		return send($to, $subject, $msg, $cc);
+		return $this->send($to, $subject, $msg, $cc);
 	}
 
 	/**
@@ -108,8 +108,6 @@ class Mail
 		if (is_array($cc))
 			$header[] = "Cc: " . implode(", ", $cc);
 		$headers = implode(self::CRLF, $header);
-
-		$to = implode(", ", $recipients);
 
 		// use wordwrap() if lines are longer than 70 characters [RFC2822: lines should be no more than 78 characters, excluding CRLF]
 		$msg = wordwrap($msg, 70, self::CRLF);
