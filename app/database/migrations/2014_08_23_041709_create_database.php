@@ -33,6 +33,7 @@ class CreateDatabase extends Migration {
 			$table->string('phone_private', 30)->nullable();
 			$table->string('phone_mobile', 30)->nullable();
 			$table->tinyInteger('rating')->unsigned();
+			//TODO: maybe replace enabled, isAdmin with unsigned tinyInteger role: 0 -> !enabled, 1 -> enabled, 2 -> run coordinator, 3 -> admin, ... ?  --> remove run_coordinators table ?
 			$table->boolean('isAdmin')->default(false);
 			$table->boolean('enabled')->default(false);
             $table->string('remember_token', 100)->nullable();
@@ -55,8 +56,21 @@ class CreateDatabase extends Migration {
 			$table->tinyInteger('duration')->unsigned();
 			$table->tinyInteger('n_crew')->unsigned();
 			$table->boolean('maintenance')->default(false);
-			$table->string('remark')->nullable();
+			$table->string('remark', 200)->nullable();
 			$table->foreign('beamtime_id')->references('id')->on('beamtimes')->onDelete('cascade')->onUpdate('cascade');
+		});
+
+		Schema::create('swaps', function(Blueprint $table)
+		{
+			$table->increments('id');
+			$table->string('hash', 20)->unique();
+			$table->integer('user_id')->unsigned()->index();
+			$table->integer('original_shift_id')->unsigned()->index();
+			$table->integer('request_shift_id')->unsigned()->index();
+			$table->integer('request_user_id')->unsigned()->index()->nullable;
+			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+			$table->foreign('original_shift_id')->references('id')->on('shifts')->onDelete('cascade')->onUpdate('cascade');
+			$table->foreign('request_shift_id')->references('id')->on('shifts')->onDelete('cascade')->onUpdate('cascade');
 		});
 
 		Schema::create('run_coordinators', function(Blueprint $table)
@@ -88,6 +102,7 @@ class CreateDatabase extends Migration {
 		Schema::drop('shift_user');
 		Schema::drop('run_coordinators');
 		Schema::drop('shifts');
+		//Schema::drop('swaps');
 		Schema::drop('beamtimes');
 		Schema::drop('users');
 		Schema::drop('workgroups');
