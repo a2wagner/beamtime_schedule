@@ -108,7 +108,7 @@ class LDAP
 	 */
 	public function authenticate($user, $pw)
 	{
-		return @ldap_bind($this->ldap_conn, $user, $pw);
+		return @ldap_bind($this->ldap_conn, $this->config['uid'] . '=' . $user . ',' . $this->config['base_dn'], $pw);
 	}
 
 	/**
@@ -126,9 +126,8 @@ class LDAP
 			echo ldap_error($this->ldap_conn);
 			return null;
 		}
-		//dd($search);
+
 		$result = ldap_get_entries($this->ldap_conn, $search);
-		//dd($result);
 		if (count($result['count']) == 1)
 			return $result[0];
 		else if (!$result['count'])
@@ -136,7 +135,4 @@ class LDAP
 		else
 			throw new Exception("More than one user '" . $user . "' found! This should not happen...");
 	}
-
-	//TODO more functions, get properties, ...?
-
 }
