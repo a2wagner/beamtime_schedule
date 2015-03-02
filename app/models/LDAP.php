@@ -1,7 +1,6 @@
 <?php
 
 use \Exception;
-//use \adLDAP\adLDAP;
 
 class LDAP
 {
@@ -33,7 +32,6 @@ class LDAP
 		if (!is_array($this->config = Config::get('ldap')))
 			throw new Exception("Config is not an array! Please check your app/config/ldap.php");
 
-		//$this->ldap_conn = ldap_connect($ldap['host']) or die("Could not connect to LDAP server.");
 		$prtcl = '';//'ldap://';
 		if ($this->config['use_ssl'])
 			$prtcl = 'ldaps://';
@@ -69,13 +67,6 @@ class LDAP
 				return false;
 		} else
 			return @ldap_bind($this->ldap_conn, $this->config['admin_username'], $this->config['admin_password']);
-		/*try {
-			ldap_bind($this->ldap_conn, $this->config['admin_username'], $this->config['admin_password']);
-		} catch (ErrorException $e) {
-			print ldap_error($this->ldap_conn);
-			print $e;
-			return false;
-		}*/
 	}
 
 	/**

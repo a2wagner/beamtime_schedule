@@ -16,12 +16,6 @@ class UsersController extends \BaseController {
 	 */
 	public function index()
 	{
-		//return User::orderBy('username', 'asc')->get();
-		//return User::orderBy('username', 'asc')->take(2)->get();  // only the first two that match
-
-		//if (!Auth::check())
-		//	return Redirect::to('/login');
-		// the below method is better, because after login one gets redirected to the inteded page
 		if (Auth::guest())
 			return Redirect::guest('login');
 
@@ -114,24 +108,11 @@ class UsersController extends \BaseController {
 	 */
 	public function store()
 	{
-		/*$validation = Validator::make(Input::all(), ['username' => 'required', 'password' => 'required']);
-
-		if ($validation->fails())
-			return Redirect::back()->withInput()->withErrors($validation->messages());*/
-
-		/*if (!$this->user->isValid($input = Input::all()))
-			return Redirect::back()->withInput()->withErrors($this->user->errors());*/
-
 		$input = Input::all();
 
 		if (!$this->user->fill($input)->isValid())
 			return Redirect::back()->withInput()->withErrors($this->user->errors);
 
-		/*$user = new User;
-		$user->username = Input::get('username');
-		$user->password = Hash::make(Input::get('password'));
-		$user->save();*/
-		//$this->user->create($input);
 		$this->user->password = Hash::make(Input::get('password'));  //TODO try to guard password as it's not mass assigned here, just for security reasons...
 		$this->user->save();
 
@@ -143,16 +124,8 @@ class UsersController extends \BaseController {
 			$this->user->save();
 		}
 
-		//return Redirect::route('users.show', ['user' => $this->user->username]);
-		// alternative: login the user directly after account creation
-		//if (Auth::attempt(Input::only('username', 'password')))
-			//return Redirect::to('')->with('success', 'Account created successfully');
-			// redirect the user to his account view after it was created
-			//return Redirect::to('users/'.$this->user->username)->with('success', 'Account created successfully');
-			// added an enabled option, new users have first get activated, return them to the homepage with an appropriate message
-			return Redirect::to('')->with('success', 'Account created successfully. Please wait until your account gets activated by an Admin before you can login.');
-		//else
-		//	return Redirect::to('login')->withErrors(array('password' => 'Password invalid'))->withInput(Input::except('password'));
+		// added an enabled option, new users have first to get activated, return them to the homepage with an appropriate message
+		return Redirect::to('')->with('success', 'Account created successfully. Please wait until your account gets activated by an Admin before you can login.');
 	}
 
 
@@ -239,13 +212,6 @@ class UsersController extends \BaseController {
 		}
 
 		return Redirect::back()->with('error', 'You are not allowed to edit this user');
-
-		//$user = $this->user->whereUsername($id)->first();
-		//$user->property = 'new value';
-		//$user->save();
-
-		// http://stackoverflow.com/questions/22686817/laravel-model-update-only-one-field
-		// Something::find($id)->fill($with_data)->save();
 	}
 
 
