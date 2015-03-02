@@ -122,7 +122,7 @@ $(document).ready(function() {
               {{-- Form::submit('Unsubscribe', array('class' => 'btn btn-default btn-sm')) --}}
               <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Unsubscribe"><i class="fa fa-times fa-lg"></i></button>
           {{ Form::close() }}
-          {{ Form::open(['route' => array('shifts.swap', $shift->id), 'class' => 'hidden-print', 'style' => 'float: left;', 'role' => 'form']) }}
+          {{ Form::open(['route' => array('swaps.create', $shift->id), 'class' => 'hidden-print', 'style' => 'float: left;', 'role' => 'form']) }}
               {{-- Form::submit('Swap', array('class' => 'btn btn-default btn-sm ')) --}}
               <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Swap Shift"><i class="fa fa-exchange fa-lg"></i></button>
           {{ Form::close() }}

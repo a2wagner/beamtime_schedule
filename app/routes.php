@@ -59,10 +59,10 @@ Route::group(array('before' => 'auth'), function()
 {
 	Route::resource('beamtimes', 'BeamtimesController');
 	Route::patch('shifts/{shifts}', array('as' => 'shifts.update', 'uses' => 'ShiftsController@update'));
-	Route::post('shifts/{shifts}/swap', array('as' => 'shifts.swap', 'uses' => 'ShiftsController@swap'));
-	Route::post('shifts/{shifts}/request', array('as' => 'shifts.swapRequest', 'uses' => 'ShiftsController@request'));
-	Route::get('swap/{swap}', array('as' => 'swap.show', 'uses' => 'SwapController@show'));
-	Route::post('swap/{swap}', array('as' => 'swap.update', 'uses' => 'SwapController@perform'));
+	Route::post('swaps/{shift_org_id}', array('as' => 'swaps.create', 'uses' => 'SwapsController@create'));
+	Route::post('swaps/{shift_org_id}/{shift_req_id}', array('as' => 'swaps.store', 'uses' => 'SwapsController@store'));
+	Route::get('swaps/{swap}', array('as' => 'swaps.show', 'uses' => 'SwapsController@show'));
+	Route::put('swaps/{swap}', array('as' => 'swaps.update', 'uses' => 'SwapsController@update'));
 });
 //Route::resource('beamtimes', 'BeamtimesController')->before('auth');
 
