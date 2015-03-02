@@ -32,4 +32,32 @@ class Shift extends \Eloquent {
 	{
 		return $this->belongsToMany('User');
 	}
+
+	/**
+	* Get the other user, if existent, from the current Shift object regarding to the given id
+	*
+	* @param int $id
+	* @return User
+	*/
+	public function get_other_user($id)
+	{
+		return $this->users->filter(function($user) use($id)  // use the 'use' keyword to pass the $id to the closure
+		{
+			return $user->id != $id;
+		})->first();
+	}
+
+	/**
+	* Get the id of the other user, if existent, from the current Shift object regarding to the given id
+	*
+	* @param int $id
+	* @return int
+	*/
+	public function get_other_user_id($id)
+	{
+		if (!$user = $this->get_other_user($id))
+			return 0;
+		else
+			return $user->id;
+	}
 }
