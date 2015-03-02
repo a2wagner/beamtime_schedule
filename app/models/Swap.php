@@ -1,10 +1,18 @@
 <?php
 
-class Swap extends \Eloquent {
-	protected $fillable = ['hash', 'user_id', 'original_shift_id', 'request_shift_id', 'request_user_id'];
+class Swap extends \Eloquent
+{
+	/**
+	* Hashing algorithm which is used to create unique obfuscated links and check requests
+	*
+	* @var string
+	*/
+	protected static $algorithm = 'crc32';
 
 	// Do not use timestamps for this model
 	public $timestamps = false;
+
+	protected $fillable = ['hash', 'user_id', 'original_shift_id', 'request_shift_id', 'request_user_id'];
 
 	public static $rules = [
 		'hash' => 'required|unique:swaps',
@@ -60,9 +68,9 @@ class Swap extends \Eloquent {
 	* @param int $beamtime, int $shift_org, int $shift_req
 	* @return string
 	*/
-	public function create_hash($beamtime, $shift_org, $shift_req)
+	public static function create_hash($beamtime, $shift_org, $shift_req)
 	{
-		return hash('crc32', $beamtime . ':' . $shift_org . ',' . $shift_req);
+		return hash(self::$algorithm, $beamtime . ':' . $shift_org . ',' . $shift_req);
 	}
 
 	/**
@@ -71,8 +79,8 @@ class Swap extends \Eloquent {
 	* @param string $hash, int $beamtime, int $shift_org, int $shift_req
 	* @return string
 	*/
-	public function validate_hash($hash, $beamtime, $shift_org, $shift_req)
+	public static function validate_hash($hash, $beamtime, $shift_org, $shift_req)
 	{
-		return $hash === hash('crc32', $beamtime . ':' . $shift_org . ',' . $shift_req);
+		return $hash === hash(self::$algorithm, $beamtime . ':' . $shift_org . ',' . $shift_req);
 	}
 }
