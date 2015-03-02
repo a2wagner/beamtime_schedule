@@ -111,6 +111,16 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
+	 * Get the full name of a user, firstname + lastname
+	 *
+	 * @return string
+	 */
+	public function get_full_name()
+	{
+		return $this->first_name . ' ' . $this->last_name;
+	}
+
+	/**
 	 * Send a mail to the current user
 	 *
 	 * @param string $subject
