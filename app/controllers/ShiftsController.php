@@ -77,10 +77,14 @@ class ShiftsController extends \BaseController {
 		$msg = '';
 		$shift = Shift::find($id);
 		if (Input::get('action') === 'subscribe') {
-			$shift->users()->attach(Auth::user()->id);
-			// shorter
-			//Shift::find($shift_id)->users()->attach($user_id);
-			$msg = 'Subscribed to shift';
+			if ($shift->users->count() < $shift->n_crew) {
+				$shift->users()->attach(Auth::user()->id);
+				// shorter
+				//Shift::find($shift_id)->users()->attach($user_id);
+				$msg = 'Subscribed to shift';
+			} else {
+				return Redirect::back()->with('error', "The shift you wanted to subscribe to is already full!");
+			}
 		} elseif (Input::get('action') === 'unsubscribe') {
 			$shift->users()->detach(Auth::user()->id);
 			$msg = 'Unsubscribed from shift';
