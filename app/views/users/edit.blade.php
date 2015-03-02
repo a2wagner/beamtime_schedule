@@ -46,6 +46,11 @@ function hide()
         <h2>Edit Account Information</h2>
     </div>
 
+    @if ($user->ldap_id)
+    <p class="col-lg-offset-2">
+      Note: This will only change the local data stored for the Beamtime Scheduler, <b>not</b> your KPH account itself.
+    </p>
+    @endif
     {{ Form::model($user, ['route' => array('users.update', $user->id), 'method' => 'PATCH', 'class' => 'form-horizontal']) }}
         <fieldset>
             <div class="form-group {{{ $errors->has('first_name') ? 'has-error' : '' }}}">
@@ -133,6 +138,12 @@ function hide()
         <h2>Change your password</h2>
     </div>
 
+    @if ($user->ldap_id)
+    <p class="col-lg-offset-2">
+      You can change your password via the KPH internal pages: <br />
+      <a href="http://kph.uni-mainz.de/de/interne-seiten/benutzer-menu/benutzer-profil.html" target="_blank">KPH user menu</a>
+    </p>
+    @else
     {{ Form::open(['route' => array('users.update', $user->id), 'method' => 'PUT', 'class' => 'form-horizontal']) }}
         <fieldset>
             <div class="form-group {{{ $errors->has('password_old') ? 'has-error' : '' }}}">
@@ -164,12 +175,18 @@ function hide()
             </div>
         </fieldset>
     {{ Form::close() }}
+    @endif
 
     <div class="page-header">
         <h2>Delete your account</h2>
     </div>
 
-    <div class="col-lg-10 col-lg-offset-2">
+    <div class="col-lg-offset-2">
+        @if ($user->ldap_id)
+        <p>
+          Note: This will only affect your locally stored data for the Beamtime Scheduler, <b>not</b> your KPH account.
+        </p>
+        @endif
         <div id="formAlert" class="alert alert-warning hide" role="alert">
           <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
           <h4>Delete Account</h4>
