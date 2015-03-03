@@ -196,7 +196,7 @@ function hide()
             <button type="button" class="btn btn-default" onclick="hide();">Cancel</button>
           </p>
         </div>
-        {{ Form::open(['route' => 'users.destroy', 'name' => 'delete']) }}
+        {{ Form::open(['route' => array('users.destroy', $user->id), 'method' => 'DELETE', 'name' => 'delete']) }}
             <div class="form-group">
                 {{ Form::submit('Delete Account', array('class' => 'btn btn-danger')) }}
             </div>
