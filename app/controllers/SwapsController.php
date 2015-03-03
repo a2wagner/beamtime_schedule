@@ -83,9 +83,9 @@ class SwapsController extends \BaseController {
 
 		// mail content
 		$subject = 'Swap Request from ' . Auth::user()->get_full_name();
-		$msg = 'Hello [USER],\r\n\r\n';
-		$msg.= Auth::user()->first_name . ' wants to swap shifts. ' . Auth::user()->first_name . ' is assigned to the shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift_org->start)) . ' and wants to change to your shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift_request->start)) . '.\r\n';
-		$msg.= 'You can view the swap request for the related beamtime in detail here: ' . Request::root() . '/swaps/' . $hash . '\r\n\r\n';
+		$msg = "Hello [USER],\r\n\r\n";
+		$msg.= Auth::user()->first_name . ' wants to swap shifts. ' . Auth::user()->first_name . ' is assigned to the shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift_org->start)) . ' and wants to change to your shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift_request->start)) . ".\r\n";
+		$msg.= 'You can view the swap request for the related beamtime in detail here: ' . Request::root() . '/swaps/' . $hash . "\r\n\r\n";
 		$msg.= 'A2 Beamtime Scheduler';
 		// check if mailing worked
 		$success = true;

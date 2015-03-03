@@ -9,7 +9,7 @@ class Sendmail
 	 *
 	 * @var string
 	 */
-	const CRLF = '\r\n';
+	const CRLF = "\r\n";
 
 	/**
 	 * Create an instance of the Mail class
