@@ -94,6 +94,7 @@ class SessionsController extends \BaseController {
 					$user->phone_private = $data['homephone'][0];
 					$user->workgroup_id = 1;
 					$user->rating = 1;
+					$user->ldap_id = $data['uidnumber'][0];
 					$user->enabled = true;
 					$user->save();
 
