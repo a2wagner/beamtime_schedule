@@ -59,37 +59,49 @@ class SwapsController extends \BaseController {
 		$swap = new Swap();
 		$hash = $swap->create_hash($beamtime_id, $org, $req);
 
+		// check if this request is already in the database
+		if (Swap::whereHash($hash)->count())
+			return Redirect::to('beamtimes/' . $beamtime_id)->with('error', 'This swap request has already been sent!');
+
 		// create database entry
 		$swap->user_id = Auth::id();
 		$swap->hash = $hash;
 		$swap->original_shift_id = $org;
 		$swap->request_shift_id = $req;
-		//$swap->save();
+		$swap->save();
 		//IMPORTANT: only mail swap requests to possible users, i. e. not to the user who is already subscribed to the original shift
-//TODO: test mail transmission!
-echo 'Users on shift: <br />';
-$shift_request->users->each(function($user){ print $user->username . '<br />'; });
-echo '<br />';
-echo 'User who is on the original shift:<br />';
-$other_user_org = $shift_org->get_other_user(Auth::id());
-if ($other_user_org)
-	print $other_user_org->username . '<br />';
-echo '<br />';
-echo 'Users who should receive an email:<br />';
-if ($other_user_org)
-	$users = $shift_request->users->filter(function($user) use($other_user_org)
-	{
-		return $user->id != $other_user_org->id;
-	});
-else
-	$users = $shift_request->users;
-$to = array();
-$users->each(function($user) use($to, &$to)
-{
-	$to[] = $user->email;
-	print 'Mail request to '. $user->username . ' (' . $user->email . ')<br />';
-});
-echo '<br />';
+		// user who is on the original shift
+		$other_user_org = $shift_org->get_other_user(Auth::id());
+		// users who should receive an email
+		if ($other_user_org)
+			$users = $shift_request->users->filter(function($user) use($other_user_org)
+			{
+				return $user->id != $other_user_org->id;
+			});
+		else
+			$users = $shift_request->users;
+
+		// mail content
+		$subject = 'Swap Request from ' . Auth::user()->get_full_name();
+		$msg = 'Hello [USER],\r\n\r\n';
+		$msg.= Auth::user()->first_name . ' wants to swap shifts. ' . Auth::user()->first_name . ' is assigned to the shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift_org->start)) . ' and wants to change to your shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift_request->start)) . '.\r\n';
+		$msg.= 'You can view the swap request for the related beamtime in detail here: ' . Request::root() . '/swaps/' . $hash . '\r\n\r\n';
+		$msg.= 'A2 Beamtime Scheduler';
+		// check if mailing worked
+		$success = true;
+
+		// send the mail to every user who should receive it
+		$users->each(function($user) use(&$success, $subject, $msg)
+		{
+			$success &= $user->mail($subject, str_replace(array('[USER]'), array($user->first_name), $msg));
+		});
+
+		if ($success)
+			return Redirect::to('beamtimes/' . $beamtime_id)->with('success', 'Swap request sent successfully to ' . implode(' and ', $users->lists('first_name')));
+		else {
+			$swap->delete();  // delete this request in case the mail(s) could not be send
+			return Redirect::to('beamtimes/' . $beamtime_id)->with('error', 'Swap request couldn\'t be sent, mailing error...');
+		}
 
 /*echo Request::root();
 echo '<br />';
@@ -107,21 +119,6 @@ echo $_SERVER['HTTP_HOST'];
 echo '<br />';
 echo $_SERVER['SERVER_NAME'];
 echo '<br />';*/
-
-$subject = 'Swap Request from ' . Auth::user()->get_full_name();
-$msg = 'Hello,\r\n\r\n';
-$msg.= Auth::user()->first_name . ' wants to swap shifts. ' . Auth::user()->first_name . ' is assigned to the shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift_org->start)) . ' and wants to change to your shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift_request->start)) . '.\r\n';
-$msg.= 'You can view the swap request for the related beamtime in detail here: ' . Request::root() . '/swaps/' . $hash . '\r\n\r\n';
-$msg.= 'A2 Beamtime Scheduler';
-
-echo '<br />#######################<br />';
-echo 'Mail content: <br /><br />';
-echo 'To: ' . implode(', ', $to) . '<br />';
-echo 'Subject: ' . $subject;
-echo '<br /><br />';
-echo str_replace(array('\r\n'), array('<br />'), $msg);
-echo '<br />';
-echo '<br />#######################<br />';
 
 	}
 
