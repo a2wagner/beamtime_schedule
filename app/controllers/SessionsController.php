@@ -98,6 +98,7 @@ class SessionsController extends \BaseController {
 					$user->enabled = true;
 					$user->save();
 
+					Auth::login($user);  // authenticate user
 					return Redirect::to('/users/' . $userdata['username'] . '/edit')
 							->with('info', 'You\'ve logged in for the first time. Check the information below and update them if needed.');
 				}
