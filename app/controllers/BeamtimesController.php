@@ -228,4 +228,14 @@ class BeamtimesController extends \BaseController {
 	}
 
 
+	/**
+	 * Show statistical information about the beamtimes
+	 *
+	 * @return Respone
+	 */
+	public function statistics()
+	{
+		return View::make('beamtimes.statistics');
+	}
+
 }

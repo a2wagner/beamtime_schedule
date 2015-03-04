@@ -58,6 +58,7 @@ Route::when('users', 'auth', array('put', 'delete'));
 Route::group(array('before' => 'auth'), function()
 {
 	Route::resource('beamtimes', 'BeamtimesController');
+	Route::get('statistics', array('as' => 'statistics', 'uses' => 'BeamtimesController@statistics'));
 	Route::patch('shifts/{shifts}', array('as' => 'shifts.update', 'uses' => 'ShiftsController@update'));
 	Route::post('swaps/{shift_org_id}', array('as' => 'swaps.create', 'uses' => 'SwapsController@create'));
 	Route::post('swaps/{shift_org_id}/{shift_req_id}', array('as' => 'swaps.store', 'uses' => 'SwapsController@store'));

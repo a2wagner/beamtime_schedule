@@ -60,7 +60,7 @@
                           <ul class="dropdown-menu">
                             <li><a href="/beamtimes"><i class="fa fa-bars fa-fw"></i> Overview</a></li>
                             <li><a href="/beamtimes/create"><i class="fa fa-plus fa-fw"></i> Create</a></li>
-                            <li><a href="#"><span class="glyphicon glyphicon-stats fa-fw"></span> Statistics</a></li>
+                            <li><a href="/statistics"><span class="glyphicon glyphicon-stats fa-fw"></span> Statistics</a></li>
                             <li class="divider"></li>
                             <li><a href="#">Some other stuff</a></li>
                           </ul>
