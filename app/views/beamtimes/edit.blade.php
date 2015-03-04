@@ -69,9 +69,18 @@ function toggleRadio(id)
 {{ Form::open(['route' => array('beamtimes.update', $beamtime->id), 'method' => 'PATCH']) }}
 <div class="col-lg-10 col-lg-offset-1">
     <div class="page-header">
-        <h2>
-          Beamtime: {{ Form::text('beamtime_name', $beamtime->name) }}
-        </h2>
+      <table width="100%">
+        <tr>
+          <td>
+            <h2>
+              Beamtime: {{ Form::text('beamtime_name', $beamtime->name) }}
+            </h2>
+          </td>
+          <td align="right">
+            {{ Form::submit('Apply Changes', array('class' => 'btn btn-primary')) }}
+          </td>
+        </tr>
+      </table>
     </div>
 
     {{-- Check if the beamtime contain shifts to avoid errors --}}
