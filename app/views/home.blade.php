@@ -16,8 +16,11 @@
         <h2>Welcome to the A2 Beamtime Management</h2>
     </div>
     <p>
-        <h3>Do you already have an account?</h3>
-        {{ HTML::link('login', 'Sign in', ['class' => 'btn btn-primary']) }}
+        <h3>
+          <p>Do you already have an account?</p>
+          <p>You can use your KPH credentials.</p>
+        </h3>
+        {{ HTML::link('login', 'Login', ['class' => 'btn btn-primary']) }}
     </p>
     <p>
         <h3>Need a new account?</h3>
