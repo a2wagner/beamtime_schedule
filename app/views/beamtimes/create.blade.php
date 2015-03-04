@@ -17,6 +17,14 @@ Create New Beamtime
   padding: 4px;
   margin-top: 1px;
 }
+
+.fixed-text-input {
+  position: absolute;
+  display: block;
+  right: 70px;
+  top: 10px;
+  z-index: 3;
+}
 @stop
 
 @section('scripts')
@@ -159,7 +167,7 @@ $(".input-number").keydown(function (e) {
 @stop
 
 @section('content')
-<div class="col-lg-6 col-lg-offset-2">
+<div class="col-lg-10 col-lg-offset-1">
     <div class="page-header">
         <h2>Create a new beamtime</h2>
     </div>
@@ -168,7 +176,7 @@ $(".input-number").keydown(function (e) {
         <fieldset>
             <div class="form-group {{{ $errors->has('name') ? 'has-error has-feedback' : '' }}}">
                 {{ Form::label('name', 'Name: ', array('class' => 'col-lg-2 control-label')) }}
-                <div class="col-lg-10">
+                <div class="col-lg-8">
                     {{ Form::text('name', Input::old('name'), array('class' => 'form-control', 'id' => 'inputError2', 'autofocus' => 'autofocus')) }}
                     {{ $errors->has('name') ? '<span class="glyphicon glyphicon-remove form-control-feedback"></span>' : '' }}
                     <p class="help-block">{{ $errors->first('name') }}</p>
@@ -177,12 +185,12 @@ $(".input-number").keydown(function (e) {
 
             <div class="form-group {{{ $errors->has('start') ? 'has-error has-feedback' : '' }}}">
                 {{ Form::label('start', 'Start&nbsp;date: ', array('class' => 'col-lg-2 control-label')) }}
-                <div class="col-lg-6">
+                <div class="col-lg-5">
                     {{ Form::text('start', Input::old('start'), array('class' => 'form-control datepicker', 'id' => 'dpd1', 'data-date-format' => 'yyyy-mm-dd')) }}
                     {{ $errors->has('start') ? '<span class="glyphicon glyphicon-remove form-control-feedback"></span>' : '' }}
                     <p class="help-block">{{ $errors->first('start') }}</p>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-3">
                 	@if (Input::old('sTime'))
                     {{ Form::select('sTime', $hours, Input::old('sTime'), array('class' => 'form-control', 'id' => 'inputError2')) }}
                     @else
@@ -192,12 +200,12 @@ $(".input-number").keydown(function (e) {
             </div>
             <div class="form-group {{{ $errors->has('end') ? 'has-error has-feedback' : '' }}}">
                 {{ Form::label('end', 'End&nbsp;date: ', array('class' => 'col-lg-2 control-label')) }}
-                <div class="col-lg-6">
+                <div class="col-lg-5">
                     {{ Form::text('end', Input::old('end'), array('class' => 'form-control datepicker', 'id' => 'dpd2', 'data-date-format' => 'yyyy-mm-dd')) }}
                     {{ $errors->has('end') ? '<span class="glyphicon glyphicon-remove form-control-feedback"></span>' : '' }}
                     <p class="help-block">{{ $errors->first('end') }}</p>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-3">
                 	@if (Input::old('eTime'))
                     {{ Form::select('eTime', $hours, Input::old('eTime'), array('class' => 'form-control', 'id' => 'inputError2')) }}
                     @else
@@ -207,8 +215,8 @@ $(".input-number").keydown(function (e) {
             </div>
 
             <div class="form-group {{{ $errors->has('duration') ? 'has-error has-feedback' : '' }}}">
-                {{ Form::label('duration', 'Duration: ', array('class' => 'col-lg-2 control-label')) }}
-                <div class="col-lg-10">
+                {{ Form::label('duration', 'Shift duration: ', array('class' => 'col-lg-2 control-label')) }}
+                <div class="col-lg-5">
                     <div class="input-group">
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-default btn-number" data-type="minus" data-field="duration">
@@ -226,6 +234,9 @@ $(".input-number").keydown(function (e) {
                             <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="duration">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
+                        </span>
+                        <span class="fixed-text-input">
+                          hours
                         </span>
                     </div>
                 </div>
