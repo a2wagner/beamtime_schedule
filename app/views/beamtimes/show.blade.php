@@ -70,6 +70,9 @@ $(document).ready(function() {
       </div>
       @endif
     </div>
+    <p>
+      Total {{ $shifts->count() }} shifts ({{ $shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }} open), {{ $shifts->sum('n_crew') }} individual shifts ({{ $shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) }} open)
+    </p>
     <div class="table-responsive">
     <table class="table table-striped table-hover">
       <thead>
