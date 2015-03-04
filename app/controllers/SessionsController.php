@@ -90,9 +90,9 @@ class SessionsController extends \BaseController {
 					$user->first_name = $data['givenname'][0];
 					$user->last_name = $data['sn'][0];
 					$user->email = $data['mail'][0];
-					if ($data['telephonenumber'][0])
+					if (in_array('telephonenumber', $data))
 						$user->phone_institute = $data['telephonenumber'][0];
-					if ($data['homephone'][0])
+					if (in_array('homephone', $data))
 						$user->phone_private = $data['homephone'][0];
 					$user->workgroup_id = 1;
 					$user->rating = 1;
