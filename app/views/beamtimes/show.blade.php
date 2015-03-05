@@ -101,7 +101,13 @@ $(document).ready(function() {
           <?php $td = ""; if ($n = $shift->users->count() > 0) $td = '<td rowspan="' . $n . '">'; else $td = '<td>'; ?>
           {{ $td }}{{ ++$i }}</td>
           {{ $td }}{{ $shift->start }}</td>
-          {{ $td }}{{ $shift->duration }} hours</td>
+          <?php  // calculate actual duration depending on local timezone
+          	$start = new DateTime($shift->start);
+          	$end = clone($start);
+          	$dur = 'PT' . $shift->duration . 'H';
+          	$end->add(new DateInterval($dur));
+          ?>
+          {{ $td }}{{ $start->diff($end)->h }} hours</td>
           {{-- check if users subscribed to this shift and it's not maintenance --}}
           @if ($shift->users->isEmpty() && !$shift->maintenance)
           {{-- if not, then display this --}}
