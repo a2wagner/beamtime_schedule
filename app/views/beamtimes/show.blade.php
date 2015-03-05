@@ -69,10 +69,10 @@ $(document).ready(function() {
         <div class="progress-bar progress-bar-success" style="width: {{{ $progress }}}%"></div>
       </div>
       @endif
+      <p>
+        Total {{ $shifts->count() }} shifts ({{ $shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }} open), {{ $shifts->sum('n_crew') }} individual shifts ({{ $shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) }} open)
+      </p>
     </div>
-    <p>
-      Total {{ $shifts->count() }} shifts ({{ $shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }} open), {{ $shifts->sum('n_crew') }} individual shifts ({{ $shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) }} open)
-    </p>
     <div class="table-responsive">
     <table class="table table-striped table-hover">
       <thead>
@@ -83,7 +83,7 @@ $(document).ready(function() {
           <th>Shift Workers</th>
           <th>Remarks</th>
           <th>Status</th>
-          <th>Actions</th>
+          <th class="hidden-print">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -110,7 +110,7 @@ $(document).ready(function() {
           {{-- otherwise show the subscribed users and display open shifts --}}
           <td><?php $shift->users->each(function($user)  // $shift->users returns a Collection of User objects which are connected to the current Shift object via the corresponding pivot table; with Collection::each we can iterate over this Collection instead of creating a foreach loop
           {
-          	echo '<span rel="tooltip" data-toggle="tooltip" data-placement="top" title="Rating: ' . $user->rating . '">' . $user->first_name . ' ' . $user->last_name . '</span> (' . $user->workgroup->name . ')<br />';
+          	echo '<span rel="tooltip" data-toggle="tooltip" data-placement="top" title="Rating: ' . $user->rating . '">' . $user->first_name . ' ' . $user->last_name . '</span><span class="hidden-print"> (' . $user->workgroup->name . ')</span><br />';
           });
           ?></td>
           @endif
