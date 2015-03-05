@@ -169,7 +169,28 @@ echo '<br />';*/
 		$shift_req = Shift::find($swap->request_shift_id);
 		$user_id = $swap->user_id;
 
-		// swap the users
+		// check if the requesting user is still on the original shift
+		if (!$shift_org->users->find($user_id)) {
+			// delete the swap request
+			$swap->delete();
+			return Redirect::to('beamtimes/' . $shift_org->beamtime->id)->with('warning', 'Swap request deleted, ' . User::find($user_id)->first_name . ' wanted to swap a shift, but unsubscribed from it.');
+		}
+
+		// check if the current user is on the requested shift
+		if (!$shift_req->users->find(Auth::id())) {
+			// delete the swap request
+			$swap->delete();
+			return Redirect::to('beamtimes/' . $shift_org->beamtime->id)->with('error', 'Swap request deleted, you unsibscribed from the shift since the swap request has been submitted!');
+		}
+
+		// additionally check if the current user is not subscribed to the original shift
+		if ($shift_org->users->find(Auth::id())) {
+			// delete the swap request
+			$swap->delete();
+			return Redirect::to('beamtimes/' . $shift_org->beamtime->id)->with('error', 'Swap request deleted, you cannot swap to a shift where you\'re already assigned to!');
+		}
+
+		// if everything is okay, swap the users
 		$shift_org->users()->detach($user_id);
 		$shift_org->users()->attach(Auth::id());
 		$shift_req->users()->detach(Auth::id());
