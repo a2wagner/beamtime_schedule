@@ -65,12 +65,27 @@ $(document).ready(function() {
       	$elapsed = $now->getTimestamp() - $start->getTimestamp();
       	$progress = round($elapsed/$length*100, 2);
       ?>
-      <div class="progress progress-striped">
+      <div class="progress progress-striped active">
         <div class="progress-bar progress-bar-success" style="width: {{{ $progress }}}%"></div>
       </div>
       @endif
+      <h3>Shift Status</h3>
+      <?php  // calculate shift status
+      	$shifts_total = $shifts->count();
+      	$shifts_open = $shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count();
+      	$individual = $shifts->sum('n_crew');
+      	$individual_open = $shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) ;
+      	$empty_shifts = $shifts->sum(function($shift){ return $shift->users->isEmpty() && !$shift->maintenance; });
+      	$full = round(($shifts_total - $shifts_open)/$shifts_total * 100, 2);
+      	$empty = round($empty_shifts/$shifts_total * 100, 2);
+      ?>
+      <div class="progress">
+        <div class="progress-bar progress-bar-success" style="width: {{{ $full }}}%"></div>
+        <div class="progress-bar progress-bar-warning" style="width: {{{ 100 - $full - $empty }}}%"></div>
+        <div class="progress-bar progress-bar-danger" style="width: {{{ $empty }}}%"></div>
+      </div>
       <p>
-        Total {{ $shifts->count() }} shifts ({{ $shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }} open), {{ $shifts->sum('n_crew') }} individual shifts ({{ $shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) }} open)
+        {{{ $shifts_open }}} of {{{ $shifts_total }}} total shifts open, {{{ $individual_open }}} of {{{ $individual }}} individual shifts open. (<span class="text-success">full</span>, <span class="text-warning">partly filled</span>, <span class="text-danger">empty</span>)
       </p>
     </div>
     <div class="table-responsive">
@@ -165,7 +180,7 @@ $(document).ready(function() {
     </table>
     </div>
     <div>
-      Total {{ $shifts->count() }} shifts ({{ $shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }} open), {{ $shifts->sum('n_crew') }} individual shifts ({{ $shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) }} open), TODO: button iCal export...
+      Total shifts: {{{ $shifts_total }}} ({{{ $shifts_open }}} open), individual shifts: {{{ $individual }}} ({{{ $individual_open }}} open), TODO: button iCal export...
     </div>
     @else
     <h3 class="text-danger">Beamtime not found!</h3>
