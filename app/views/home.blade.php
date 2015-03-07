@@ -29,7 +29,9 @@
 </div>
 @else
 <div class="col-lg-10 col-lg-offset-1">
-    <h3>Most recent beamtimes</h3>
+    <div class="page-header">
+        <h2>Most recent beamtimes</h2>
+    </div>
     <?php $beamtimes = Beamtime::orderBy('id', 'desc')->take(5)->get(); ?>
     @if ($beamtimes->count())
     <div class="table-responsive">
