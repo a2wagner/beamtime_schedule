@@ -54,9 +54,9 @@
           <td class="text-center"><a href="/beamtimes/{{{$beamtime->id}}}" data-method="delete" data-confirm="Are you sure to delete this beamtime?" class="btn btn-danger btn-sm"><span class="fa fa-times"></span>Delete</a></td>
           @endif
           @else
-          <td>{{ link_to("/beamtimes/{$beamtime->id}", $beamtime->name) }}</td>
-          <td>{{ $beamtime->shifts->first()->start }}</td>
-          <td>{{ $beamtime->shifts()->count() }}</td>
+          <td style="vertical-align: middle;">{{ link_to("/beamtimes/{$beamtime->id}", $beamtime->name) }}</td>
+          <td style="vertical-align: middle;">{{ $beamtime->shifts->first()->start }}</td>
+          <td style="vertical-align: middle;">{{ $beamtime->shifts()->count() }}</td>
           <?php  // calculate some time information of the beamtime
           	$now = new DateTime();
           	$start = new DateTime($beamtime->shifts->first()->start);
@@ -66,7 +66,7 @@
           ?>
           @if ($now < $start)
           <?php $diff = $now->diff($start); ?>
-          <td class="text-primary">Beamtime will start <?php  // show time difference until beamtime starts according to the time span
+          <td><span class="text-primary">Beamtime will start <?php  // show time difference until beamtime starts according to the time span
           	if ($diff->d > 0)
           		echo $diff->format('in %a days and %h hours.');
           	elseif ($diff->d === 0 && $diff->h > 0)
@@ -75,7 +75,8 @@
           		echo $diff->format('in %i minutes.');
           	else
           		echo 'shortly.';
-          ?></td>
+          ?></span><br />
+          Shifts: {{ $beamtime->shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }}/{{ $beamtime->shifts->count() }} open ({{ $beamtime->shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) }}/{{ $beamtime->shifts->sum('n_crew') }} individual shifts open)</td>
           @elseif ($now > $end)
           <?php $diff = $now->diff($end); ?>
           <td class="text-muted">Ended {{{ $diff->format('%a days ago') }}}</td>
@@ -83,14 +84,15 @@
           <?php  // calculate progress of the current beamtime
           	$diff = $now->diff($start);
           ?>
-          <td class="text-success">Running for <?php  // show time span for how long beamtime is running more precise
+          <td><span class="text-success">Running for <?php  // show time span for how long beamtime is running more precise
           	if ($diff->d > 0)
           		echo $diff->format('%a days and %h hours.');
           	elseif ($diff->d === 0 && $diff->h > 0)
           		echo $diff->format('%h hours and %i minutes.');
           	else
           		echo $diff->format('%i minutes.');
-          ?></td>
+          ?></span><br />
+          Shifts: {{ $beamtime->shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }}/{{ $beamtime->shifts->count() }} open ({{ $beamtime->shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) }}/{{ $beamtime->shifts->sum('n_crew') }} individual shifts open)</td>
           @endif
           @endif  {{-- end of check if beamtime contains shifts --}}
         </tr>
