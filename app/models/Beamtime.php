@@ -65,4 +65,54 @@ class Beamtime extends \Eloquent {
 
 		return $range;
 	}
+
+	/**
+	* Check if the beamtime is in the specified year
+	*
+	* @param int $year
+	* @return boolean
+	*/
+	public function is_year($year)
+	{
+		return $this->shifts->first()->is_year($year);
+	}
+
+	/**
+	* Check if the beamtime is in the specified array of years
+	*
+	* @param array $years
+	* @return boolean
+	*/
+	public function is_in_years($years)
+	{
+		foreach ($years as $year)
+			if ($this->shifts->first()->is_year($year))
+				return true;
+
+		// if the if condition above was not true, the beamtime lies not in the given array of years
+		return false;
+	}
+
+	/**
+	* Check if the beamtime is in the specified range of years
+	*
+	* @param int $begin, int $end
+	* @return boolean
+	*/
+	public function is_in_range($begin, $end)
+	{
+		// check order of range and correct if necessary
+		$start = $begin;
+		if ($begin > $end) {
+			$start = $end;
+			$end = $begin;
+		}
+
+		for ($year = $start; $year <= $end; $year++)
+			if ($this->shifts->first()->is_year($year))
+				return true;
+
+		// if the if condition above was not true, the beamtime lies not in the given range
+		return false;
+	}
 }

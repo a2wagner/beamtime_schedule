@@ -60,4 +60,16 @@ class Shift extends \Eloquent {
 		else
 			return $user->id;
 	}
+
+	/**
+	* Check if the shift is in the specified year
+	*
+	* @param int $year
+	* @return boolean
+	*/
+	public function is_year($year)
+	{
+		$date = new DateTime($this->start);
+		return $date->format('Y') == $year;
+	}
 }
