@@ -65,22 +65,22 @@ class Swap extends \Eloquent
 	/**
 	* Create the CRC32 hash for the swap request
 	*
-	* @param int $beamtime, int $shift_org, int $shift_req
+	* @param int $user_id, int $shift_org, int $shift_req
 	* @return string
 	*/
-	public static function create_hash($beamtime, $shift_org, $shift_req)
+	public static function create_hash($user_id, $shift_org, $shift_req)
 	{
-		return hash(self::$algorithm, $beamtime . ':' . $shift_org . ',' . $shift_req);
+		return hash(self::$algorithm, $user_id . ':' . $shift_org . ',' . $shift_req);
 	}
 
 	/**
 	* Validate the CRC32 hash for the swap request
 	*
-	* @param string $hash, int $beamtime, int $shift_org, int $shift_req
+	* @param string $hash, int $user_id, int $shift_org, int $shift_req
 	* @return string
 	*/
-	public static function validate_hash($hash, $beamtime, $shift_org, $shift_req)
+	public static function validate_hash($hash, $user_id, $shift_org, $shift_req)
 	{
-		return $hash === hash(self::$algorithm, $beamtime . ':' . $shift_org . ',' . $shift_req);
+		return $hash === hash(self::$algorithm, $user_id . ':' . $shift_org . ',' . $shift_req);
 	}
 }

@@ -57,7 +57,7 @@ class SwapsController extends \BaseController {
 
 		// the query seems reasonable, create an entry in the database for this request and send emails to the users of this shift
 		$swap = new Swap();
-		$hash = $swap->create_hash($beamtime_id, $org, $req);
+		$hash = $swap->create_hash(Auth::id(), $org, $req);
 
 		// check if this request is already in the database
 		if (Swap::whereHash($hash)->count())
