@@ -235,8 +235,7 @@ class BeamtimesController extends \BaseController {
 	 */
 	public function statistics()
 	{
-		return View::make('construction');
-		//return View::make('beamtimes.statistics');
+		return View::make('beamtimes.statistics');
 	}
 
 }
