@@ -5,6 +5,8 @@ class Beamtime extends \Eloquent {
 
 	public static $rules = ['name' => 'required'];
 
+	public $errors;
+
 	/**
 	* A beamtime consists of many shifts
 	*
@@ -23,6 +25,23 @@ class Beamtime extends \Eloquent {
 	public function run_coordinators()
 	{
 		return $this->hasMany('User', 'run_coordinators');
+	}
+
+	/**
+	* Validation of the filled attributes concerning the defined rules and messages for the check
+	*
+	* @return bool of validation check
+	*/
+	public function isValid()
+	{
+		$validation = Validator::make($this->attributes, static::$rules);
+
+		if ($validation->passes())
+			return true;
+
+		$this->errors = $validation->messages();
+
+		return false;
 	}
 
 	/**
