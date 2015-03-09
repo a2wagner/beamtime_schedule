@@ -182,6 +182,14 @@ $(".input-number").keydown(function (e) {
                     <p class="help-block">{{ $errors->first('name') }}</p>
                 </div>
             </div>
+            <div class="form-group {{{ $errors->has('description') ? 'has-error has-feedback' : '' }}}">
+                {{ Form::label('description', 'Short description: ', array('class' => 'col-lg-2 control-label')) }}
+                <div class="col-lg-8">
+                    {{ Form::textarea('description', Input::old('description'), array('class' => 'form-control', 'rows' => '3', 'placeholder' => 'optional', 'id' => 'inputError2', 'autofocus' => 'autofocus')) }}
+                    {{ $errors->has('description') ? '<span class="glyphicon glyphicon-remove form-control-feedback"></span>' : '' }}
+                    <p class="help-block">{{ $errors->first('description') }}</p>
+                </div>
+            </div>
 
             <div class="form-group {{{ $errors->has('start') ? 'has-error has-feedback' : '' }}}">
                 {{ Form::label('start', 'Start&nbsp;date: ', array('class' => 'col-lg-2 control-label')) }}

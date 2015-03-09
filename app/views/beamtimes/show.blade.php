@@ -31,6 +31,10 @@ $(document).ready(function() {
       <h2>Beamtime: {{{ $beamtime->name }}}</h2>
       @endif
     </div>
+    @if (!empty($beamtime->description))
+    <h4>Short beamtime description:</h4>
+    <p style="white-space: pre-wrap;">{{ $beamtime->description }}</p>
+    @endif
 
     {{-- Check if the beamtime contain shifts to avoid errors --}}
     @if (is_null($beamtime->shifts->first()))

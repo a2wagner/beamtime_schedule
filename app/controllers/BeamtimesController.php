@@ -61,7 +61,8 @@ class BeamtimesController extends \BaseController {
 		// check if entered data is correct
 		$now = date("Y-m-d H:i:s");
 		$rules = [
-			'name' => 'required',
+			'name' => 'required|max:100',
+			'description' => 'max:500',
 			'start' => 'required|date|after:'.$now,
 			'end' => 'required|date|after:'.((Input::has('start')) ? Input::get('start') : $now),
 			'duration' => 'required|integer|max:10'
@@ -83,7 +84,7 @@ class BeamtimesController extends \BaseController {
 		// length information of the beamtime
 		$interval = $start->diff($end);
 		// store beamtime information
-		$this->beamtime->name = Input::get('name');
+		$this->beamtime->fill(Input::only('name', 'description'));
 		$this->beamtime->save();
 		// create the shifts
 		$shifts = $this->beamtime->createShifts($start, $end, $duration);
@@ -153,8 +154,12 @@ class BeamtimesController extends \BaseController {
 		else
 			return 'Beamtime not found!';
 
-		// save the (new) name for this beamtime
-		$beamtime->name = Input::get('beamtime_name');
+
+		// check if the beamtime properties are correct
+		if (!$beamtime->fill(Input::only('name', 'description'))->isValid())
+			return Redirect::back()->withInput()->withErrors($beamtime->errors);
+
+		// save the (new) name and description for this beamtime
 		$beamtime->save();
 
 		$n = Input::get('n_crew');

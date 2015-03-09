@@ -45,7 +45,8 @@ class CreateDatabase extends Migration {
 		Schema::create('beamtimes', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->string('name');
+			$table->string('name', 100);
+			$table->string('description', 500)->nullable();
 			$table->timestamps();
 		});
 

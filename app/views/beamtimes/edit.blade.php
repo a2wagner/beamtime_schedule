@@ -4,6 +4,22 @@
 Edit {{ $beamtime->name }}
 @stop
 
+@section('styles')
+@parent
+.form-control-feedback-large-h2 {
+    position: absolute;
+    top: 60px;
+    right: 15px;
+    display: block;
+}
+.from-control-feedback-textarea {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    display: block;
+}
+@stop
+
 @section('scripts')
 <script type="text/javascript">
 $(document).ready(function() {
@@ -72,15 +88,28 @@ function toggleRadio(id)
       <table width="100%">
         <tr>
           <td>
-            <h2>
-              Beamtime: {{ Form::text('beamtime_name', $beamtime->name) }}
-            </h2>
+            <div class="col-lg-10 form-group {{{ $errors->has('name') ? 'has-error has-feedback' : '' }}}">
+              <h2>
+                {{ Form::label('name', 'Beamtime: ', array('class' => 'col-lg-2 control-label', 'style' => 'font-weight: normal;')) }}
+                {{ Form::text('name', $beamtime->name, array('class' => 'form-control input-lg', 'id' => 'inputError2 inputLarge', 'autofocus' => 'autofocus')) }}
+                {{ $errors->has('name') ? '<span class="glyphicon glyphicon-remove form-control-feedback form-control-feedback-large-h2"></span>' : '' }}
+              </h2>
+              <h3>
+                <p class="help-block">{{ $errors->first('name') }}</p>
+              </h3>
+            </div>
           </td>
           <td align="right">
             {{ Form::submit('Apply Changes', array('class' => 'btn btn-primary')) }}
           </td>
         </tr>
       </table>
+    </div>
+    <div class="col-lg-8 form-group {{{ $errors->has('description') ? 'has-error has-feedback' : '' }}}">
+      {{ Form::label('description', 'Short beamtime description: ', array('class' => 'col-lg-8 control-label')) }}
+      {{ Form::textarea('description', $beamtime->description, array('class' => 'form-control', 'rows' => '3', 'placeholder' => 'optional', 'id' => 'inputError2', 'autofocus' => 'autofocus')) }}
+      {{ $errors->has('description') ? '<span class="glyphicon glyphicon-remove form-control-feedback from-control-feedback-textarea"></span>' : '' }}
+      <p class="help-block">{{ $errors->first('description') }}</p>
     </div>
 
     {{-- Check if the beamtime contain shifts to avoid errors --}}
