@@ -26,6 +26,16 @@ class Beamtime extends \Eloquent {
 	}
 
 	/**
+	 * Use the custom collection that allows tapping
+	 *
+	 * @return UtilityCollection
+	 */
+	public function newCollection(array $models = array())
+	{
+		return new UtilityCollection($models);
+	}
+
+	/**
 	* Create an array of days between a given start and end date
 	*
 	* @param DateTime $start, DateTime $end, int $duration

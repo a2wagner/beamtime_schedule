@@ -34,6 +34,16 @@ class Shift extends \Eloquent {
 	}
 
 	/**
+	 * Use the custom collection that allows tapping
+	 *
+	 * @return UtilityCollection
+	 */
+	public function newCollection(array $models = array())
+	{
+		return new UtilityCollection($models);
+	}
+
+	/**
 	* Get the other user, if existent, from the current Shift object regarding to the given id
 	*
 	* @param int $id
