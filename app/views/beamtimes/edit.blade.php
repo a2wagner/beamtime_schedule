@@ -8,7 +8,7 @@ Edit {{ $beamtime->name }}
 @parent
 .form-control-feedback-large-h2 {
     position: absolute;
-    top: 60px;
+    top: 40px;
     right: 15px;
     display: block;
 }
@@ -17,6 +17,10 @@ Edit {{ $beamtime->name }}
     top: 25px;
     right: 25px;
     display: block;
+}
+/* fix misalignment of form input and table in this view */
+.form-group, .control-label {
+  float: none;
 }
 @stop
 
