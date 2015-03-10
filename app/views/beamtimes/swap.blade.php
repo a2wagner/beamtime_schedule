@@ -16,7 +16,20 @@ $(document).ready(function() {
 @section('content')
 <div class="col-lg-10 col-lg-offset-1">
     <div class="page-header">
-        <h2>Beamtime: {{{ $beamtime->name }}}</h2>
+      @if (!empty($current))
+      <table width="100%">
+        <tr>
+          <td>
+            <h2>Beamtime: {{{ $beamtime->name }}}</h2>
+          </td>
+          <td class="text-right hidden-print">
+            {{ link_to(URL::previous(), 'Cancel', ['class' => 'btn btn-default']) }}
+          </td>
+        </tr>
+      </table>
+      @else
+      <h2>Beamtime: {{{ $beamtime->name }}}</h2>
+      @endif
     </div>
 
     {{-- Check if the beamtime contain shifts to avoid errors --}}

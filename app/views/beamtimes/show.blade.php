@@ -16,20 +16,19 @@ $(document).ready(function() {
 @section('content')
 <div class="col-lg-10 col-lg-offset-1">
     <div class="page-header">
-      @if (Auth::user()->isAdmin)
       <table width="100%">
         <tr>
           <td>
             <h2>Beamtime: {{{ $beamtime->name }}}</h2>
           </td>
           <td class="text-right hidden-print">
+            @if (Auth::user()->isAdmin)
             <a class="btn btn-primary btn" href="/beamtimes/{{{$beamtime->id}}}/edit"><span class="fa fa-pencil"></span>&nbsp;&nbsp;&nbsp;Edit Beamtime</a>
+            @endif
+            {{ link_to('/beamtimes', 'Back', ['class' => 'btn btn-default']) }}
           </td>
         </tr>
       </table>
-      @else
-      <h2>Beamtime: {{{ $beamtime->name }}}</h2>
-      @endif
     </div>
     @if (!empty($beamtime->description))
     <h4>Short beamtime description:</h4>

@@ -9,7 +9,6 @@ Edit {{ $beamtime->name }}
 .form-control-feedback-large-h2 {
     position: absolute;
     top: 40px;
-    right: 15px;
     display: block;
 }
 .from-control-feedback-textarea {
@@ -92,9 +91,9 @@ function toggleRadio(id)
       <table width="100%">
         <tr>
           <td>
-            <div class="col-lg-10 form-group {{{ $errors->has('name') ? 'has-error has-feedback' : '' }}}">
+            <div class="form-group {{{ $errors->has('name') ? 'has-error has-feedback' : '' }}}" style="padding-left: 15px;">
               <h2>
-                {{ Form::label('name', 'Beamtime: ', array('class' => 'col-lg-2 control-label', 'style' => 'font-weight: normal;')) }}
+                {{ Form::label('name', 'Beamtime: ', array('class' => 'control-label', 'style' => 'font-weight: normal; padding-left: 15px;')) }}
                 {{ Form::text('name', $beamtime->name, array('class' => 'form-control input-lg', 'id' => 'inputError2 inputLarge', 'autofocus' => 'autofocus')) }}
                 {{ $errors->has('name') ? '<span class="glyphicon glyphicon-remove form-control-feedback form-control-feedback-large-h2"></span>' : '' }}
               </h2>
@@ -105,6 +104,7 @@ function toggleRadio(id)
           </td>
           <td align="right">
             {{ Form::submit('Apply Changes', array('class' => 'btn btn-primary')) }}
+            {{ link_to(URL::previous(), 'Cancel', ['class' => 'btn btn-default']) }}
           </td>
         </tr>
       </table>
