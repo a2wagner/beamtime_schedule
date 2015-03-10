@@ -14,14 +14,6 @@ Beamtimes
         <h2>All Beamtimes</h2>
     </div>
 
-Dropdown Menü mit allen Strahlzeiten, paar Infos wie Start, Dauer, Anzahl Schichten, ... 
-Zeige aktuelle oder nächste beginnende Strahlzeit, Infos Ermittlung: 
-http://stackoverflow.com/questions/13026334/get-closest-date-from-mysql-table
-http://stackoverflow.com/questions/6186962/sql-query-to-show-nearest-date
-http://www.dintillion.com/?p=135
-http://www.justskins.com/forums/finding-a-date-closest-40535.html#post121244
---> Logik, ob Strahlzeit ist oder nicht. Vlt. finde nächsten Start, wo DATEDIFF negativ und am kleinsten, dann teste, ob Ende größer now --> aktuell Strahlzeit, sonst DATEDIFF positiv am kleinsten ist beginnende Strahlzeit; zeige jeweils aktuelle oder folgende an
-
     @if ($beamtimes->count())
     <div class="table-responsive">
     <table class="table table-striped table-hover">

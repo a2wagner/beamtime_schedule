@@ -81,7 +81,7 @@ $(document).ready(function () {
 // function of +/- buttons, disabling them when min/max value reached as well as prevent non-integer input
 $('.btn-number').click(function(e){
     e.preventDefault();
-    
+
     fieldName = $(this).attr('data-field');
     type      = $(this).attr('data-type');
     var input = $("input[name='"+fieldName+"']");
@@ -91,18 +91,11 @@ $('.btn-number').click(function(e){
         if (type == 'minus') {
             if (currentVal > input.attr('min')) {
                 input.val(currentVal - 1).change();
-            } 
-            // if parseInt no longer needed due to ('.input-number').change() function changes; needed to prevent manipulations by changing values with keyboard
-            /*if (parseInt(input.val()) == input.attr('min')) {
-                $(this).attr('disabled', true);
-            }*/
+            }
         } else if (type == 'plus') {
             if (currentVal < input.attr('max')) {
                 input.val(currentVal + 1).change();
             }
-            /*if (parseInt(input.val()) == input.attr('max')) {
-                $(this).attr('disabled', true);
-            }*/
         }
     } else {
         input.val(0);
@@ -115,22 +108,9 @@ $('.input-number').change(function() {
     minValue = parseInt($(this).attr('min'));
     maxValue = parseInt($(this).attr('max'));
     valueCurrent = parseInt($(this).val());
-    
+
     name = $(this).attr('name');
 
-    /*if (valueCurrent >= minValue) {
-        $(".btn-number[data-type='minus'][data-field='"+name+"']").removeAttr('disabled')
-    } else {
-        alert('Sorry, the minimum value was reached');
-        $(this).val($(this).data('oldValue'));
-    }
-
-    if (valueCurrent <= maxValue) {
-        $(".btn-number[data-type='plus'][data-field='"+name+"']").removeAttr('disabled')
-    } else {
-        alert('Sorry, the maximum value was reached');
-        $(this).val($(this).data('oldValue'));
-    }*/
     if (valueCurrent < minValue || valueCurrent > maxValue) {
         alert('Sorry, the value is out of range');
         $(this).val($(this).data('oldValue'));
@@ -248,26 +228,6 @@ $(".input-number").keydown(function (e) {
                         </span>
                     </div>
                 </div>
-            </div>
-
-<!--<div class="center">
-    <div class="input-group">
-        <span class="input-group-btn">
-            <button type="button" class="btn btn-default btn-number" data-type="minus" data-field="duration">
-                <span class="glyphicon glyphicon-minus"></span>
-            </button>
-        </span>
-        <input type="text" name="duration" class="form-control input-number" value="8" min="1" max="10">
-        <span class="input-group-btn">
-            <button type="button" class="btn btn-default btn-number" data-type="plus" data-field="duration">
-                <span class="glyphicon glyphicon-plus"></span>
-            </button>
-        </span>
-    </div>
-</div>-->
-
-            <div class="form-group">
-                Possibility to choose run coordinators
             </div>
 
             <div class="form-group">

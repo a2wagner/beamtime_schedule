@@ -170,14 +170,6 @@ $(document).ready(function() {
           @endif
           @endif  {{-- maintenance and future check --}}
           </td>
-          {{-- Form::open(['route' => 'shifts.update', 'class' => 'form-horizontal print-hidden', 'role' => 'form']) --}}
-              {{-- <td>@if (Auth::user()->isAdmin || run_coordinator) zusätzliche buttons --}}
-              {{-- is run coordinator?  --> vlt in methode auslagern, isRun_coordinator(beamtime_id) ? --}}
-              {{-- evtl so was wie: @if ($shift->run_coordinators->filter(function($user) { return $user->id == Auth::user()->id; })->first()) {{ 'user is run coordinator' }} @endif --}}
-              	{{-- filter nicht ausprobiert, antworten hier: http://stackoverflow.com/questions/20931020/laravel-get-object-from-collection-by-attribute  (muss true returnen für verbleibende elemente) --}}
-              {{-- Form::submit('Swap Shift', array('class' => 'btn btn-primary btn-sm')) --}}
-              {{-- unsubscribe, methode sendMail in User, evtl. erstes Argument shift_id, zweites Argument identifier für swap, unsubscribe wenn diff->d smaller 14, ..., drittes Argument Nachrichteninhalt --}}
-          {{-- Form::close() --}}
         </tr>
         @endforeach
       </tbody>
