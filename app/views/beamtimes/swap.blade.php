@@ -143,7 +143,7 @@ $(document).ready(function() {
     </table>
     </div>
     <div>
-      Total {{ $shifts->count() }} shifts, {{ $shifts->sum('n_crew') }} individual shifts
+      Total {{ $shifts->filter(function($shift){ return !$shift->maintenance; })->count() }} shifts, {{{ $shifts->filter(function($shift){ return $shift->maintenance; })->count() }}} maintenance shifts, {{ $shifts->sum('n_crew') }} individual shifts
     </div>
     @else
     <h3 class="text-danger">Beamtime not found!</h3>

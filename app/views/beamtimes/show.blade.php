@@ -75,7 +75,7 @@ $(document).ready(function() {
       @endif
       <h3>Shift Status</h3>
       <?php  // calculate shift status
-      	$shifts_total = $shifts->count();
+      	$shifts_total = $shifts->filter(function($shift){ return !$shift->maintenance; })->count();
       	$shifts_open = $shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count();
       	$individual = $shifts->sum('n_crew');
       	$individual_open = $shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) ;
@@ -184,7 +184,7 @@ $(document).ready(function() {
     </table>
     </div>
     <div>
-      Total shifts: {{{ $shifts_total }}} ({{{ $shifts_open }}} open), individual shifts: {{{ $individual }}} ({{{ $individual_open }}} open), TODO: button iCal export...
+      Total shifts: {{{ $shifts_total }}} ({{{ $shifts_open }}} open), {{{ $shifts->count() - $shifts_total }}} maintenance shifts, individual shifts: {{{ $individual }}} ({{{ $individual_open }}} open), TODO: button iCal export...
     </div>
     @else
     <h3 class="text-danger">Beamtime not found!</h3>
