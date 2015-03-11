@@ -119,6 +119,16 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
+	 * Use the custom collection that allows tapping
+	 *
+	 * @return UtilityCollection
+	 */
+	public function newCollection(array $models = array())
+	{
+		return new UtilityCollection($models);
+	}
+
+	/**
 	 * Get the full name of a user, firstname + lastname
 	 *
 	 * @return string
