@@ -34,9 +34,7 @@ class CreateDatabase extends Migration {
 			$table->string('phone_mobile', 30)->nullable();
 			$table->tinyInteger('rating')->unsigned();
 			$table->integer('ldap_id')->unsigned()->nullable();
-			//TODO: maybe replace enabled, isAdmin with unsigned tinyInteger role: 0 -> !enabled, 1 -> enabled, 2 -> run coordinator, 3 -> admin, ... ?  --> remove run_coordinators table ?
-			$table->boolean('isAdmin')->default(false);
-			$table->boolean('enabled')->default(false);
+			$table->tinyInteger('role')->unsigned()->default(0);
             $table->string('remember_token', 100)->nullable();
 			$table->timestamps();
 			$table->foreign('workgroup_id')->references('id')->on('workgroups');
