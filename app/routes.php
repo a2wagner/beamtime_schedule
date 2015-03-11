@@ -64,6 +64,11 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('swaps/{shift_org_id}/{shift_req_id}', array('as' => 'swaps.store', 'uses' => 'SwapsController@store'));
 	Route::get('swaps/{swap}', array('as' => 'swaps.show', 'uses' => 'SwapsController@show'));
 	Route::put('swaps/{swap}', array('as' => 'swaps.update', 'uses' => 'SwapsController@update'));
+	//temporary: A2 collaboration meeting talk
+	Route::get('talk', function()
+	{
+		return View::make('talk');
+	});
 });
 //Route::resource('beamtimes', 'BeamtimesController')->before('auth');
 
