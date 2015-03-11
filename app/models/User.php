@@ -38,6 +38,12 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	public $errors;
 
+	// different roles a user can have, stored in an unsigned 8bit integer (max value 255_10 = 11111111_2)
+	const ENABLED = 1;
+	const RUN_COORDINATOR = 2;
+	const ADMIN = 4;
+	const AUTHOR = 8;
+
 	use UserTrait, RemindableTrait;
 
 	// create custom validation messages ------------------
@@ -133,6 +139,46 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		$mail = new Sendmail();
 
 		return $mail->send_single($this->email, $subject, $msg, $cc);
+	}
+
+	/**
+	 * Check if the current user is enabled
+	 *
+	 * @return boolean
+	 */
+	public function is_enabled()
+	{
+		return $this->role & $enabled;
+	}
+
+	/**
+	 * Check if the current user is a run coordinator
+	 *
+	 * @return boolean
+	 */
+	public function is_run_coordinator()
+	{
+		return $this->role & $run_coordinator;
+	}
+
+	/**
+	 * Check if the current user is an admin
+	 *
+	 * @return boolean
+	 */
+	public function is_admin()
+	{
+		return $this->role & $admin;
+	}
+
+	/**
+	 * Check if the current user is an author
+	 *
+	 * @return boolean
+	 */
+	public function is_author()
+	{
+		return $this->role & $author;
 	}
 
 }
