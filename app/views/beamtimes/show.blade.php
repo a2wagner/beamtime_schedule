@@ -22,7 +22,7 @@ $(document).ready(function() {
             <h2>Beamtime: {{{ $beamtime->name }}}</h2>
           </td>
           <td class="text-right hidden-print">
-            @if (Auth::user()->isAdmin)
+            @if (Auth::user()->isAdmin())
             <a class="btn btn-primary btn" href="/beamtimes/{{{$beamtime->id}}}/edit"><span class="fa fa-pencil"></span>&nbsp;&nbsp;&nbsp;Edit Beamtime</a>
             @endif
             {{ link_to('/beamtimes', 'Back', ['class' => 'btn btn-default']) }}

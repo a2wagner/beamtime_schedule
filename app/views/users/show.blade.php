@@ -40,7 +40,7 @@ Profile of {{ $user->username }}
             <td>{{ implode(', ', array_map(function ($v, $k) { return $k . ': ' . $v; }, $phone, array_keys($phone))) }}</td>
           </tr>
           @endif
-          @if (Auth::user()->isAdmin)
+          @if (Auth::user()->isAdmin())
           @endif
           <tr>
             <td>Rating</td>

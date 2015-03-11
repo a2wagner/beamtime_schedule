@@ -20,7 +20,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	//protected $fillable = ['first_name', 'last_name', 'user_name', 'email', 'password', 'rating'];
 	// fillable leads to problems with forms because not listed variables can't be filled via forms (mass assignment security); use black list instead white list
-	protected $guarded = ['id', 'isAdmin', 'enabled'];
+	protected $guarded = ['id', 'role'];
 
 	public static $rules = [
 		'first_name' => 'required',
@@ -30,7 +30,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'workgroup_id' => 'required',
 		'password' => 'required|min:6|confirmed',
 		'password_confirmation' => 'required|same:password',
-		'rating' => 'required'
+		'rating' => 'required',
+		'role' => 'integer|between:0,255'
 	];
 
 	public static $rules_edit;
@@ -41,8 +42,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	// different roles a user can have, stored in an unsigned 8bit integer (max value 255_10 = 11111111_2)
 	const ENABLED = 1;
 	const RUN_COORDINATOR = 2;
-	const ADMIN = 4;
-	const AUTHOR = 8;
+	const AUTHOR = 4;
+	//const SOMETING_ELSE = 8;
+	const ADMIN = 128;  // use the highest bit for admins
 
 	use UserTrait, RemindableTrait;
 
@@ -146,9 +148,19 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 *
 	 * @return boolean
 	 */
-	public function is_enabled()
+	public function isEnabled()
 	{
-		return $this->role & $enabled;
+		return $this->isFlagSet(self::ENABLED);
+	}
+
+	/**
+	 * Enable a new user
+	 *
+	 * @return void
+	 */
+	public function enable()
+	{
+		$this->role |= self::ENABLED;
 	}
 
 	/**
@@ -156,9 +168,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 *
 	 * @return boolean
 	 */
-	public function is_run_coordinator()
+	public function isRunCoordinator()
 	{
-		return $this->role & $run_coordinator;
+		return $this->isFlagSet(self::RUN_COORDINATOR);
 	}
 
 	/**
@@ -166,9 +178,19 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 *
 	 * @return boolean
 	 */
-	public function is_admin()
+	public function isAdmin()
 	{
-		return $this->role & $admin;
+		return $this->isFlagSet(self::ADMIN);
+	}
+
+	/**
+	 * Toggle the admin flag of a user role
+	 *
+	 * @return void
+	 */
+	public function toggleAdmin()
+	{
+		$this->role ^= self::ADMIN;
 	}
 
 	/**
@@ -176,9 +198,49 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 *
 	 * @return boolean
 	 */
-	public function is_author()
+	public function isAuthor()
 	{
-		return $this->role & $author;
+		return $this->isFlagSet(self::AUTHOR);
+	}
+
+
+	/* General methods to get and manipulate bits of $this->role */
+
+	/**
+	 * Check if a specific bit is set
+	 *
+	 * @param int $flag
+	 * @return boolean
+	 */
+	protected function isFlagSet($flag)
+	{
+		return (($this->role & $flag) == $flag);
+	}
+
+	/**
+	 * Set a specific bit to the given value
+	 *
+	 * @param int $flag, bool $value
+	 * @return void
+	 */
+	protected function setFlag($flag, $value)
+	{
+		if ($value) {
+			$this->role |= $flag;
+		} else {
+			$this->role &= ~$flag;
+		}
+	}
+
+	/**
+	 * Flip a specific bit
+	 *
+	 * @param int $flag
+	 * @return void
+	 */
+	protected function toggleFlag($flag)
+	{
+		$this->role ^= $flag;
 	}
 
 }

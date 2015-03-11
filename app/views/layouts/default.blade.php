@@ -54,7 +54,7 @@
                         @if (Auth::guest())
                         <li>{{ HTML::link('login', ' Login', ['class' => 'fa fa-sign-in']) }}</li>
                         @else
-                        @if (Auth::user()->isAdmin)
+                        @if (Auth::user()->isAdmin())
                         <li class="dropdown">
                           <a href="#" class="dropdown-toggle fa fa-calendar" data-toggle="dropdown"> Beamtimes <span class="fa fa-caret-down"></span></a>
                           <ul class="dropdown-menu">
@@ -92,10 +92,10 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li>{{ HTML::link('logout', ' Logout', ['class' => 'fa fa-sign-out']) }}</li>
                         @endif
-                    </ul> 
+                    </ul>
                 </div>
             </div>
-        </div> 
+        </div>
 
         <!-- Container -->
         <div class="container">

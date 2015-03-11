@@ -15,6 +15,8 @@ class AddRole extends Migration {
 		Schema::table('users', function(Blueprint $table)
 		{
 			$table->tinyInteger('role')->unsigned()->default(0);
+			$table->dropColumn('enabled');
+			$table->dropColumn('isAdmin');
 		});
 	}
 

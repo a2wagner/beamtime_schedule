@@ -14,7 +14,7 @@ Registered Users
 @stop
 
 @section('content')
-@if (Auth::user()->isAdmin)
+@if (Auth::user()->isAdmin())
 <div class="col-lg-10 col-lg-offset-1">
     <div class="page-header">
         <h2>Registered Shift Workers</h2>
@@ -25,7 +25,7 @@ Registered Users
     	/* filter all users for admins */
     	$admins = $users->filter(function($user)
     	{
-    		if ($user->isAdmin)
+    		if ($user->isAdmin())
     			return true;
     	});
     ?>
@@ -43,11 +43,11 @@ Registered Users
         @foreach ($users as $user)
         <tr>
           {{-- show an extra icon in front of every other admin --}}
-          <td>@if ($user->isAdmin) <span class="fa fa-user"></span> @endif {{ link_to("/users/{$user->username}", $user->first_name." ".$user->last_name) }}</td>
+          <td>@if ($user->isAdmin()) <span class="fa fa-user"></span> @endif {{ link_to("/users/{$user->username}", $user->first_name." ".$user->last_name) }}</td>
           <td>{{ $user->workgroup->name }}</td>
           <td>{{ $user->email }}</td>
           <td class="text-center">
-            @if ($user->isAdmin)
+            @if ($user->isAdmin())
             {{-- prevent the last remaining admin from removing his admin privileges --}}
             @if ($admins->count() > 1)
             <a href="/users/{{{$user->id}}}/admin" data-method="patch" class="btn btn-warning btn-xs"><span class="fa fa-times-circle"></span> Remove Admin</a>

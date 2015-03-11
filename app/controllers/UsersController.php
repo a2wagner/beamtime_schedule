@@ -119,8 +119,8 @@ class UsersController extends \BaseController {
 		// if this is the first user, we set him as an admin and enable him by default
 		if ($this->user->id == 1) {
 			// set the value manually because they're guarded, user->update(['isAdmin' => true]) won't work due to mass assignment protection (via array)
-			$this->user->isAdmin = true;
-			$this->user->enabled = true;
+			$this->user->toggleAdmin();
+			$this->user->enable();
 			$this->user->save();
 		}
 
@@ -158,7 +158,6 @@ class UsersController extends \BaseController {
 			return Redirect::guest('login');
 
 		$user = $this->user->whereUsername($id)->first();//User::find($id);
-
 		$workgroups = Workgroup::orderBy('name', 'asc')->lists('name', 'id');//Workgroup::lists('name', 'id');
 
 		return View::make('users.edit')->with('user', $user)->with('workgroups', $workgroups);
@@ -177,7 +176,7 @@ class UsersController extends \BaseController {
 			return Redirect::guest('login');
 
 		// allow only admin or the current user to edit the user information
-		if (Auth::user()->isAdmin || Auth::user()->id == $id) {
+		if (Auth::user()->isAdmin() || Auth::user()->id == $id) {
 			$user = $this->user->whereId($id)->first();
 			$data = array();
 			$validator = NULL;
@@ -243,8 +242,8 @@ class UsersController extends \BaseController {
 	 */
 	public function viewNew()
 	{
-		if (Auth::user()->isAdmin) {
-			$users = $this->user->where('enabled', '=', 0)->get();
+		if (Auth::user()->isAdmin()) {
+			$users = $this->user->where('role', '!&', User::ENABLED)->get();
 
 			return View::make('users.enable', ['users' => $users]);
 		} else
@@ -259,9 +258,9 @@ class UsersController extends \BaseController {
 	 */
 	public function viewAdmins()
 	{
-		if (Auth::user()->isAdmin) {
+		if (Auth::user()->isAdmin()) {
 			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
-			$users = $this->user->orderBy('isAdmin', 'desc')->orderBy('last_name', 'asc')->get();
+			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
 
 			return View::make('users.admins', ['users' => $users]);
 		} else
@@ -277,12 +276,12 @@ class UsersController extends \BaseController {
 	 */
 	public function enable($id)
 	{
-		if (Auth::user()->isAdmin) {
+		if (Auth::user()->isAdmin()) {
 				$user = $this->user->find($id);
-				$user->enabled = true;
+				$user->enable();
 				$user->save();
 
-				return Redirect::route('users.new', ['users' => $this->user->where('enabled', '=', 0)->get()])->with('success', 'User ' . $user->username . ' enabled successfully');
+				return Redirect::route('users.new', ['users' => $this->user->where('role', '!&', User::ENABLED)->get()])->with('success', 'User ' . $user->username . ' enabled successfully');
 		} else
 			return Redirect::to('/users');
 	}
@@ -296,13 +295,13 @@ class UsersController extends \BaseController {
 	 */
 	public function toggleAdmin($id)
 	{
-		if (Auth::user()->isAdmin) {
+		if (Auth::user()->isAdmin()) {
 				$user = $this->user->find($id);
-				$user->isAdmin = !$user->isAdmin;
+				$user->toggleAdmin();
 				$user->save();
 
 				$msg = 'User ' . $user->first_name . ' ' . $user->last_name;
-				if ($user->isAdmin)
+				if ($user->isAdmin())
 					$msg .= ' is now an admin';
 				else
 					$msg .= ' is no longer an admin';

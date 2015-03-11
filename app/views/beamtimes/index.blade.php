@@ -23,7 +23,7 @@ Beamtimes
           <th>Start</th>
           <th>#Shifts</th>
           <th>Status</th>
-          @if (Auth::user()->isAdmin)
+          @if (Auth::user()->isAdmin())
           <th class="text-center">Actions</th>
           @endif
         </tr>
@@ -33,7 +33,7 @@ Beamtimes
         <tr>
           {{-- Check if the beamtime contain shifts to avoid errors --}}
           @if (is_null($beamtime->shifts->first()))
-          @if (Auth::user()->isAdmin)
+          @if (Auth::user()->isAdmin())
           <td colspan="4"><h4 class="text-danger">Beamtime contains no shifts!</h4></td>
           <td class="text-center"><a href="/beamtimes/{{{$beamtime->id}}}" data-method="delete" data-confirm="Are you sure to delete this beamtime?" class="btn btn-danger btn-sm"><span class="fa fa-times"></span>Delete</a></td>
           @endif
@@ -74,7 +74,7 @@ Beamtimes
           		echo $diff->format('%i minutes.');
           ?></td>
           @endif
-          @if (Auth::user()->isAdmin)
+          @if (Auth::user()->isAdmin())
           <td class="text-center">
             <a class='btn btn-primary btn-xs' href="/beamtimes/{{{$beamtime->id}}}/edit"><span class="fa fa-pencil"></span> Edit</a> 
             <a href="/beamtimes/{{{$beamtime->id}}}" data-method="delete" data-confirm="Are you sure to delete this beamtime?" class="btn btn-danger btn-xs"><span class="fa fa-times"></span> Del</a>

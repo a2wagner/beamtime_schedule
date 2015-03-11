@@ -55,7 +55,7 @@ class BeamtimesController extends \BaseController {
 	public function store()
 	{
 		// only admins are allowed to create and remove beamtimes
-		if (!Auth::user()->isAdmin)
+		if (!Auth::user()->isAdmin())
 			return Redirect::to('beamtimes');
 
 		// check if entered data is correct
@@ -125,7 +125,7 @@ class BeamtimesController extends \BaseController {
 	public function edit($id)
 	{
 		// only admins and run coordinators are allowed to edit beamtimes
-		if (!Auth::user()->isAdmin)
+		if (!Auth::user()->isAdmin())
 			return Redirect::to('beamtimes/' . $id);
 
 		if ($beamtime = Beamtime::find($id))
@@ -146,7 +146,7 @@ class BeamtimesController extends \BaseController {
 	public function update($id)
 	{
 		// only admins are allowed to edit beamtimes
-		if (!Auth::user()->isAdmin)
+		if (!Auth::user()->isAdmin())
 			return Redirect::to('beamtimes/' . $id);
 
 		if ($beamtime = $this->beamtime->find($id))
@@ -222,7 +222,7 @@ class BeamtimesController extends \BaseController {
 	public function destroy($id)
 	{
 		// only admins are allowed to create and remove beamtimes
-		if (!Auth::user()->isAdmin)
+		if (!Auth::user()->isAdmin())
 			return Redirect::to('beamtimes');
 
 		$beamtime = Beamtime::find($id);

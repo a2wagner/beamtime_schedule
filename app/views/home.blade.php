@@ -49,7 +49,7 @@
         <tr>
           {{-- Check if the beamtime contain shifts to avoid errors --}}
           @if (is_null($beamtime->shifts->first()))
-          @if (Auth::user()->isAdmin)
+          @if (Auth::user()->isAdmin())
           <td colspan="3"><h4 class="text-danger">Beamtime contains no shifts!</h4></td>
           <td class="text-center"><a href="/beamtimes/{{{$beamtime->id}}}" data-method="delete" data-confirm="Are you sure to delete this beamtime?" class="btn btn-danger btn-sm"><span class="fa fa-times"></span>Delete</a></td>
           @endif

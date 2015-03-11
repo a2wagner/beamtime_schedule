@@ -70,7 +70,7 @@ class SessionsController extends \BaseController {
 				$user_LDAP = true;
 
 		// Check if the user got enabled after registration, redirect him to home with an error otherwise
-		if ($user_localDB && !User::whereUsername(Input::get('username'))->first()->enabled)
+		if ($user_localDB && !User::whereUsername(Input::get('username'))->first()->isEnabled())
 			return Redirect::to('')->with('error', 'You\'re not enabled yet. Please wait until your account gets activated.');
 
 		// At this point we have only valid usernames, either on the LDAP server or in the local database
@@ -97,7 +97,7 @@ class SessionsController extends \BaseController {
 					$user->workgroup_id = 1;
 					$user->rating = 1;
 					$user->ldap_id = $data['uidnumber'][0];
-					$user->enabled = true;
+					$user->enable();
 					$user->save();
 
 					Auth::login($user);  // authenticate user

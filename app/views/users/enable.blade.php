@@ -14,7 +14,7 @@ Enable Users
 @stop
 
 @section('content')
-@if (Auth::user()->isAdmin)
+@if (Auth::user()->isAdmin())
 <div class="col-lg-10 col-lg-offset-1">
     <div class="page-header">
         <h2>Newly Registered Shift Workers</h2>
