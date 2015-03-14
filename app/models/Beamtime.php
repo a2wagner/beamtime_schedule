@@ -58,41 +58,73 @@ class Beamtime extends \Eloquent {
 	* Create an array of days between a given start and end date
 	*
 	* @param DateTime $start, DateTime $end, int $duration
-	* @return array of days between start and end date
+	* @return two-dimensional array of array of shifts and array of run coordinator shifts between start and end date
 	*/
 	public function createShifts($_start, $end, $duration) 
 	{
-		$range = array();
+		// check if the start date is smaller than the end date, otherwise switch positions
+		if ($_start > $end)
+			return $this->createShifts($end, $start, $duration);
 
-#		if (is_string($start) === true)
-#			$start = strtotime($start);
-#		if (is_string($end) === true )
-#			$end = strtotime($end);
+		$shifts = array();
+		$rc_shifts = array();
 
-#		if ($start > $end)
-#			return createDateRangeArray($end, $start);
-
-#		do {
-#			$range[] = date/*_create*/('Y-m-d', $start);
-#			$start = strtotime("+ 8 hours", $start);
-#		} while($start < $end);
-
+		// normal shifts
 		$length = $duration;
 		$start = clone($_start);
+		// run coordinator shifts
+		$rc_default_length = RC_Shift::DURATION;
+		$rc_length = $rc_default_length;
+		$rc_start = new DateTime($start->format('Y-m-d ' . RC_Shift::START . ':00:00'));
+		$rc_diff_start = $start->diff($rc_start);
+		// check if the difference between the beamtime start and the start of the run coordinator shift pattern doesn't match
+		if ($rc_diff_start->h != 0) {
+			// length in hours the first shift has to have to match the start and duration pattern specified in RC_Shift
+			$rc_length_first = $rc_diff_start->h % $rc_length;
+			// if the difference is negative (beamtime start before $rc_start) --> subtract the calculated value stored in $rc_length_first from the specified RC length shift
+			if ($rc_diff_start->invert == 1)
+				$rc_length_first = $rc_length - $rc_length_first;
+		}
 
+		/* create the normal shifts */
 		while ($start < $end) {
 			$begin = clone($start);  // start gets modified with the add method, store it in another variable for later (database) usage
-			$dur = 'PT'.$length.'H';
+			$dur = 'PT' . $length . 'H';
 			$start->add(new DateInterval($dur));  // add the legnth of the shifts in hours to the start date
 			$interval = $begin->diff($end);
-			// when there are less hours than the dedfined shift length remaining, change the length of this last shift to the remaining time
+			// when there are less hours than the defined shift length remaining, change the length of this last shift to the remaining time
 			if ($interval->d == 0 && $interval->h < $duration)
 				$length = $interval->h;
 			//echo $start->format('Y-m-d H:i:s') . " - duration " . $length . " hours<br />\n";
-			$range[] = array('start' => $begin->format('Y-m-d H:i:s'), 'duration' => $length, 'n_crew' => '2');
+			$shifts[] = array('start' => $begin->format('Y-m-d H:i:s'), 'duration' => $length, 'n_crew' => '2');
 		}
 
-		return $range;
+		/* create the run coordinator shifts now */
+		// first set $start back to the initial beamtime start
+		$start = clone($_start);
+		// create shifts
+		while ($start < $end) {
+			$begin = clone($start);  // start gets modified with the add method, store it in another variable for later (database) usage
+			// in case the first run coordinator shift must have a different length to match the usual pattern, changed it
+			if ($rc_length_first != 0)
+				$rc_length = $rc_length_first;
+			$dur = 'PT' . $rc_length . 'H';
+			$start->add(new DateInterval($dur));  // add the legnth of the shifts in hours to the start date
+			$interval = $begin->diff($end);
+			// when there are less hours than the defined rc shift length remaining, change the length of this last shift to the remaining time
+			if ($interval->d == 0 && $interval->h < $rc_length)
+				$rc_length = $interval->h;
+
+			$rc_shifts[] = array('start' => $begin->format('Y-m-d H:i:s'), 'duration' => $rc_length);
+
+			// if this is the first loop run and the first shift length is different, change $rc_length so that the stored value in the array is correct
+			if ($rc_length_first != 0) {
+				$rc_length = $rc_default_length;  // set the length back to the usual duration of rc shifts
+				$rc_length_first = 0;
+			}
+		}
+
+		return array('normal' => $shifts, 'rc' => $rc_shifts);
 	}
 
 	/**
