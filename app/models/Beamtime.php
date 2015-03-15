@@ -22,9 +22,9 @@ class Beamtime extends \Eloquent {
 	*
 	* @return Array of User objects
 	*/
-	public function run_coordinators()
+	public function rcshifts()
 	{
-		return $this->hasMany('User', 'run_coordinators');
+		return $this->hasMany('RCShift');
 	}
 
 	/**
@@ -73,9 +73,9 @@ class Beamtime extends \Eloquent {
 		$length = $duration;
 		$start = clone($_start);
 		// run coordinator shifts
-		$rc_default_length = RC_Shift::DURATION;
+		$rc_default_length = RCShift::DURATION;
 		$rc_length = $rc_default_length;
-		$rc_start = new DateTime($start->format('Y-m-d ' . RC_Shift::START . ':00:00'));
+		$rc_start = new DateTime($start->format('Y-m-d ' . RCShift::START . ':00:00'));
 		$rc_diff_start = $start->diff($rc_start);
 		// check if the difference between the beamtime start and the start of the run coordinator shift pattern doesn't match
 		if ($rc_diff_start->h != 0) {

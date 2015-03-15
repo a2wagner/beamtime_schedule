@@ -86,10 +86,17 @@ class BeamtimesController extends \BaseController {
 		// store beamtime information
 		$this->beamtime->fill(Input::only('name', 'description'));
 		$this->beamtime->save();
-		// create the shifts
+		/* create the shifts */
 		$shifts = $this->beamtime->createShifts($start, $end, $duration);
-		foreach ($shifts as $shift) {
+		// create and save all normal shifts
+		foreach ($shifts['normal'] as $shift) {
 			$s = new Shift;
+			$s->fill(array_add($shift, 'beamtime_id', $this->beamtime->id));
+			$s->save();
+		}
+		// create and save the run coordinator shifts
+		foreach ($shifts['rc'] as $shift) {
+			$s = new RCShift;
 			$s->fill(array_add($shift, 'beamtime_id', $this->beamtime->id));
 			$s->save();
 		}
@@ -107,12 +114,13 @@ class BeamtimesController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		if ($beamtime = Beamtime::find($id))
+		if ($beamtime = Beamtime::find($id)) {
 			$shifts = $beamtime->shifts;
-		else
+			$rc_shifts = $beamtime->rcshifts;
+		} else
 			return 'Beamtime not found!';
 
-		return View::make('beamtimes.show')->with('beamtime', $beamtime)->with('shifts', $shifts);
+		return View::make('beamtimes.show')->with('beamtime', $beamtime)->with('shifts', $shifts)->with('rc_shifts', $rc_shifts);
 	}
 
 

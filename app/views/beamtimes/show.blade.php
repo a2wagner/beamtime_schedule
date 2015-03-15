@@ -108,10 +108,29 @@ $(document).ready(function() {
         <?php $i = 0; $day = ""; ?>
         @foreach ($shifts as $shift)
         @if ($day !== date("l, d.m.Y", strtotime($shift->start)))
-        <?php $day = date("l, d.m.Y", strtotime($shift->start)); ?>
+        <?php
+        	$day = date("l, d.m.Y", strtotime($shift->start));
+        	$date = new DateTime($shift->start);
+        	$rc_day = $rc_shifts->filter(function($rc_shift) use($date)
+        	{
+        		$day = new DateTime($rc_shift->start);
+        		return $day->format('Y-m-d') === $date->format('Y-m-d');
+        	});
+        	$rc_info = array();
+        	$rc_day->each(function($rc_shift) use(&$rc_info)
+        	{
+        		if ($rc_shift->user->count())
+        			$rc_info[] = $rc_shift->type . ': ' . $rc_shift->user->first()->get_full_name();
+        	});
+        	$rc = '';
+        	if (!empty($rc_info))
+        		$rc = 'Run Coordinators: ' . implode(', ', $rc_info);
+        	elseif ($rc_day->count())
+        		$rc = "Run Coordinators: TBA";
+        ?>
         <thead>
           <tr class="active" style="padding-left:20px;">
-            <th colspan=7>{{ $day }}</th>
+            <th colspan=7>{{ $day }} &emsp;&emsp;&emsp; {{{ $rc }}}</th>
           </tr>
         </thead>
         @endif

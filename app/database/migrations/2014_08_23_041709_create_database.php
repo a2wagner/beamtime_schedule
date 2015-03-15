@@ -77,9 +77,9 @@ class CreateDatabase extends Migration {
 		{
 			$table->increments('id');
 			$table->integer('beamtime_id')->unsigned()->index();
-			$table->integer('user_id')->unsigned()->index();
+			$table->dateTime('start');
+			$table->tinyInteger('duration')->unsigned();
 			$table->foreign('beamtime_id')->references('id')->on('beamtimes')->onDelete('cascade')->onUpdate('cascade');
-			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 		});
 
 		Schema::create('shift_user', function(Blueprint $table)
@@ -87,8 +87,6 @@ class CreateDatabase extends Migration {
 			$table->increments('id');
 			$table->integer('shift_id')->unsigned()->index();
 			$table->integer('user_id')->unsigned()->index();
-			$table->dateTime('start');
-			$table->tinyInteger('duration')->unsigned();
 			$table->foreign('shift_id')->references('id')->on('shifts')->onDelete('cascade')->onUpdate('cascade');
 			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 		});
@@ -99,6 +97,15 @@ class CreateDatabase extends Migration {
 			$table->integer('swap_id')->unsigned()->index();
 			$table->integer('user_id')->unsigned()->index();
 			$table->foreign('swap_id')->references('id')->on('swaps')->onDelete('cascade')->onUpdate('cascade');
+			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+		});
+
+		Schema::create('rc_shift_user', function(Blueprint $table)
+		{
+			$table->increments('id');
+			$table->integer('rc_shift_id')->unsigned()->index();
+			$table->integer('user_id')->unsigned()->index();
+			$table->foreign('rc_shift_id')->references('id')->on('rc_shifts')->onDelete('cascade')->onUpdate('cascade');
 			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 		});
 	}
