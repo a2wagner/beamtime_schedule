@@ -1,0 +1,160 @@
+@extends('layouts.default')
+
+@section('title')
+Run Coordinators :: {{ $beamtime->name }}
+@stop
+
+@section('scripts')
+<script type="text/javascript">
+$(document).ready(function() {
+    //$("[rel='tooltip']").tooltip();
+    $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+});
+
+$("[type='checkbox']").on("click", function() {
+  var buttons = $("[type='btn-xs']");
+  var checks = $("[type='checkbox']");
+
+  var idx = checks.index($(this));  // index of the clicked checkbox element
+
+  // toggle status button if maintenance is checked or not
+  if (checks[idx].checked)
+    $(".disabled:eq("+idx+")").hide();
+  else
+    $(".disabled:eq("+idx+")").show();
+
+  if (radios[2*idx].disabled && !(radios[2*idx].checked || radios[2*idx+1].checked))
+    radios[2*idx+1].checked = true;
+
+  radios[2*idx].disabled = !radios[2*idx].disabled;
+  radios[2*idx+1].disabled = !radios[2*idx+1].disabled;
+/*  if (this.checked) {
+    radios[2*idx].disabled = true;
+    radios[2*idx+1].disabled = true;
+  } else {
+    radios[2*idx].disabled = false;
+    radios[2*idx+1].disabled = false;
+  }*/
+});
+
+$(document).ready(function() {
+  var buttons = $("[type='btn-xs']");
+  var checks = $("[type='checkbox']");
+
+/*  checks.each(function() {
+    if (this.checked) {
+      radios[2*this.index()].disabled = true;
+      radios[2*this.index()+1].disabled = true;
+    }
+  }*/
+  for (var i = 0; i < checks.length; ++i) {
+    if (checks[i].checked) {
+      radios[2*i].disabled = true;
+      radios[2*i+1].disabled = true;
+      // hide status buttons if maintenance is checked
+      $(".disabled:eq("+i+")").hide();
+    }
+  }
+});
+</script>
+@stop
+
+@section('content')
+{{ Form::open(['route' => array('beamtimes.rc_update', $beamtime->id), 'method' => 'PATCH']) }}
+<div class="col-lg-10 col-lg-offset-1">
+    <div class="page-header">
+      <table width="100%">
+        <tr>
+          <td>
+            <h2>Beamtime: {{{ $beamtime->name }}}</h2>
+          </td>
+          <td align="right">
+            {{ Form::submit('Apply Changes', array('class' => 'btn btn-primary')) }}
+            {{ link_to(URL::previous(), 'Cancel', ['class' => 'btn btn-default']) }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    @if (!empty($beamtime->description))
+    <h4>Short beamtime description:</h4>
+    <p style="white-space: pre-wrap;">{{ $beamtime->description }}</p>
+    @endif
+
+    {{-- Check if the beamtime contain shifts to avoid errors --}}
+    @if (is_null($beamtime->shifts->first()))
+    <h3 class="text-danger">Beamtime contains no shifts!</h3>
+    @else
+    @if (isset($beamtime))
+    <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>#Shift</th>
+          <th>Start</th>
+          <th>Duration</th>
+          <th>Type</th>
+          <th>Run Coordinator</th>
+          <th>Subscribed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php $i = 0; $day = ""; ?>
+        @foreach ($rc_shifts as $shift)
+        @if ($day != date("l, d.m.Y", strtotime($shift->start)))
+        <?php $day = date("l, d.m.Y", strtotime($shift->start)); ?>
+        <tr class="active" style="padding-left: 20px;">
+          <th colspan=8>{{ $day }}</th>
+        </tr>
+        @endif
+        <tr>
+          <td>{{ ++$i }}</td>
+          <td>{{ $shift->start }}</td>
+          <?php  // calculate actual duration depending on local timezone
+          	$start = new DateTime($shift->start);
+          	$end = clone($start);
+          	$dur = 'PT' . $shift->duration . 'H';
+          	$end->add(new DateInterval($dur));
+          ?>
+          <td>{{ $start->diff($end)->h }} hours</td>
+          <td>{{ $shift->type() }}</td>
+          {{-- check if a user subscribed to this shift --}}
+          @if (!$shift->user->count())
+          {{-- if not, then display this --}}
+          <td>open</td>
+          @else
+          {{-- otherwise show the subscribed user --}}
+          <td>{{ $shift->user->first()->get_full_name() }}</td>
+          @endif
+          <td>
+            <div class="checkbox">
+              <label>
+                {{ Form::checkbox('subscription[]', $shift->id, $shift->user->count() ? $shift->user->first()->id == Auth::id() : false) }}
+                {{-- don't use disable in the class attribute, otherwise the tooltip function won't work --}}
+                <a rel="tooltip" data-toggle="tooltip" data-placement="top" data-original-title="Take shift?" class="btn btn-default btn-xs"><span class="fa fa-check"></span></a>
+              </label>
+            </div>
+          </td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
+    </div>
+    <div>
+      <table border=0 width=95%>
+        <tr>
+          <td>Total {{ $rc_shifts->count() }} run coordinator shifts</td>
+          <td align="right">
+            {{ Form::submit('Apply Changes', array('class' => 'btn btn-primary')) }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    @else
+    <h3 class="text-danger">Beamtime not found!</h3>
+    @endif
+    @endif  {{-- end of check if beamtime contains shifts --}}
+</div>
+{{ Form::close() }}
+@stop
+

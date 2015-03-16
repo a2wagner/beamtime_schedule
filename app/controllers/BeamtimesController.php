@@ -251,4 +251,70 @@ class BeamtimesController extends \BaseController {
 		return View::make('beamtimes.statistics');
 	}
 
+
+	/**
+	 * Display the run coordinator shifts for the specified beamtime.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function rc_show($id)
+	{
+		// restrict this view to run coordinators
+		if (!Auth::user()->isRunCoordinator())
+			return Redirect::to('beamtimes/' . $id);
+
+		if ($beamtime = Beamtime::find($id))
+			$rc_shifts = $beamtime->rcshifts;
+		else
+			return 'Beamtime not found!';
+
+		return View::make('beamtimes.rc')->with('beamtime', $beamtime)->with('rc_shifts', $rc_shifts);
+	}
+
+
+	/**
+	 * Update the run coordinator shifts
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function rc_update($id)
+	{
+		// restrict this view to run coordinators
+		if (!Auth::user()->isRunCoordinator())
+			return Redirect::to('beamtimes/' . $id);
+
+		if ($beamtime = Beamtime::find($id))
+			$rc_shifts = $beamtime->rcshifts;
+		else
+			return 'Beamtime not found!';
+
+		// loop over all run coordinator shifts in this beamtime
+		foreach ($rc_shifts as $shift) {
+			$id = $shift->id;
+
+			/* check for subscription status */
+			if (Input::get('subscription')) {  // prevents an error if the user subscribed to no shifts
+				if (is_int(array_search($id, Input::get('subscription')))) {  // array_search() returns the index of the value if it was found, so check if the returned value is an int which is true in case the user subscribed to this shift
+					// if other users are subscribed to this shift, return an error
+					if (!$shift->user->isEmpty() && $shift->user->first()->id != Auth::id())
+						return Redirect::back()->withInput()->with('error', 'You chose a shift were a user is already subscribed to');
+					// if the shift is empty, subscribe the user to this shift
+					$shift->user()->attach(Auth::id());
+				} else {
+					// else the user might have unsibscribed, so check if there is a subscription from this user and remove the user if this is the case
+					$shift->user()->detach(Auth::id());
+				}
+			} else  // If there are no subscriptions to shifts, then it could be the case that the user unsubscribed from all. So check if there are still subscriptions for this user and remove them
+				if (!$shift->user->isEmpty() && $shift->user->first()->id == Auth::id()) {
+					$shift->user()->detach(Auth::id());
+				}
+
+			$shift->save();
+		}
+
+		return Redirect::back()->with('beamtime', $beamtime)->with('rc_shifts', $rc_shifts)->with('success', 'Run coordinator shifts taken successfully');
+	}
+
 }
