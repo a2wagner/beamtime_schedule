@@ -120,10 +120,12 @@ $(document).ready(function() {
         	$rc_day->each(function($rc_shift) use(&$rc_info)
         	{
         		if ($rc_shift->user->count())
-        			$rc_info[] = $rc_shift->type . ': ' . $rc_shift->user->first()->get_full_name();
+        			$rc_info[] = $rc_shift->type() . ': ' . $rc_shift->user->first()->get_full_name();
+        		else
+        			$rc_info[] = $rc_shift->type() . ': open';
         	});
         	$rc = '';
-        	if (!empty($rc_info))
+        	if (!$rc_day->user->isEmpty())
         		$rc = 'Run Coordinators: ' . implode(', ', $rc_info);
         	elseif ($rc_day->count())
         		$rc = "Run Coordinators: TBA";
