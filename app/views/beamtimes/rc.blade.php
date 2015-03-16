@@ -99,7 +99,7 @@ $(document).ready(function() {
         </tr>
       </thead>
       <tbody>
-        <?php $i = 0; $day = ""; ?>
+        <?php $i = 0; $day = ""; $now = new DateTime(); ?>
         @foreach ($rc_shifts as $shift)
         @if ($day != date("l, d.m.Y", strtotime($shift->start)))
         <?php $day = date("l, d.m.Y", strtotime($shift->start)); ?>
@@ -129,9 +129,12 @@ $(document).ready(function() {
           <td>
             <div class="checkbox">
               <label>
-                {{ Form::checkbox('subscription[]', $shift->id, $shift->user->count() ? $shift->user->first()->id == Auth::id() : false) }}
-                {{-- don't use disable in the class attribute, otherwise the tooltip function won't work --}}
-                <a rel="tooltip" data-toggle="tooltip" data-placement="top" data-original-title="Take shift?" class="btn btn-default btn-xs"><span class="fa fa-check"></span></a>
+                {{ Form::checkbox('subscription[]', $shift->id, $shift->user->count() ? $shift->user->first()->id == Auth::id() : false, $now > new DateTime($shift->start) ? array('disabled') : '') }}
+                {{-- if a shift start is in the past and the current user is subscribed to it, add a hidden input field to prevent the user from getting unsubscribed due to the disabled checkbox --}}
+                @if ($now > new DateTime($shift->start) && $shift->user->count() && $shift->user->first()->id == Auth::id())
+                {{ Form::hidden('subscription[]', $shift->id) }}
+                @endif
+                <a rel="tooltip" data-toggle="tooltip" data-placement="top" data-original-title="Take shift?" class="btn btn-default btn-xs {{{ $now > new DateTime($shift->start) ? 'disabled' : '' }}}"><span class="fa fa-check"></span></a>
               </label>
             </div>
           </td>
