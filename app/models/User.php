@@ -184,6 +184,16 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
+	 * Set the current user as a run coordinator
+	 *
+	 * @return void
+	 */
+	public function setRunCoordinator()
+	{
+		$this->role |= self::RUN_COORDINATOR;
+	}
+
+	/**
 	 * Check if the current user is an admin
 	 *
 	 * @return boolean
