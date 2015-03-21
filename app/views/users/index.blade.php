@@ -18,7 +18,7 @@ Registered Users
     <div class="page-header">
         <h2>Registered Shift Workers</h2>
     </div>
-    
+
     @if ($users->count())
     <div class="table-responsive">
     <table class="table table-striped table-hover">

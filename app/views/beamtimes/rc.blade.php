@@ -7,7 +7,6 @@ Run Coordinators :: {{ $beamtime->name }}
 @section('scripts')
 <script type="text/javascript">
 $(document).ready(function() {
-    //$("[rel='tooltip']").tooltip();
     $("body").tooltip({ selector: '[data-toggle=tooltip]' });
 
 });
@@ -15,7 +14,6 @@ $(document).ready(function() {
 $("[type='checkbox']").on("click", function() {
   var buttons = $("[rel='tooltip']");
   var checks = $("[type='checkbox']");
-
   var idx = checks.index($(this));  // index of the clicked checkbox element
 
   toggleButton(buttons.eq(idx));

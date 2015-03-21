@@ -208,15 +208,6 @@ class BeamtimesController extends \BaseController {
 			$shift->save();
 		}
 
-#		foreach (Input::get('maintenance') as $maintenance) {
-#			$shift = $shifts->find($maintenance);
-#			$shift->n_crew = 0;
-#			$shift->maintenance = true;
-#			$shift->save();
-#		}
-
-		//dd(Input::all());
-
 		return Redirect::back()->with('beamtime', $beamtime)->with('shifts', $shifts)->with('success', 'Beamtime edited successfully');
 	}
 

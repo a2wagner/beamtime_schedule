@@ -48,25 +48,12 @@ $("[type='checkbox']").on("click", function() {
 
   radios[2*idx].disabled = !radios[2*idx].disabled;
   radios[2*idx+1].disabled = !radios[2*idx+1].disabled;
-/*  if (this.checked) {
-    radios[2*idx].disabled = true;
-    radios[2*idx+1].disabled = true;
-  } else {
-    radios[2*idx].disabled = false;
-    radios[2*idx+1].disabled = false;
-  }*/
 });
 
 $(document).ready(function() {
   var radios = $("[type='radio']");
   var checks = $("[type='checkbox']");
 
-/*  checks.each(function() {
-    if (this.checked) {
-      radios[2*this.index()].disabled = true;
-      radios[2*this.index()+1].disabled = true;
-    }
-  }*/
   for (var i = 0; i < checks.length; ++i) {
     if (checks[i].checked) {
       radios[2*i].disabled = true;
@@ -175,7 +162,6 @@ function toggleRadio(id)
             </div>
           </td>
           {{ $td }}{{ Form::text('remarks[' . $shift->id . ']', $shift->remark, array('class' => 'form-control input-sm')) }}</td>
-          {{-- //TODO: {{ Form::checkbox('maintenance[]', $shift->id, true) }} --}}
           {{ $td }}
             <div class="checkbox">
               <label>
