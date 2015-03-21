@@ -13,50 +13,36 @@ $(document).ready(function() {
 });
 
 $("[type='checkbox']").on("click", function() {
-  var buttons = $("[type='btn-xs']");
+  var buttons = $("[rel='tooltip']");
   var checks = $("[type='checkbox']");
 
   var idx = checks.index($(this));  // index of the clicked checkbox element
 
-  // toggle status button if maintenance is checked or not
-  if (checks[idx].checked)
-    $(".disabled:eq("+idx+")").hide();
-  else
-    $(".disabled:eq("+idx+")").show();
-
-  if (radios[2*idx].disabled && !(radios[2*idx].checked || radios[2*idx+1].checked))
-    radios[2*idx+1].checked = true;
-
-  radios[2*idx].disabled = !radios[2*idx].disabled;
-  radios[2*idx+1].disabled = !radios[2*idx+1].disabled;
-/*  if (this.checked) {
-    radios[2*idx].disabled = true;
-    radios[2*idx+1].disabled = true;
-  } else {
-    radios[2*idx].disabled = false;
-    radios[2*idx+1].disabled = false;
-  }*/
+  toggleButton(buttons.eq(idx));
 });
 
 $(document).ready(function() {
-  var buttons = $("[type='btn-xs']");
+  var buttons = $("[rel='tooltip']");
   var checks = $("[type='checkbox']");
 
-/*  checks.each(function() {
-    if (this.checked) {
-      radios[2*this.index()].disabled = true;
-      radios[2*this.index()+1].disabled = true;
-    }
-  }*/
-  for (var i = 0; i < checks.length; ++i) {
-    if (checks[i].checked) {
-      radios[2*i].disabled = true;
-      radios[2*i+1].disabled = true;
-      // hide status buttons if maintenance is checked
-      $(".disabled:eq("+i+")").hide();
-    }
-  }
+  checks.each(function(i, val) {
+    if (val.checked)
+      toggleButton(buttons.eq(i));
+  });
 });
+
+function toggleButton(btn)
+{
+  if (btn.children("span").first().hasClass("fa-check")) {
+    btn.children("span").first().removeClass("fa-check");
+    btn.children("span").first().addClass("fa-times");
+    btn.attr("data-original-title", "Unsubscribe");
+  } else {
+    btn.children("span").first().removeClass("fa-times");
+    btn.children("span").first().addClass("fa-check");
+    btn.attr("data-original-title", "Subscribe");
+  }
+}
 </script>
 @stop
 
@@ -134,7 +120,7 @@ $(document).ready(function() {
                 @if ($now > new DateTime($shift->start) && $shift->user->count() && $shift->user->first()->id == Auth::id())
                 {{ Form::hidden('subscription[]', $shift->id) }}
                 @endif
-                <a rel="tooltip" data-toggle="tooltip" data-placement="top" data-original-title="Take shift?" class="btn btn-default btn-xs {{{ $now > new DateTime($shift->start) ? 'disabled' : '' }}}"><span class="fa fa-check"></span></a>
+                <a rel="tooltip" data-toggle="tooltip" data-placement="top" data-original-title="Subscribe" class="btn btn-default btn-xs {{{ $now > new DateTime($shift->start) ? 'disabled' : '' }}}"><span class="fa fa-check"></span></a>
               </label>
             </div>
           </td>
