@@ -28,6 +28,16 @@ class Beamtime extends \Eloquent {
 	}
 
 	/**
+	* Return a collection of run coordinators for the current beamtime
+	*
+	* @return Array of unique User objects
+	*/
+	public function run_coordinators()
+	{
+		return $this->rcshifts->user->unique();
+	}
+
+	/**
 	* Validation of the filled attributes concerning the defined rules and messages for the check
 	*
 	* @return bool of validation check
