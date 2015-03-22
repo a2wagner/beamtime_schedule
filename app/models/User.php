@@ -41,9 +41,11 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	// different roles a user can have, stored in an unsigned 8bit integer (max value 255_10 = 11111111_2)
 	const ENABLED = 1;
-	const RUN_COORDINATOR = 2;
-	const AUTHOR = 4;
-	//const SOMETING_ELSE = 8;
+	//const SOMETHING = 2 || 4;
+	const RUN_COORDINATOR = 8;
+	const AUTHOR = 16;
+	//const SOMETING_ELSE = 32;
+	const PI = 64;
 	const ADMIN = 128;  // use the highest bit for admins
 
 	use UserTrait, RemindableTrait;
@@ -191,6 +193,16 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public function setRunCoordinator()
 	{
 		$this->role |= self::RUN_COORDINATOR;
+	}
+
+	/**
+	 * Check if the current user is an admin
+	 *
+	 * @return boolean
+	 */
+	public function isPI()
+	{
+		return $this->isFlagSet(self::PI);
 	}
 
 	/**
