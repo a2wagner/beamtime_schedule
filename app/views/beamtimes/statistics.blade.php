@@ -40,13 +40,39 @@ $shifts = $beamtimes->shifts->reject(function($shift)
  // --> $results = $articles->groupBy('category');
 
 $info = array();
+// initialise array with every contributing workgroup and the total shift amount
 $beamtimes->shifts->users->workgroup
 	->groupBy('name', 'country')
 	->orderBy('country')
 	->orderBy('name')
 	->each(function($item) use(&$info)
 	{
-		$info[] = array('id' => $item[0]->id, 'sum' => count($item));
+		$info[$item[0]->id] = array(
+			'id' => $item[0]->id,
+			'sum' => count($item),
+			'day' => 0,
+			'late' => 0,
+			'night' => 0
+		);
+	});
+// add the specific shift type information to the array
+$beamtimes->shifts->each(function($shift) use(&$info)
+	{
+		if ($shift->is_day())
+			$shift->users->workgroup->each(function($workgroup) use(&$info)
+			{
+				$info[$workgroup->id]['day']++;
+			});
+		elseif ($shift->is_late())
+			$shift->users->workgroup->each(function($workgroup) use(&$info)
+			{
+				$info[$workgroup->id]['late']++;
+			});
+		else
+			$shift->users->workgroup->each(function($workgroup) use(&$info)
+			{
+				$info[$workgroup->id]['night']++;
+			});
 	});
 //dd($info);
 
@@ -73,7 +99,9 @@ Total beamtime: {{{ $hours }}} hours ({{{ round($hours/24, 1) }}} days)
 <?php
 foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
-	echo $workgroup->name . ' (' . $workgroup->country . ') has taken a total of ' . $group['sum'] . ' shifts (shifts/head ratio is ' . $group['sum']/$workgroup->members->count() . ")<br />\n";
+	echo '<p>' . $workgroup->name . ' (' . $workgroup->country . ') has taken a total of ' . $group['sum'] . " shifts<br />\n";
+	echo '&emsp;&emsp;shifts/head ratio is ' . $group['sum']/$workgroup->members->count() . "<br />\n";
+	echo '&emsp;&emsp;taken shift types: day: ' . round($group['day']/$group['sum']*100, 2) . '%, late: ' . round($group['late']/$group['sum']*100, 2) . '%, night: ' . round($group['night']/$group['sum']*100, 2) . "%<p>\n";
 }
 
 }
