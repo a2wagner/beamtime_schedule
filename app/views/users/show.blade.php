@@ -40,16 +40,19 @@ Profile of {{ $user->username }}
             <td>{{ implode(', ', array_map(function ($v, $k) { return $k . ': ' . $v; }, $phone, array_keys($phone))) }}</td>
           </tr>
           @endif
-          @if (Auth::user()->isAdmin())
-          @endif
+          {{-- only show the following information to the belonging user or to the same workgrop PI's as well as admins --}}
+          @if (Auth::id() == $user->id || Auth::user()->isAdmin() || (Auth::user()->isPI() && Auth::user()->workgroup_id == $user->workgroup_id))
           <tr>
             <td>Rating</td>
             <td>{{ $user->rating }}</td>
           </tr>
           <tr>
             <td>Total shifts</td>
-            <td>{{ $user->shifts->count() }}</td>
+            <td>
+              {{ $user->shifts->count() }}&emsp;@if ($user->shifts->count()) (day: {{ $user->shifts->sum(function($shift) { return $shift->is_day(); }) }}, late: {{ $user->shifts->sum(function($shift) { return $shift->is_late(); }) }}, night: {{ $user->shifts->sum(function($shift) { return $shift->is_night(); }) }}) @endif
+            </td>
           </tr>
+          @endif
         </tbody>
       </table>
     </div>
