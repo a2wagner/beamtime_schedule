@@ -111,6 +111,8 @@ function toggleButton(btn)
           <td>{{ $shift->user->first()->get_full_name() }}</td>
           @endif
           <td>
+            {{-- only show (un-)subscription box if the run coordinator shift is empty or the current user is assigned to it --}}
+            @if (!$shift->user->count() || $shift->user->first()->id == Auth::id())
             <div class="checkbox">
               <label>
                 {{ Form::checkbox('subscription[]', $shift->id, $shift->user->count() ? $shift->user->first()->id == Auth::id() : false, $now > new DateTime($shift->start) ? array('disabled') : '') }}
@@ -121,6 +123,7 @@ function toggleButton(btn)
                 <a rel="tooltip" data-toggle="tooltip" data-placement="top" data-original-title="Subscribe" class="btn btn-default btn-xs {{{ $now > new DateTime($shift->start) ? 'disabled' : '' }}}"><span class="fa fa-check"></span></a>
               </label>
             </div>
+            @endif
           </td>
         </tr>
         @endforeach
