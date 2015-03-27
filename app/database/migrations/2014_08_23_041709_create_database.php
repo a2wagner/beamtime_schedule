@@ -67,7 +67,6 @@ class CreateDatabase extends Migration {
 			$table->integer('user_id')->unsigned()->index();
 			$table->integer('original_shift_id')->unsigned()->index();
 			$table->integer('request_shift_id')->unsigned()->index();
-			$table->integer('request_user_id')->unsigned()->index()->nullable;
 			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
 			$table->foreign('original_shift_id')->references('id')->on('shifts')->onDelete('cascade')->onUpdate('cascade');
 			$table->foreign('request_shift_id')->references('id')->on('shifts')->onDelete('cascade')->onUpdate('cascade');

@@ -12,14 +12,13 @@ class Swap extends \Eloquent
 	// Do not use timestamps for this model
 	public $timestamps = false;
 
-	protected $fillable = ['hash', 'user_id', 'original_shift_id', 'request_shift_id', 'request_user_id'];
+	protected $fillable = ['hash', 'user_id', 'original_shift_id', 'request_shift_id'];
 
 	public static $rules = [
 		'hash' => 'required|unique:swaps',
 		'user_id' => 'required|integer',
 		'original_shift_id' => 'required|integer',
 		'request_shift_id' => 'required|integer',
-		'request_user_id' => 'integer',
 	];
 
 	/**
@@ -53,13 +52,13 @@ class Swap extends \Eloquent
 	}
 
 	/**
-	* Optional: The swap request belongs to a specific user on the requested shift
+	* The swap request belongs to a one or more users on the requested shift
 	*
 	* @return User
 	*/
-	public function request_user()
+	public function request_users()
 	{
-		return $this->belongsTo('User', 'request_user_id');
+		return $this->belongsToMany('User');
 	}
 
 	/**
