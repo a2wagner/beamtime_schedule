@@ -39,16 +39,21 @@ $(document).ready(function() {
     @if (isset($beamtime))
     {{-- show a button to accept the swap request here if it is currently shown --}}
     @if (!empty($org) && !empty($req))
-    <table>
+    <table width="100%">
       <tr>
         <td>
           <h3 class="text-warning"><b>Swap Request</b></h3>
           <p>Do you accept this swap request from {{{ User::find(Swap::whereHash($swap)->first()->user_id)->get_full_name() }}}?</p>
         </td>
         <td style="padding-left:20px; padding-top:15px;">
-          {{ Form::open(['route' => array('swaps.update', $swap), 'class' => 'hidden-print', 'role' => 'form']) }}
+          {{ Form::open(['route' => array('swaps.update', $swap), 'class' => 'hidden-print', 'style' => 'float: left; margin-right: 5px;', 'role' => 'form']) }}
             {{ Form::hidden('_method', 'PUT') }}
             {{ Form::submit('Accept', array('class' => 'btn btn-primary')) }}
+          {{ Form::close() }}
+          {{ Form::open(['route' => array('swaps.update', $swap), 'class' => 'hidden-print', 'role' => 'form']) }}
+            {{ Form::hidden('_method', 'PUT') }}
+            {{ Form::hidden('action', 'decline') }}
+            {{ Form::submit('Decline', array('class' => 'btn btn-danger')) }}
           {{ Form::close() }}
         </td>
       </tr>
