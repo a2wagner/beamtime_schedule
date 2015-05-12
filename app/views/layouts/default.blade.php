@@ -54,7 +54,7 @@
                         @if (Auth::guest())
                         <li>{{ HTML::link('login', ' Login', ['class' => 'fa fa-sign-in']) }}</li>
                         @else
-                        @if (Auth::user()->isAdmin())
+                        @if (Auth::user()->isAdmin() || Auth::user()->isPI())
                         <li class="dropdown">
                           <a href="#" class="dropdown-toggle fa fa-calendar" data-toggle="dropdown"> Beamtimes <span class="fa fa-caret-down"></span></a>
                           <ul class="dropdown-menu">
@@ -70,7 +70,7 @@
                           <ul class="dropdown-menu">
                             <li><a href="/users"><i class="fa fa-bars fa-fw"></i> All Users</a></li>
                             <li><a href="/users/enable"><i class="fa fa-check-square-o fa-fw"></i> Enable Users</a></li>
-                            <li><a href="/users/admins"><i class="fa fa-wrench fa-fw"></i> Manage Admins</a></li>
+                            <li><a href="/users/manage"><i class="fa fa-wrench fa-fw"></i> Manage Users</a></li>
                           </ul>
                         </li>
                         @else

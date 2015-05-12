@@ -252,7 +252,21 @@ class UsersController extends \BaseController {
 
 
 	/**
-	 * Show a page of all users where the isAdmin flag can be toggled if logged-in user has admin privileges
+	 * Show an overview page of all user-related actions the logged-in user can do if he has admin or PI privileges
+	 *
+	 * @return Response
+	 */
+	public function manageUsers()
+	{
+		if (Auth::user()->isAdmin() || Auth::user()->isPI()) {
+			return View::make('users.manage');
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Show a page of all users where the admin flag can be toggled if logged-in user has admin privileges
 	 *
 	 * @return Response
 	 */
@@ -263,6 +277,23 @@ class UsersController extends \BaseController {
 			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
 
 			return View::make('users.admins', ['users' => $users]);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Show a page of all users where the run coordinator flag can be toggled if logged-in user has admin or PI privileges
+	 *
+	 * @return Response
+	 */
+	public function viewRunCoordinators()
+	{
+		if (Auth::user()->isAdmin() || Auth::user()->isPI()) {
+			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
+			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
+
+			return View::make('users.run_coordinators', ['users' => $users]);
 		} else
 			return Redirect::to('/users');
 	}
@@ -288,7 +319,7 @@ class UsersController extends \BaseController {
 
 
 	/**
-	 * Toggle isAdmin flag for user with the id $id
+	 * Toggle amin flag for user with the id $id
 	 *
 	 * @param  int  $id
 	 * @return Response
@@ -307,6 +338,31 @@ class UsersController extends \BaseController {
 					$msg .= ' is no longer an admin';
 
 				return Redirect::route('users.admins', ['users' => $this->user->all()])->with('success', $msg);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Toggle admin flag for user with the id $id
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function toggleRunCoordinator($id)
+	{
+		if (Auth::user()->isAdmin() || Auth::user()->isPI()) {
+				$user = $this->user->find($id);
+				$user->toggleRunCoordinator();
+				$user->save();
+
+				$msg = 'User ' . $user->first_name . ' ' . $user->last_name;
+				if ($user->isRunCoordinator())
+					$msg .= ' is now a run coordinator';
+				else
+					$msg .= ' is no longer a run coordinator';
+
+				return Redirect::route('users.run_coordinators', ['users' => $this->user->all()])->with('success', $msg);
 		} else
 			return Redirect::to('/users');
 	}

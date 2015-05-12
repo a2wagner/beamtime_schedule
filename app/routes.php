@@ -25,8 +25,11 @@ Route::get('users/{username}/delete', 'UsersController@destroy');*/
 // place this users/enable route before the other users routes because otherwise the route users/{user} is defined before and hence a user enable is searched who doesn't exist and cause an error
 Route::get('users/enable', array('as' => 'users.new', 'uses' => 'UsersController@viewNew'))->before('auth');
 Route::patch('users/{users}/enable', array('as' => 'users.enable', 'uses' => 'UsersController@enable'))->before('auth');
+Route::get('users/manage', array('as' => 'users.manage', 'uses' => 'UsersController@manageUsers'))->before('auth');
 Route::get('users/admins', array('as' => 'users.admins', 'uses' => 'UsersController@viewAdmins'))->before('auth');
+Route::get('users/run_coordinators', array('as' => 'users.run_coordinators', 'uses' => 'UsersController@viewRunCoordinators'))->before('auth');
 Route::patch('users/{users}/admin', array('as' => 'users.toggleAdmin', 'uses' => 'UsersController@toggleAdmin'))->before('auth');
+Route::patch('users/{users}/rc', array('as' => 'users.toggleRunCoordinator', 'uses' => 'UsersController@toggleRunCoordinator'))->before('auth');
 Route::resource('users', 'UsersController');
 
 // aliases for session handling

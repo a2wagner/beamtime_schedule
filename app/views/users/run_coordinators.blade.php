@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('title')
-Manage Admins
+Manage Run Coordinators
 @stop
 
 @section('styles')
@@ -14,22 +14,14 @@ Manage Admins
 @stop
 
 @section('content')
-@if (Auth::user()->isAdmin())
+@if (Auth::user()->isAdmin() || Auth::user()->isPI())
 <div class="col-lg-10 col-lg-offset-1">
     <div class="page-header">
-        <h2>Manage Admins</h2>
+        <h2>Manage Run Coordinators</h2>
     </div>
 
     @if ($users->count())
     <h3>Registered Shift Workers</h3>
-    <?php
-    	/* filter all users for admins */
-    	$admins = $users->filter(function($user)
-    	{
-    		if ($user->isAdmin())
-    			return true;
-    	});
-    ?>
     <div class="table-responsive">
     <table class="table table-striped table-hover">
       <thead>
@@ -48,13 +40,10 @@ Manage Admins
           <td>{{ $user->workgroup->name }}</td>
           <td>{{ $user->email }}</td>
           <td class="text-center">
-            @if ($user->isAdmin())
-            {{-- prevent the last remaining admin from removing his admin privileges --}}
-            @if ($admins->count() > 1)
-            <a href="/users/{{{$user->id}}}/admin" data-method="patch" class="btn btn-warning btn-xs"><span class="fa fa-times-circle"></span> Remove Admin</a>
-            @endif
+            @if ($user->isRunCoordinator())
+            <a href="/users/{{{$user->id}}}/rc" data-method="patch" class="btn btn-warning btn-xs"><span class="fa fa-times-circle"></span> Remove RC</a>
             @else
-            <a href="/users/{{{$user->id}}}/admin" data-method="patch" class="btn btn-success btn-xs"><span class="fa fa-check-circle"></span> Add Admin</a>
+            <a href="/users/{{{$user->id}}}/rc" data-method="patch" class="btn btn-success btn-xs"><span class="fa fa-check-circle"></span> Add RC</a>
             @endif
           </td>
         </tr>

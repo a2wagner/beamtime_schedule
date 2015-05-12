@@ -196,6 +196,16 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
+	 * Toggle the run coordinator flag of a user role
+	 *
+	 * @return void
+	 */
+	public function toggleRunCoordinator()
+	{
+		$this->role ^= self::RUN_COORDINATOR;
+	}
+
+	/**
 	 * Check if the current user is an admin
 	 *
 	 * @return boolean
