@@ -239,6 +239,10 @@ class BeamtimesController extends \BaseController {
 	 */
 	public function statistics()
 	{
+		// only admins and PIs can see statistics
+		if (!Auth::user()->isAdmin() && !Auth::user()->isPI())
+			return Redirect::to('beamtimes');
+
 		return View::make('beamtimes.statistics');
 	}
 
