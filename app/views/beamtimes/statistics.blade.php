@@ -6,8 +6,8 @@
 @stop
 
 @section('scripts')
-<script src="http://localhost:8000/js/jquery.flot.min.js"></script>
-<script src="http://localhost:8000/js/jquery.flot.pie.min.js"></script>
+{{ HTML::script('js/jquery.flot.min.js') }}
+{{ HTML::script('js/jquery.flot.pie.min.js') }}
 <script type='text/javascript'>
 $(document).ready(function(){
     $('#select-year').on('change', function(e){
@@ -129,7 +129,7 @@ Total beamtime: {{{ $hours }}} hours ({{{ round($hours/24, 1) }}} days)
 
 <h3>Contributing Workgroups:</h3>
 {{-- jQuery needs to be loaded before the other Javascript parts need it --}}
-<script src="http://localhost:8000/js/jquery-2.1.1.min.js"></script>
+{{ HTML::script('js/jquery-2.1.1.min.js') }}
 <?php
 foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
