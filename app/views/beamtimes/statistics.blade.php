@@ -5,14 +5,51 @@
 :: Statistics
 @stop
 
+@section('scripts')
+<script type='text/javascript'>
+$(document).ready(function(){
+    $('#select-year').on('change', function(e){
+        console.log('onchange select year detected');
+        var select = $(this), form = select.closest('form');
+        form.attr('action', '/statistics/' + select.val());
+        //form.attr('method', 'get');
+        form.submit();
+    });
+    // hide submit button
+    //$(this).find('input[type=submit]').hide();
+});
+</script>
+@stop
+
 @section('content')
-<div class="col-lg-10 col-lg-offset-1">
-Total beamtimes: {{{ Beamtime::all()->count() }}} <br />
+<?php
+if (!$year)
+	$year = date('Y');
+$current_year = date('Y');
+?>
+<div class="row">
+  <div class="col-lg-4 col-lg-offset-1">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        Total beamtimes: {{{ Beamtime::all()->count() }}} <br />
+      </div>
+    </div>
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h4 class="panel-title">Please select a year</h3>
+      </div>
+      <div class="panel-body">
+{{ Form::open(['route' => 'statistics', 'method' => 'get', 'class' => 'form-horizontal', 'role' => 'form']) }}
+{{ Form::selectYear('year', 2013, $current_year, $year, array('id' => 'select-year')) }}
+{{ Form::close() }}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-10 col-lg-offset-1">
 
 <?php
-$year = date('Y');
-//$year = array(2014, 2015, 2016);
-
 $beamtimes = Beamtime::all()
 	->filter(function($beamtime) use($year)
 	{
@@ -22,7 +59,7 @@ $beamtimes = Beamtime::all()
 	});
 
 if (!$beamtimes->count())
-	echo 'No beamtimes found for ' . $year . "!\n";
+	echo '<h3 class="text-info">No beamtimes found for ' . $year . "!</h3>\n";
 else {
 
 
@@ -78,8 +115,6 @@ $beamtimes->shifts->each(function($shift) use(&$info)
 
 ?>
 
-{{ Form::selectYear('year', 2013, $year, $year, []) }}
-
 <div class="page-header">
     <h2>Statistics for {{{ $year }}}</h2>
 </div>
@@ -107,5 +142,6 @@ foreach ($info as $group) {
 }
 ?>
 
+  </div>
 </div>
 @stop

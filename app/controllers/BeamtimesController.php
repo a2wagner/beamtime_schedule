@@ -237,13 +237,15 @@ class BeamtimesController extends \BaseController {
 	 *
 	 * @return Respone
 	 */
-	public function statistics()
+	public function statistics($year = NULL)
 	{
 		// only admins and PIs can see statistics
 		if (!Auth::user()->isAdmin() && !Auth::user()->isPI())
 			return Redirect::to('beamtimes');
 
-		return View::make('beamtimes.statistics');
+		if (!$year)
+			$year = Input::get('year', NULL);
+		return View::make('beamtimes.statistics')->with('year', $year);
 	}
 
 
