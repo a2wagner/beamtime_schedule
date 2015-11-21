@@ -6,17 +6,15 @@
 @stop
 
 @section('scripts')
+<script src="http://localhost:8000/js/jquery.flot.min.js"></script>
+<script src="http://localhost:8000/js/jquery.flot.pie.min.js"></script>
 <script type='text/javascript'>
 $(document).ready(function(){
     $('#select-year').on('change', function(e){
-        console.log('onchange select year detected');
         var select = $(this), form = select.closest('form');
         form.attr('action', '/statistics/' + select.val());
-        //form.attr('method', 'get');
         form.submit();
     });
-    // hide submit button
-    //$(this).find('input[type=submit]').hide();
 });
 </script>
 @stop
@@ -130,13 +128,56 @@ $beamtimes->shifts->each(function($shift) use(&$info)
 Total beamtime: {{{ $hours }}} hours ({{{ round($hours/24, 1) }}} days)
 
 <h3>Contributing Workgroups:</h3>
-
+{{-- jQuery needs to be loaded before the other Javascript parts need it --}}
+<script src="http://localhost:8000/js/jquery-2.1.1.min.js"></script>
 <?php
 foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
-	echo '<p>' . $workgroup->name . ' (' . $workgroup->country . ') has taken a total of ' . $group['sum'] . " shifts<br />\n";
+	echo '<p><h4>' . $workgroup->name . ' (' . $workgroup->country . ")</h4>\n";
+	echo '&emsp;&emsp;has taken a total of ' . $group['sum'] . " shifts<br />\n";
 	echo '&emsp;&emsp;shifts/head ratio is ' . $group['sum']/$workgroup->members->count() . "<br />\n";
-	echo '&emsp;&emsp;taken shift types: day: ' . round($group['day']/$group['sum']*100, 2) . '%, late: ' . round($group['late']/$group['sum']*100, 2) . '%, night: ' . round($group['night']/$group['sum']*100, 2) . "%<p>\n";
+	//echo '&emsp;&emsp;taken shift types: day: ' . round($group['day']/$group['sum']*100, 2) . '%, late: ' . round($group['late']/$group['sum']*100, 2) . '%, night: ' . round($group['night']/$group['sum']*100, 2) . "%<p>\n";
+	echo "&emsp;&emsp;taken shift types:\n";
+	echo '<script type="text/javascript">
+$(document).ready(function(){
+    var data = [
+        {label: "day", data: ' . round($group['day']/$group['sum']*100, 2) . ', color: "#8BC34A"},
+        {label: "late", data: ' . round($group['late']/$group['sum']*100, 2) . ', color: "#FFA000"},
+        {label: "night", data: ' . round($group['night']/$group['sum']*100, 2) . ', color: "#455A64"}
+    ];
+
+    var options = {
+        series: {
+            pie: {
+                show: true,
+                radius: 1,
+                label: {
+                    show: true,
+                    radius: 2/3,
+                    // Added custom formatter here...
+                    //formatter: function(label, point){
+                    //    return(point.percent.toFixed(2) + \'%\');
+                    //},
+                    formatter: function(label, series) {
+                        return \'<div style="font-size: 14px; font-weight: bold; text-align: center; padding: 2px; color: white;">\'+label+\'<br/>\'+Math.round(series.percent)+\'%</div>\';
+                    },
+                    threshold: 0.1
+                }
+		    }
+		},
+        legend: {
+            show: false
+        },
+        grid: {
+            hoverable: true,
+            clickable: true
+        }
+    };
+
+    $.plot($("#flotcontainer'.$group['id'].'"), data, options);
+});
+</script>';
+	echo '<div id="flotcontainer'.$group['id'].'" style="width: 400px; height: 250px; margin-bottom: 2em;"></div></p>';
 }
 
 }
