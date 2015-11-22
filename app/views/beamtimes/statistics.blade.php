@@ -21,9 +21,9 @@ $(document).ready(function(){
 
 @section('content')
 <?php
-if (!$year)
-	$year = date('Y');
 $current_year = date('Y');
+if (!$year)
+	$year = $current_year;
 ?>
 <div class="row">
   <div class="col-lg-4 col-lg-offset-1">
@@ -37,7 +37,7 @@ $current_year = date('Y');
         <h4 class="panel-title">Please select a year</h3>
       </div>
       <div class="panel-body">
-{{ Form::open(['route' => 'statistics', 'method' => 'get', 'class' => 'form-horizontal', 'role' => 'form']) }}
+{{ Form::open(['route' => 'statistics', 'class' => 'form-horizontal', 'role' => 'form']) }}
 {{ Form::selectYear('year', 2013, $current_year, $year, array('id' => 'select-year')) }}
 {{ Form::close() }}
       </div>

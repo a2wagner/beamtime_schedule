@@ -62,6 +62,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::resource('beamtimes', 'BeamtimesController');
 	Route::get('statistics', array('as' => 'statistics', 'uses' => 'BeamtimesController@statistics'));
 	Route::get('statistics/{year}', array('as' => 'statistics', 'uses' => 'BeamtimesController@statistics'));
+	Route::post('statistics/{year}', array('as' => 'statistics', 'uses' => 'BeamtimesController@statistics'));
 	Route::get('beamtimes/{id}/rc', array('as' => 'beamtimes.rc_show', 'uses' => 'BeamtimesController@rc_show'));
 	Route::patch('beamtimes/{id}/rc', array('as' => 'beamtimes.rc_update', 'uses' => 'BeamtimesController@rc_update'));
 	Route::patch('shifts/{shifts}', array('as' => 'shifts.update', 'uses' => 'ShiftsController@update'));
