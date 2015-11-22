@@ -4,6 +4,11 @@
 Profile of {{ $user->username }}
 @stop
 
+@section('scripts')
+{{ HTML::script('js/jquery.flot.min.js') }}
+{{ HTML::script('js/jquery.flot.pie.min.js') }}
+@stop
+
 @section('content')
 <div class="col-lg-6 col-lg-offset-2">
     @if ($user->count())
@@ -49,7 +54,47 @@ Profile of {{ $user->username }}
           <tr>
             <td>Total shifts</td>
             <td>
-              {{ $user->shifts->count() }}&emsp;@if ($user->shifts->count()) (day: {{ $user->shifts->sum(function($shift) { return $shift->is_day(); }) }}, late: {{ $user->shifts->sum(function($shift) { return $shift->is_late(); }) }}, night: {{ $user->shifts->sum(function($shift) { return $shift->is_night(); }) }}) @endif
+              {{ $user->shifts->count() }}&emsp;@if ($user->shifts->count()) (day: {{ $day = $user->shifts->sum(function($shift) { return $shift->is_day(); }) }}, late: {{ $late = $user->shifts->sum(function($shift) { return $shift->is_late(); }) }}, night: {{ $night = $user->shifts->sum(function($shift) { return $shift->is_night(); }) }})
+              {{-- jQuery needs to be loaded before the other Javascript parts need it --}}
+              {{ HTML::script('js/jquery-2.1.1.min.js') }}
+              <script type="text/javascript">
+              $(document).ready(function(){
+                var data = [
+                  {label: "day", data: {{{ $day }}}, color: "#8BC34A"},
+                  {label: "late", data: {{{ $late }}}, color: "#FFA000"},
+                  {label: "night", data: {{{ $night }}}, color: "#455A64"}
+                ];
+
+                var options = {
+                  series: {
+                    pie: {
+                      show: true,
+                      radius: 1,
+                      label: {
+                        show: true,
+                        radius: 2/3,
+                        // Add custom formatter
+                        formatter: function(label, data) {
+                          return '<div style="font-size: 14px; font-weight: bold; text-align: center; padding: 2px; color: white;">' + label + '<br/>' + Math.round(data.percent) + '%</div>';
+                        },
+                        threshold: 0.1
+                      }
+                    }
+                  },
+                  legend: {
+                    show: false
+                  },
+                  grid: {
+                    hoverable: true,
+                    clickable: true
+                  }
+                };
+
+                $.plot($("#flotcontainer"), data, options);
+              });
+              </script>
+              <div id="flotcontainer" style="width: 300px; height: 250px; margin-top: 10px"></div>
+              @endif
             </td>
           </tr>
           @endif
