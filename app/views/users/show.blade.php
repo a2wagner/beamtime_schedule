@@ -54,7 +54,13 @@ Profile of {{ $user->username }}
           <tr>
             <td>Total shifts</td>
             <td>
-              {{ $user->shifts->count() }}&emsp;@if ($user->shifts->count()) (day: {{ $day = $user->shifts->sum(function($shift) { return $shift->is_day(); }) }}, late: {{ $late = $user->shifts->sum(function($shift) { return $shift->is_late(); }) }}, night: {{ $night = $user->shifts->sum(function($shift) { return $shift->is_night(); }) }})
+              {{ $user->shifts->count() }}&emsp;@if ($user->shifts->count())(day: {{ $day = $user->shifts->sum(function($shift) {
+              		return $shift->is_day();
+              	}) }}, late: {{ $late = $user->shifts->sum(function($shift) {
+              		return $shift->is_late();
+              	}) }}, night: {{ $night = $user->shifts->sum(function($shift) {
+              		return $shift->is_night();
+              	}) }})&emsp;{{ round($user->shifts->count()/$user->shifts->groupBy('beamtime_id')->count(), 2) }} shifts/beamtime
               {{-- jQuery needs to be loaded before the other Javascript parts need it --}}
               {{ HTML::script('js/jquery-2.1.1.min.js') }}
               <script type="text/javascript">
