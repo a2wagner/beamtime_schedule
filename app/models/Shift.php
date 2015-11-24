@@ -2,25 +2,46 @@
 
 class Shift extends \Eloquent {
 	/**
-	 * General time (hour of day) to check if a given shift is a day shift
+	 * General time (hour of day) for the start of a day shift
 	 *
 	 * @var int
 	 */
-	const DAY = 12;
+	const DAY_START = 8;
 
 	/**
-	 * General time (hour of day) to check if a given shift is a day shift
+	 * General time (hour of day) for the end of a day shift
 	 *
 	 * @var int
 	 */
-	const LATE = 20;
+	const DAY_END = 16;
 
 	/**
-	 * General time (hour of day) to check if a given shift is a night shift
+	 * General time (hour of day) for the start of a late shift
 	 *
 	 * @var int
 	 */
-	const NIGHT = 4;
+	const LATE_START = 16;
+
+	/**
+	 * General time (hour of day) for the end of a late shift
+	 *
+	 * @var int
+	 */
+	const LATE_END = 0;
+
+	/**
+	 * General time (hour of day) for the start of a night shift
+	 *
+	 * @var int
+	 */
+	const NIGHT_START = 0;
+
+	/**
+	 * General time (hour of day) for the end of a night shift
+	 *
+	 * @var int
+	 */
+	const NIGHT_END = 8;
 
 	protected $fillable = ['beamtime_id', 'start', 'duration', 'n_crew', 'maintenance', 'remark'];
 
@@ -110,19 +131,31 @@ class Shift extends \Eloquent {
 	* @param $start, $end, $date
 	* @return boolean
 	*/
-	public static function date_in_range($start, $end, $date = 'now')
+	public static function date_overlap($start, $end, $ref_start, $ref_end)
 	{
 		// convert non-timestamps to timestamps
-		$start = is_int($start) || $start instanceof DateTime ? $start : strtotime($start);
-		$end = is_int($end) || $start instanceof DateTime ? $end : strtotime($end);
-		$date = is_int($date) || $start instanceof DateTime ? $date : strtotime($date);
+		$start = is_int($start) || $start instanceof DateTime ? $start->getTimeStamp() : strtotime($start);
+		$end = is_int($end) || $end instanceof DateTime ? $end->getTimeStamp() : strtotime($end);
+		$ref_start = is_int($ref_start) || $ref_start instanceof DateTime ? $ref_start->getTimeStamp() : strtotime($ref_start);
+		$ref_end = is_int($ref_end) || $ref_end instanceof DateTime ? $ref_end->getTimeStamp() : strtotime($ref_end);
 
 		// check if start and end order is correct
 		if ($start > $end)
-			return $this->date_in_range($end, $start, $date);
+			return $this->date_in_range($end, $start, $ref_start, $ref_end);
 
-		// check if the date is between start and end date
-		return $date > $start && $date < $end;
+		// figure out which is the later start time
+		$lastStart = $start >= $ref_start ? $start : $ref_start;
+
+		// figure out which is the earlier end time
+		$firstEnd = $end <= $ref_end ? $end : $ref_end;
+
+		// get the difference in minutes between those two
+		$overlap = floor(($firstEnd - $lastStart)/60);
+		//dd($overlap);
+
+		// ff the answer is greater than 0 use it.
+		// If not, there is no overlap.
+		return $overlap > 0 ? $overlap : 0;
 	}
 
 	/**
@@ -141,26 +174,30 @@ class Shift extends \Eloquent {
 	}
 
 	/**
-	* Check if the shift is during a specific time ($hour)
+	* Check if the overlap between two time ranges is greater than or equal to 50%
 	*
-	* @param int $hour
+	* @param int $hour_start
+	* @param int $hour_end
+	* @param int $add_day (optional)
 	* @return boolean
 	*/
-	public function check_time($hour)
+	public function check_time($hour_start, $hour_end, $add_day = 0)
 	{
-		if (!is_int($hour))
+		if (!is_int($hour_start) || !is_int($hour_end))
 			return false;
 
 		$start = new DateTime($this->start);
 		$end = clone($start);
 		$dur = 'PT' . $this->duration . 'H';
 		$end->add(new DateInterval($dur));
-		$date = clone($start);
-		$date->setTime($hour, 00);
-		if ($date < $start)
-			$date->modify('+1 day');
+		$ref_start = clone($start);
+		$ref_end = clone($start);
+		$ref_start->setTime($hour_start, 00);
+		$ref_end->setTime($hour_end, 00);
+		$ref_end->modify('+'.$add_day.' day');
 
-		return $this->date_in_range($start, $end, $date);
+		// calculate the percental overlap
+		return $this->date_overlap($start, $end, $ref_start, $ref_end)/($this->duration*60) >= 0.5;
 	}
 
 	/**
@@ -170,7 +207,7 @@ class Shift extends \Eloquent {
 	*/
 	public function is_day()
 	{
-		return $this->check_time(self::DAY);
+		return $this->check_time(self::DAY_START, self::DAY_END);
 	}
 
 	/**
@@ -180,7 +217,8 @@ class Shift extends \Eloquent {
 	*/
 	public function is_late()
 	{
-		return $this->check_time(self::LATE);
+		// add 1 day on end date because it is 0 o'clock which is the next day
+		return $this->check_time(self::LATE_START, self::LATE_END, 1);
 	}
 
 	/**
@@ -190,6 +228,6 @@ class Shift extends \Eloquent {
 	*/
 	public function is_night()
 	{
-		return $this->check_time(self::NIGHT);
+		return $this->check_time(self::NIGHT_START, self::NIGHT_END);
 	}
 }
