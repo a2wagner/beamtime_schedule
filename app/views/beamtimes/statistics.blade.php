@@ -135,7 +135,7 @@ foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
 	echo '<p><h4>' . $workgroup->name . ' (' . $workgroup->country . ")</h4>\n";
 	echo '&emsp;&emsp;has taken a total of ' . $group['sum'] . " shifts<br />\n";
-	echo '&emsp;&emsp;shifts/head ratio is ' . $group['sum']/$workgroup->members->count() . "<br />\n";
+	echo '&emsp;&emsp;shifts/head ratio is ' . round($group['sum']/$workgroup->members->count(), 2) . "<br />\n";
 	//echo '&emsp;&emsp;taken shift types: day: ' . round($group['day']/$group['sum']*100, 2) . '%, late: ' . round($group['late']/$group['sum']*100, 2) . '%, night: ' . round($group['night']/$group['sum']*100, 2) . "%<p>\n";
 	echo "&emsp;&emsp;taken shift types:\n";
 	echo '<script type="text/javascript">
