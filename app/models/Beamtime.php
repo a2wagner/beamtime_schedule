@@ -87,6 +87,7 @@ class Beamtime extends \Eloquent {
 		$rc_length = $rc_default_length;
 		$rc_start = new DateTime($start->format('Y-m-d ' . RCShift::START . ':00:00'));
 		$rc_diff_start = $start->diff($rc_start);
+		$rc_length_first = 0;
 		// check if the difference between the beamtime start and the start of the run coordinator shift pattern doesn't match
 		if ($rc_diff_start->h != 0) {
 			// length in hours the first shift has to have to match the start and duration pattern specified in RC_Shift
