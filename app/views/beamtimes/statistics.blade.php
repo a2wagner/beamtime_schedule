@@ -38,7 +38,7 @@ if (!$year)
       </div>
       <div class="panel-body">
 {{ Form::open(['route' => 'statistics', 'class' => 'form-horizontal', 'role' => 'form']) }}
-{{ Form::selectYear('year', 2013, $current_year, $year, array('id' => 'select-year')) }}
+{{ Form::selectYear('year', 2015, $current_year, $year, array('id' => 'select-year')) }}
 {{ Form::close() }}
       </div>
     </div>
@@ -163,8 +163,8 @@ $(document).ready(function(){
                     },
                     threshold: 0.1
                 }
-		    }
-		},
+            }
+        },
         legend: {
             show: false
         },
