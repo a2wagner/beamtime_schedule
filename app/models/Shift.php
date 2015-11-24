@@ -128,7 +128,7 @@ class Shift extends \Eloquent {
 	/**
 	* Check if a given date is between to other dates
 	*
-	* @param $start, $end, $date
+	* @param $start, $end, $ref_start, $ref_end
 	* @return boolean
 	*/
 	public static function date_overlap($start, $end, $ref_start, $ref_end)
@@ -153,7 +153,7 @@ class Shift extends \Eloquent {
 		$overlap = floor(($firstEnd - $lastStart)/60);
 		//dd($overlap);
 
-		// ff the answer is greater than 0 use it.
+		// If the answer is greater than 0 use it.
 		// If not, there is no overlap.
 		return $overlap > 0 ? $overlap : 0;
 	}
