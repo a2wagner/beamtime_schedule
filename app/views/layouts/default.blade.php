@@ -84,6 +84,7 @@
                           <ul class="dropdown-menu">
                             <li><a href="/users/{{ Auth::user()->username }}"><i class="fa fa-eye fa-fw"></i> View</a></li>
                             <li><a href="/users/{{ Auth::user()->username }}/edit"><i class="fa fa-edit fa-fw"></i> Edit</a></li>
+                            <li><a href="/users/{{ Auth::user()->username }}/shifts"><i class="fa fa-list-alt fa-fw"></i> Shifts</a></li>
                           </ul>
                         </li>
                     </ul>

@@ -236,6 +236,26 @@ class UsersController extends \BaseController {
 
 
 	/**
+	 * Show an overview of all shifts a user has taken.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function shifts($id)
+	{
+		if (Auth::guest())
+			return Redirect::guest('login');
+		else if (Auth::user()->username !== $id) {
+			$user = $this->user->whereUsername($id)->first();
+			return View::make('users.show', ['user' => $user]);
+		}
+
+		$user = Auth::user();
+		return View::make('users.shifts')->with('user', $user)->with('shifts', $user->shifts);
+	}
+
+
+	/**
 	 * Show a page of new registered users to enable them if logged-in user has admin privileges
 	 *
 	 * @return Response

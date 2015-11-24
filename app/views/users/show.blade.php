@@ -52,7 +52,7 @@ Profile of {{ $user->username }}
             <td>{{ $user->rating }}</td>
           </tr>
           <tr>
-            <td>Total shifts</td>
+            <td>{{ link_to("/users/$user->username/shifts", "Total shifts", ['style' => 'color: inherit; text-decoration: none;']) }}</td>
             <td>
               {{ $user->shifts->count() }}&emsp;@if ($user->shifts->count())(day: {{ $day = $user->shifts->sum(function($shift) {
               		return $shift->is_day();
