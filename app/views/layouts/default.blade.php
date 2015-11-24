@@ -52,11 +52,11 @@
                 <div class="collapse navbar-collapse navbar-responsive-collapse">
                     <ul class="nav navbar-nav">
                         @if (Auth::guest())
-                        <li>{{ HTML::link('login', ' Login', ['class' => 'fa fa-sign-in']) }}</li>
+                        <li><a href="/login"><i class="fa fa-sign-in fa-fw"></i> Login</a></li>
                         @else
                         @if (Auth::user()->isAdmin() || Auth::user()->isPI())
                         <li class="dropdown">
-                          <a href="#" class="dropdown-toggle fa fa-calendar" data-toggle="dropdown"> Beamtimes <span class="fa fa-caret-down"></span></a>
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-calendar fa-fw"></i> Beamtimes <span class="fa fa-caret-down"></span></a>
                           <ul class="dropdown-menu">
                             <li><a href="/beamtimes"><i class="fa fa-bars fa-fw"></i> Overview</a></li>
                             <li><a href="/beamtimes/create"><i class="fa fa-plus fa-fw"></i> Create</a></li>
@@ -66,7 +66,7 @@
                           </ul>
                         </li>
                         <li class="dropdown">
-                          <a href="#" class="dropdown-toggle fa fa-users" data-toggle="dropdown"> Users <span class="fa fa-caret-down"></span></a>
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-users fa-fw"></i> Users <span class="fa fa-caret-down"></span></a>
                           <ul class="dropdown-menu">
                             <li><a href="/users"><i class="fa fa-bars fa-fw"></i> All Users</a></li>
                             <li><a href="/users/enable"><i class="fa fa-check-square-o fa-fw"></i> Enable Users</a></li>
@@ -75,11 +75,17 @@
                         </li>
                         @else
                         <li>
-                          <a class="fa fa-calendar" href="/beamtimes"> Beamtimes</a>
+                          <a href="/beamtimes"><i class="fa fa-calendar fa-fw"></i> Beamtimes</a>
                         </li>
-                        <li>{{ HTML::link('users', ' All Users', ['class' => 'fa fa-users']) }}</li>
+                        <li><a href="/users"><i class="fa fa-users fa-fw"></i> All Users</a></li>
                         @endif
-                        <li>{{ HTML::link('users/'.Auth::user()->username.'/edit', ' Edit Profile', ['class' => 'fa fa-edit']) }}</li>
+                        <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> Profile <span class="fa fa-caret-down"></span></a>
+                          <ul class="dropdown-menu">
+                            <li><a href="/users/{{ Auth::user()->username }}"><i class="fa fa-eye fa-fw"></i> View</a></li>
+                            <li><a href="/users/{{ Auth::user()->username }}/edit"><i class="fa fa-edit fa-fw"></i> Edit</a></li>
+                          </ul>
+                        </li>
                     </ul>
                     {{ Form::open(['route' => 'users.index', 'method' => 'get', 'class' => 'navbar-form navbar-left']) }}
                       <div class="form-group input-group">
@@ -90,7 +96,7 @@
                       </div>
                     {{ Form::close() }}
                     <ul class="nav navbar-nav navbar-right">
-                        <li>{{ HTML::link('logout', ' Logout', ['class' => 'fa fa-sign-out']) }}</li>
+                        <li><a href="/logout"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
                         @endif
                     </ul>
                 </div>
