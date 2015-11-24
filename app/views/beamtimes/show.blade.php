@@ -138,8 +138,8 @@ $(document).ready(function() {
         @endif
         <tr>
           <?php $td = ""; if ($n = $shift->users->count() > 0) $td = '<td rowspan="' . $n . '">'; else $td = '<td>'; ?>
-          {{ $td }}{{ ++$i }}</td>
-          {{ $td }}{{ $shift->start }}</td>
+          {{ $td }}<span{{ $shift->users->count() < $shift->n_crew ? ' class="text-danger"' : ''}}>{{ ++$i }}&emsp;({{{ $shift->type() }}})</span></td>
+          {{ $td }}<span{{ $shift->users->count() < $shift->n_crew ? ' class="text-danger"' : ''}}>{{ $shift->start }}</span></td>
           <?php  // calculate actual duration depending on local timezone
           	$start = new DateTime($shift->start);
           	$end = clone($start);
