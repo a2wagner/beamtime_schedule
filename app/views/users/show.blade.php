@@ -14,11 +14,11 @@ Profile of {{ $user->username }}
     @if ($user->count())
     <?php
     	$phone = array();
-    	if ($user->phone_institute !== '' && !is_null($user->phone_institute))
+    	if (!empty($user->phone_institute))
     		$phone = array_add($phone, 'Institute', $user->phone_institute);
-    	if ($user->phone_mobile !== '' && !is_null($user->phone_mobile))
+    	if (!empty($user->phone_mobile))
     		$phone = array_add($phone, 'Mobile', $user->phone_mobile);
-    	if ($user->phone_private !== '' && !is_null($user->phone_private))
+    	if (!empty($user->phone_private))
     		$phone = array_add($phone, 'Private', $user->phone_private);
     ?>
     <div class="page-header">
