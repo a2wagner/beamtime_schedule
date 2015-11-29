@@ -26,6 +26,7 @@ User Management
       <li>{{ link_to("/users/admins", "Manage admins") }}</li>
       @endif
       <li>{{ link_to("/users/run_coordinators", "Manage run coordinators") }}</li>
+      <li>{{ link_to("/users/principle_investigators", "Manage principle investigators") }}</li>
       <li>{{ link_to("/users/enable", "Enable new users") }}</li>
       <li>{{ link_to("/users", "Go to users overview") }}</li>
     </ul>

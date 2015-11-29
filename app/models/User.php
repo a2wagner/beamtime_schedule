@@ -206,13 +206,33 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
-	 * Check if the current user is an admin
+	 * Check if the current user is a principle investigator
 	 *
 	 * @return boolean
 	 */
 	public function isPI()
 	{
 		return $this->isFlagSet(self::PI);
+	}
+
+	/**
+	 * Set the current user as a principle investigator
+	 *
+	 * @return void
+	 */
+	public function setPI()
+	{
+		$this->role |= self::PI;
+	}
+
+	/**
+	 * Toggle the principle investigator flag of a user role
+	 *
+	 * @return void
+	 */
+	public function togglePI()
+	{
+		$this->role ^= self::PI;
 	}
 
 	/**

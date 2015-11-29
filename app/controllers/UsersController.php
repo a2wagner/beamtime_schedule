@@ -320,6 +320,23 @@ class UsersController extends \BaseController {
 
 
 	/**
+	 * Show a page of all users where the principle investigator flag can be toggled if logged-in user has admin or PI privileges
+	 *
+	 * @return Response
+	 */
+	public function viewPrincipleInvestigators()
+	{
+		if (Auth::user()->isAdmin() || Auth::user()->isPI()) {
+			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
+			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
+
+			return View::make('users.principle_investigators', ['users' => $users]);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
 	 * Enable the user with specific id $id
 	 *
 	 * @param  int  $id
@@ -364,7 +381,7 @@ class UsersController extends \BaseController {
 
 
 	/**
-	 * Toggle admin flag for user with the id $id
+	 * Toggle run coordinator flag for user with the id $id
 	 *
 	 * @param  int  $id
 	 * @return Response
@@ -383,6 +400,31 @@ class UsersController extends \BaseController {
 					$msg .= ' is no longer a run coordinator';
 
 				return Redirect::route('users.run_coordinators', ['users' => $this->user->all()])->with('success', $msg);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Toggle principle investigator flag for user with the id $id
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function togglePrincipleInvestigator($id)
+	{
+		if (Auth::user()->isAdmin() || Auth::user()->isPI()) {
+				$user = $this->user->find($id);
+				$user->togglePI();
+				$user->save();
+
+				$msg = 'User ' . $user->first_name . ' ' . $user->last_name;
+				if ($user->isPI())
+					$msg .= ' is now a principle investigator';
+				else
+					$msg .= ' is no longer a principle investigator';
+
+				return Redirect::route('users.principle_investigators', ['users' => $this->user->all()])->with('success', $msg);
 		} else
 			return Redirect::to('/users');
 	}
