@@ -87,6 +87,16 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
+	* Many to many relation, a user has multiple radiation instructions
+	*
+	* @return Array of RadiationInstruction objects
+	*/
+	public function radiation_instructions()
+	{
+		return $this->hasMany('RadiationInstruction');
+	}
+
+	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
@@ -153,6 +163,28 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		$mail = new Sendmail();
 
 		return $mail->send_single($this->email, $subject, $msg, $cc);
+	}
+
+	/**
+	 * Check if a user has a valid radiation protection instruction for a given date
+	 *
+	 * @param string $date
+	 * @return boolean
+	 */
+	public function hasRadiationInstruction($date = 'now')
+	{
+		$hasInstruction = false;
+		$date = new DateTime($date);
+		$instructions = $this->radiation_instructions();
+		$this->radiation_instructions()->get()->each(function($instruction) use($date, &$hasInstruction)
+		{
+			$start = new DateTime($instruction->begin);
+			if (!$start->diff($date)->format("%y")) {
+				$hasInstruction = true;
+				return;
+			}
+		});
+		return $hasInstruction;
 	}
 
 	/**
