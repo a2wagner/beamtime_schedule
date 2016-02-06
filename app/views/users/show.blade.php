@@ -51,6 +51,25 @@ Profile of {{ $user->username }}
             <td>Rating</td>
             <td>{{ $user->rating }}</td>
           </tr>
+          <?php
+          	$radiation_string = 'missing';
+          	$instruction = false;
+          	if ($user->radiation_instructions()->count()) {
+          		$radiation = $user->radiation_instructions()->orderBy('begin', 'desc')->first();
+          		$date = new DateTime($radiation->end());
+          		$date = date_format($date, 'jS F Y');
+          		if ($user->hasRadiationInstruction()) {
+          			$radiation_string = 'until ' . $date;
+          			$instruction = true;
+          		} else
+          			$radiation_string = 'expired ' . $date;
+          	}
+          ?>
+          <tr>
+            <td>Instructions</td>
+            <td{{ !$instruction ? ' class="text-danger"' : ''}}>&#9762; Radiation Protection {{ $radiation_string }}
+            </td>
+          </tr>
           <tr>
             <td>{{ link_to("/users/$user->username/shifts", "Total shifts", ['style' => 'color: inherit; text-decoration: none;']) }}</td>
             <td>

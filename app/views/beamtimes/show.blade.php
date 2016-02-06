@@ -153,9 +153,15 @@ $(document).ready(function() {
           <td>Nobody subscribed yet</td>
           @else
           {{-- otherwise show the subscribed users and display open shifts --}}
-          <td><?php $shift->users->each(function($user)  // $shift->users returns a Collection of User objects which are connected to the current Shift object via the corresponding pivot table; with Collection::each we can iterate over this Collection instead of creating a foreach loop
+          <td><?php $shift->users->each(function($user) use($shift)  // $shift->users returns a Collection of User objects which are connected to the current Shift object via the corresponding pivot table; with Collection::each we can iterate over this Collection instead of creating a foreach loop
           {
-          	echo '<span rel="tooltip" data-toggle="tooltip" data-placement="top" title="Rating: ' . $user->rating . '">' . link_to("/users/$user->username", $user->get_full_name(), ['style' => 'color: inherit; text-decoration: none;']) . '</span><span class="hidden-print"> (' . $user->workgroup->name . ')</span><br />';
+          	$rad = '';
+          	$warn = '';
+          	if (!$user->hasRadiationInstruction($shift->start)) {
+          		$rad = '<span rel="tooltip" data-toggle="tooltip" data-placement="top" title="Radiation Protection Instruction missing!" class="text-danger">&#9762; </span>';
+          		$warn = ' class="text-danger"';
+          	}
+          	echo $rad . '<span rel="tooltip" data-toggle="tooltip" data-placement="top" title="Rating: ' . $user->rating . '"' . $warn . '>' . link_to("/users/$user->username", $user->get_full_name(), ['style' => 'color: inherit; text-decoration: none;']) . '</span><span class="hidden-print"> (' . $user->workgroup->name . ')</span><br />';
           });
           ?></td>
           @endif

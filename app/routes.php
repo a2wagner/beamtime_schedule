@@ -26,6 +26,7 @@ Route::get('users/{username}/delete', 'UsersController@destroy');*/
 Route::get('users/enable', array('as' => 'users.new', 'uses' => 'UsersController@viewNew'))->before('auth');
 Route::patch('users/{users}/enable', array('as' => 'users.enable', 'uses' => 'UsersController@enable'))->before('auth');
 Route::get('users/{users}/shifts', array('as' => 'users.shifts', 'uses' => 'UsersController@shifts'))->before('auth');
+Route::patch('users/{users}/radiation', array('as' => 'users.radiation', 'uses' => 'UsersController@renewRadiationInstruction'))->before('auth');
 Route::get('users/manage', array('as' => 'users.manage', 'uses' => 'UsersController@manageUsers'))->before('auth');
 Route::get('users/admins', array('as' => 'users.admins', 'uses' => 'UsersController@viewAdmins'))->before('auth');
 Route::get('users/run_coordinators', array('as' => 'users.run_coordinators', 'uses' => 'UsersController@viewRunCoordinators'))->before('auth');

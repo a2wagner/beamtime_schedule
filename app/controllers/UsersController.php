@@ -256,6 +256,30 @@ class UsersController extends \BaseController {
 
 
 	/**
+	 * Renew Radiation Protection Instruction for the user.
+	 *
+	 * @param  int  $id
+	 * @param  date $date
+	 * @return Response
+	 */
+	public function renewRadiationInstruction($id, $date = 'now')
+	{
+		if (Auth::guest())
+			return Redirect::guest('login');
+
+		if (Auth::user()->isAdmin() || (Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction($date))) {
+			$rad = new RadiationInstruction;
+			$rad->user_id = $id;
+			$rad->begin = new DateTime($date);
+			$rad->save();
+
+			return Redirect::back()->with('success', 'Successfully extended Radiation Protection Instruction for ' . User::find($id)->get_full_name());
+		} else
+			return Redirect::back();
+	}
+
+
+	/**
 	 * Show a page of new registered users to enable them if logged-in user has admin privileges
 	 *
 	 * @return Response
