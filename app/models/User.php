@@ -77,13 +77,13 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
-	* A user can be run coordinator of several beamtimes
+	* A user can subscribe to several beamtimes
 	*
 	* @return Array of Beamtime objects
 	*/
 	public function beamtimes()
 	{
-		return $this->belongsToMany('Beamtime', 'run_coordinators');
+		return $this->shifts->beamtime->unique();
 	}
 
 	/**

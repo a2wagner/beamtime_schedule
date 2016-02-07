@@ -35,7 +35,7 @@ class CreateDatabase extends Migration {
 			$table->tinyInteger('rating')->unsigned();
 			$table->integer('ldap_id')->unsigned()->nullable();
 			$table->tinyInteger('role')->unsigned()->default(0);
-            $table->string('remember_token', 100)->nullable();
+			$table->string('remember_token', 100)->nullable();
 			$table->timestamps();
 			$table->foreign('workgroup_id')->references('id')->on('workgroups');
 		});
@@ -118,6 +118,7 @@ class CreateDatabase extends Migration {
 	public function down()
 	{
 		Schema::drop('shift_user');
+		Schema::drop('rc_shift_user');
 		Schema::drop('swap_user');
 		Schema::drop('rc_shifts');
 		Schema::drop('swaps');
