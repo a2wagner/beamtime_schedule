@@ -126,6 +126,35 @@ Profile of {{ $user->username }}
               @endif
             </td>
           </tr>
+          {{-- Allow run coordinators to see the rating and the radiation protection instruction for the user if they took run coordinator shifts in a beamtime with shifts at least partly in the future and the user took regular shifts in this beamtime --}}
+          @elseif ($user->beamtimes()->rcshifts->reject(function($rcshift) { return new DateTime($rcshift->start) < new DateTime(); })->user->unique()->username->search(Auth::user()->username, true) !== false)
+          <tr>
+            <td>Rating</td>
+            <td>{{ $user->rating }}</td>
+          </tr>
+          <?php
+          	$radiation_string = 'missing';
+          	$instruction = false;
+          	if ($user->radiation_instructions()->count()) {
+          		$radiation = $user->radiation_instructions()->orderBy('begin', 'desc')->first();
+          		$date = new DateTime($radiation->end());
+          		$date = date_format($date, 'jS F Y');
+          		if ($user->hasRadiationInstruction()) {
+          			$radiation_string = 'until ' . $date;
+          			$instruction = true;
+          		} else
+          			$radiation_string = 'expired ' . $date;
+          	}
+          ?>
+          <tr>
+            <td>Instructions</td>
+            <td{{ !$instruction ? ' class="text-danger"' : ''}}>&#9762; Radiation Protection {{ $radiation_string }}
+            {{-- If the run coordinator has additionally a valid radiation instruction, he is allowed to renew the instruction for the user --}}
+            @if (Auth::user()->hasRadiationInstruction())
+            <a href="/users/{{{$user->id}}}/radiation" data-method="patch" class="btn btn-success btn-xs" style="float: right;"><span class="fa fa-check-circle"></span> Renew</a>
+            @endif
+            </td>
+          </tr>
           @endif
         </tbody>
       </table>
