@@ -5,6 +5,7 @@ Profile of {{ $user->username }}
 @stop
 
 @section('scripts')
+{{ HTML::script('js/laravel.js') }}
 {{ HTML::script('js/jquery.flot.min.js') }}
 {{ HTML::script('js/jquery.flot.pie.min.js') }}
 @stop
@@ -68,6 +69,9 @@ Profile of {{ $user->username }}
           <tr>
             <td>Instructions</td>
             <td{{ !$instruction ? ' class="text-danger"' : ''}}>&#9762; Radiation Protection {{ $radiation_string }}
+            @if (Auth::user()->isAdmin())
+            <a href="/users/{{{$user->id}}}/radiation" data-method="patch" class="btn btn-success btn-xs" style="float: right;"><span class="fa fa-check-circle"></span> Renew</a>
+            @endif
             </td>
           </tr>
           <tr>
