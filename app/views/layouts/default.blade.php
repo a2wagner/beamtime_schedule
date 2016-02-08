@@ -15,6 +15,7 @@
 
         <!-- CSS are placed here -->
         @section('css')
+        {{ HTML::style('css/source-sans-pro.css') }}
         {{ HTML::style('css/bootstrap.min.css') }}
         {{ HTML::style('css/font-awesome.min.css') }}
         @show

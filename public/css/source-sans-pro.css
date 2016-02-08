@@ -1,0 +1,35 @@
+@font-face{
+    font-family: 'Source Sans Pro';
+    font-weight: 300;
+    font-style: normal;
+    font-stretch: normal;
+    src: url('../fonts/EOT/SourceSansPro-Light.eot') format('embedded-opentype'),
+         url('../fonts/WOFF2/TTF/SourceSansPro-Light.ttf.woff2') format('woff2'),
+         url('../fonts/WOFF/OTF/SourceSansPro-Light.otf.woff') format('woff'),
+         url('../fonts/OTF/SourceSansPro-Light.otf') format('opentype'),
+         url('../fonts/TTF/SourceSansPro-Light.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'Source Sans Pro';
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
+    src: url('../fonts/EOT/SourceSansPro-Regular.eot') format('embedded-opentype'),
+         url('../fonts/WOFF2/TTF/SourceSansPro-Regular.ttf.woff2') format('woff2'),
+         url('../fonts/WOFF/OTF/SourceSansPro-Regular.otf.woff') format('woff'),
+         url('../fonts/OTF/SourceSansPro-Regular.otf') format('opentype'),
+         url('../fonts/TTF/SourceSansPro-Regular.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'Source Sans Pro';
+    font-weight: 700;
+    font-style: normal;
+    font-stretch: normal;
+    src: url('../fonts/EOT/SourceSansPro-Bold.eot') format('embedded-opentype'),
+         url('../fonts/WOFF2/TTF/SourceSansPro-Bold.ttf.woff2') format('woff2'),
+         url('../fonts/WOFF/OTF/SourceSansPro-Bold.otf.woff') format('woff'),
+         url('../fonts/OTF/SourceSansPro-Bold.otf') format('opentype'),
+         url('../fonts/TTF/SourceSansPro-Bold.ttf') format('truetype');
+}
