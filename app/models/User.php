@@ -181,15 +181,14 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 * @param string $date
 	 * @return boolean
 	 */
-	public function hasRadiationInstruction($date = 'now')
+	public function hasRadiationInstruction($date = '')
 	{
 		$hasInstruction = false;
 		$date = new DateTime($date);
-		$instructions = $this->radiation_instructions();
 		$this->radiation_instructions()->get()->each(function($instruction) use($date, &$hasInstruction)
 		{
 			$start = new DateTime($instruction->begin);
-			if (!$start->diff($date)->format("%y")) {
+			if (!$start->diff($date)->format("%y") && $date > $start) {
 				$hasInstruction = true;
 				return;
 			}
