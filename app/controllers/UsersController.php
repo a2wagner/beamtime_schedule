@@ -275,7 +275,7 @@ class UsersController extends \BaseController {
 
 			return Redirect::back()->with('success', 'Successfully extended Radiation Protection Instruction for ' . User::find($id)->get_full_name());
 		} else
-			return Redirect::back();
+			return Redirect::back()->with('error', 'You are not allowed to extended the Radiation Protection Instruction');
 	}
 
 
