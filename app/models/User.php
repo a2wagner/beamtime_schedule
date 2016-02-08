@@ -77,6 +77,16 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
+	 * Many to many relation, a user can take several run coordinator shifts
+	 *
+	 * @return Array of RCShift objects
+	 */
+	public function rcshifts()
+	{
+		return $this->belongsToMany('RCShift', 'rc_shift_user', 'user_id', 'rc_shift_id');
+	}
+
+	/**
 	* A user can subscribe to several beamtimes
 	*
 	* @return Array of Beamtime objects
