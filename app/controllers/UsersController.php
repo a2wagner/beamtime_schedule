@@ -262,10 +262,14 @@ class UsersController extends \BaseController {
 	 * @param  date $date
 	 * @return Response
 	 */
-	public function renewRadiationInstruction($id, $date = '')
+	public function renewRadiationInstruction($id)
 	{
 		if (Auth::guest())
 			return Redirect::guest('login');
+
+		$date = '';
+		if (Input::has('date'))
+			$date = Input::get('date');
 
 		if (Auth::user()->isAdmin() || (Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction($date))) {
 			$rad = new RadiationInstruction;
