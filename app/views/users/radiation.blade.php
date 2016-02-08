@@ -4,13 +4,60 @@
 Renew Radiation Protection Instruction
 @stop
 
+@section('css')
+{{ HTML::style('css/datepicker.css') }}
+@parent
+@stop
+
 @section('styles')
 @parent
 .nounderline {text-decoration: none !important;}
+.input-date {display: none;}
+
+.datepicker.dropdown-menu {
+  top: 0;
+  left: 0;
+  padding: 4px;
+  margin-top: 1px;
+}
+
+.fixed-text-input {
+  position: absolute;
+  display: block;
+  right: 70px;
+  top: 10px;
+  z-index: 3;
+}
 @stop
 
 @section('scripts')
-{{ HTML::script('js/laravel.js') }}
+{{ HTML::script('js/bootstrap-datepicker.js') }}
+
+<script type="text/javascript">
+$(".change-date").on("click", function() {
+  $(".input-date").hide();
+  $(".change-date").show();
+
+  var fields = $(".input-date");
+  var buttons = $(".change-date");
+
+  var idx = buttons.index($(this));  // index of the clicked checkbox element
+
+  $(".input-date:eq("+idx+")").show();
+  $(".change-date:eq("+idx+")").hide();
+
+  /* date-picker */
+  var nowTemp = new Date();
+  var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+  var begin = $(".input-date:eq("+idx+")").datepicker({
+    weekStart: 1  //0 sunday, 1 monday ...
+  }).on('changeDate', function(ev) {
+    begin.hide();
+  }).data('datepicker');
+  $(".input-date:eq("+idx+")")[0].focus();
+});
+</script>
 @stop
 
 @section('content')
@@ -29,6 +76,7 @@ Renew Radiation Protection Instruction
           <th>Name</th>
           <th>Workgroup</th>
           <th>Radiation Instruction</th>
+          <th></th>
           <th class="text-center">Action</th>
         </tr>
       </thead>
@@ -49,13 +97,21 @@ Renew Radiation Protection Instruction
         	}
         ?>
         <tr>
-          {{-- show an extra icon in front of every other admin --}}
+          {{ Form::open(['url' => '/users/'.$user->id.'/radiation', 'method' => 'PATCH', 'id' => $user->id,'class' => 'form-horizontal', 'role' => 'form']) }}
           <td>{{ link_to("/users/{$user->username}", $user->first_name." ".$user->last_name) }}</td>
           <td>{{ $user->workgroup->name }}</td>
           <td{{ !$instruction ? ' class="text-danger"' : ''}}>{{ $radiation_string }}</td>
-          <td class="text-center">
-            <a href="/users/{{{$user->id}}}/radiation" data-method="patch" class="btn btn-success btn-xs"><span class="fa fa-check-circle"></span> Renew</a>
+          <td>
+            <a id="button-{{{$user->id}}}" class="change-date btn btn-default btn-xs"><span class="fa fa-calendar"></span> Change Date</a>
+              {{ Form::text('date', date('Y-m-d'), array('class' => 'input-sm form-control input-date datepicker', 'size' => '10', 'id' => 'date-'.$user->id, 'data-date-format' => 'yyyy-mm-dd')) }}
           </td>
+          <td class="text-center">
+              {{--<a href="/users/{{{$user->id}}}/radiation" data-method="patch" class="btn btn-success btn-xs"><span class="fa fa-check-circle"></span> Renew</a>--}}
+              <button type="submit" class="btn btn-success btn-xs">
+                <i class="fa fa-check-circle"></i> Renew
+              </button>
+          </td>
+          {{ Form::close() }}
         </tr>
         @endforeach
       </tbody>
