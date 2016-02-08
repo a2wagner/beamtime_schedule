@@ -27,6 +27,9 @@ User Management
       @endif
       <li>{{ link_to("/users/run_coordinators", "Manage run coordinators") }}</li>
       <li>{{ link_to("/users/principle_investigators", "Manage principle investigators") }}</li>
+      @if (Auth::user()->isAdmin() || Auth::user()->hasRadiationInstruction())
+      <li>{{ link_to("/users/radiation", "Renew Radiation Instruction") }}</li>
+      @endif
       <li>{{ link_to("/users/enable", "Enable new users") }}</li>
       <li>{{ link_to("/users", "Go to users overview") }}</li>
     </ul>

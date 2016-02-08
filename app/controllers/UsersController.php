@@ -262,7 +262,7 @@ class UsersController extends \BaseController {
 	 * @param  date $date
 	 * @return Response
 	 */
-	public function renewRadiationInstruction($id, $date = 'now')
+	public function renewRadiationInstruction($id, $date = '')
 	{
 		if (Auth::guest())
 			return Redirect::guest('login');
@@ -355,6 +355,36 @@ class UsersController extends \BaseController {
 			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
 
 			return View::make('users.principle_investigators', ['users' => $users]);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Show a page with all users for which the currently logged in user is legitimated to renew the radiation protection instruction
+	 *
+	 * @return Response
+	 */
+	public function viewRadiationInstruction()
+	{
+		if (Auth::user()->isAdmin() || (Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction())) {
+			if (Auth::user()->isAdmin())
+				$users = $this->user->get();
+			else {
+				$users = Auth::user()->rcshifts->reject(function($rcshift)  // get all run coordinator shifts for the logged in user
+				{
+					return new DateTime($rcshift->start) < new DateTime();  // reject all shifts in the past
+				})
+				->beamtime->unique()  // get the corresponding beamtimes
+				->shifts->users->unique();  // get all users from these beamtimes
+			}
+			// sort the users by the date they got the last radiation instruction renewal
+			$users->sortBy(function($user)
+			{
+				return $user->radiation_instructions()->orderBy('begin', 'desc')->first();
+			});
+
+			return View::make('users.radiation')->with('users', $users);
 		} else
 			return Redirect::to('/users');
 	}

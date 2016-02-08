@@ -73,6 +73,17 @@
                             <li><a href="/users/manage"><i class="fa fa-wrench fa-fw"></i> Manage Users</a></li>
                           </ul>
                         </li>
+                        @elseif (Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction())
+                        <li>
+                          <a href="/beamtimes"><i class="fa fa-calendar fa-fw"></i> Beamtimes</a>
+                        </li>
+                        <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-users fa-fw"></i> Users <span class="fa fa-caret-down"></span></a>
+                          <ul class="dropdown-menu">
+                            <li><a href="/users"><i class="fa fa-bars fa-fw"></i> All Users</a></li>
+                            <li><a href="/users/radiation"><i class="fa">&nbsp;&#9762;&nbsp;</i> Radiation Instruction</a></li>
+                          </ul>
+                        </li>
                         @else
                         <li>
                           <a href="/beamtimes"><i class="fa fa-calendar fa-fw"></i> Beamtimes</a>
