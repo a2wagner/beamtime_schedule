@@ -385,7 +385,10 @@ class UsersController extends \BaseController {
 			// sort the users by the date they got the last radiation instruction renewal
 			$users->sortBy(function($user)
 			{
-				return strtotime($user->radiation_instructions()->orderBy('begin', 'desc')->first()->begin);  // convert date string to timestamp, otherwise the sorting is wrong sometimes
+				if ($user->radiation_instructions()->count())
+					return strtotime($user->radiation_instructions()->orderBy('begin', 'desc')->first()->begin);  // convert date string to timestamp, otherwise the sorting is wrong sometimes
+				else
+					return 1;
 			});
 
 			return View::make('users.radiation')->with('users', $users);
