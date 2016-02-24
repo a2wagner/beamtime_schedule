@@ -10,12 +10,11 @@ Create New Profile
     font-family: 'FontAwesome';
     font-weight: normal;
     font-size: 7px;
-    position: absolute;
     margin-left: 1px;
-    top: 10px;
+    //position: relative;
+    //top: -8px;
+    vertical-align: super;
     content: "\f069";
-    //vertical-align: super;  /* this without the position stuff above leads to a working behaviour for small devices, but the indentation of the labels get messed up ... */
-    //content: "*";
     color: red;
 }
 @stop
