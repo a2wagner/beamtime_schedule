@@ -230,4 +230,16 @@ class Shift extends \Eloquent {
 	{
 		return $this->check_time(self::NIGHT_START, self::NIGHT_END);
 	}
+
+	/**
+	 * Return end time of a shift
+	 *
+	 * @return DateTime
+	 */
+	public function end()
+	{
+		$date = new DateTime($this->start);
+		$date->add(new DateInterval('PT' . $this->duration . 'H'));
+		return $date;
+	}
 }
