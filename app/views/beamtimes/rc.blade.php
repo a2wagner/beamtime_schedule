@@ -96,9 +96,7 @@ function toggleButton(btn)
           <td>{{ $shift->start }}</td>
           <?php  // calculate actual duration depending on local timezone
           	$start = new DateTime($shift->start);
-          	$end = clone($start);
-          	$dur = 'PT' . $shift->duration . 'H';
-          	$end->add(new DateInterval($dur));
+          	$end = $shift->end();
           ?>
           <td>{{ $start->diff($end)->h }} hours</td>
           <td>{{ $shift->type() }}</td>

@@ -124,9 +124,7 @@ class RCShift extends Eloquent
 			return false;
 
 		$start = new DateTime($this->start);
-		$end = clone($start);
-		$dur = 'PT' . $this->duration . 'H';
-		$end->add(new DateInterval($dur));
+		$end = $this->end();
 		$ref_start = clone($start);
 		$ref_end = clone($start);
 		$ref_start->setTime($hour_start, 00);
@@ -155,5 +153,17 @@ class RCShift extends Eloquent
 	public function is_night()
 	{
 		return $this->check_time(self::START + self::DURATION, self::START, 1);
+	}
+
+	/**
+	 * Return end time of the shift
+	 *
+	 * @return DateTime
+	 */
+	public function end()
+	{
+		$date = new DateTime($this->start);
+		$date->add(new DateInterval('PT' . $this->duration . 'H'));
+		return $date;
 	}
 }

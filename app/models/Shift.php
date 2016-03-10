@@ -187,9 +187,7 @@ class Shift extends \Eloquent {
 			return false;
 
 		$start = new DateTime($this->start);
-		$end = clone($start);
-		$dur = 'PT' . $this->duration . 'H';
-		$end->add(new DateInterval($dur));
+		$end = $this->end();
 		$ref_start = clone($start);
 		$ref_end = clone($start);
 		$ref_start->setTime($hour_start, 00);

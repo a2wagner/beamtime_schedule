@@ -45,9 +45,7 @@ $(document).ready(function() {
       <?php  // calculate some time information for later usage
       	$now = new DateTime();
       	$start = new DateTime($beamtime->shifts->first()->start);
-      	$end = new DateTime($beamtime->shifts->last()->start);
-      	$dur = 'PT' . $beamtime->shifts->last()->duration . 'H';
-      	$end->add(new DateInterval($dur));
+      	$end = $beamtime->shifts->last()->end();
       ?>
       @if ($now < $start)
       <?php $diff = $now->diff($start); ?>
@@ -142,9 +140,7 @@ $(document).ready(function() {
           {{ $td }}<span{{ $shift->users->count() < $shift->n_crew ? ' class="text-danger"' : ''}}>{{ $shift->start }}</span></td>
           <?php  // calculate actual duration depending on local timezone
           	$start = new DateTime($shift->start);
-          	$end = clone($start);
-          	$dur = 'PT' . $shift->duration . 'H';
-          	$end->add(new DateInterval($dur));
+          	$end = $shift->end();
           ?>
           {{ $td }}{{ $start->diff($end)->h }} hours</td>
           {{-- check if users subscribed to this shift and it's not maintenance --}}

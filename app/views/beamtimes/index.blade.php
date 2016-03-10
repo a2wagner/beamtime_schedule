@@ -44,9 +44,7 @@ Beamtimes
           <?php  // calculate some time information of the beamtime
           	$now = new DateTime();
           	$start = new DateTime($beamtime->shifts->first()->start);
-          	$end = new DateTime($beamtime->shifts->last()->start);
-          	$dur = 'PT' . $beamtime->shifts->last()->duration . 'H';
-          	$end->add(new DateInterval($dur));
+          	$end = $beamtime->shifts->last()->end();
           ?>
           @if ($now < $start)
           <?php $diff = $now->diff($start); ?>
