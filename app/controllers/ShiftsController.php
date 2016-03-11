@@ -88,7 +88,7 @@ class ShiftsController extends \BaseController {
 				foreach (Auth::user()->shifts as $s) {
 					$diffStart = abs($start->getTimestamp() - $s->end()->getTimestamp())/3600;
 					$diffEnd = abs($end->getTimestamp() - strtotime($s->start))/3600;
-					if (($diffStart < $diffEnd && $diffStart < 16) || ($diffEnd < $diffStart && $diffEnd < 16))
+					if (($diffStart < $diffEnd && $diffStart < 24-$shift->duration) || ($diffEnd < $diffStart && $diffEnd < 24-$shift->duration))
 						return Redirect::back()->with('warning', 'You subscribed to another shift within 24 hours!');
 				}
 			} else {
