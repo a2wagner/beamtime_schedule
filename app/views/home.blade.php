@@ -103,6 +103,10 @@
     @else
     <h4 class="text-danger">No beamtimes found</h4>
     @endif
+    <div class="page-header" style="padding-top:15%;">
+        <h3>KPH Beamtime Schedule</h3>
+    </div>
+    You can find the current beamtime schedule for MAMI <a href="http://www.kph.uni-mainz.de/793.php">here</a>.
 @endif
 </div>
 @stop
