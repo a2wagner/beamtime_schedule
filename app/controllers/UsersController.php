@@ -348,6 +348,23 @@ class UsersController extends \BaseController {
 
 
 	/**
+	 * Show a page of all users where the radiation expert flag can be toggled if logged-in user has admin privileges
+	 *
+	 * @return Response
+	 */
+	public function viewRadiationExperts()
+	{
+		if (Auth::user()->isAdmin()) {
+			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
+			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
+
+			return View::make('users.radiation_experts', ['users' => $users]);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
 	 * Show a page of all users where the principle investigator flag can be toggled if logged-in user has admin or PI privileges
 	 *
 	 * @return Response
@@ -371,8 +388,8 @@ class UsersController extends \BaseController {
 	 */
 	public function viewRadiationInstruction()
 	{
-		if (Auth::user()->isAdmin() || (Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction())) {
-			if (Auth::user()->isAdmin())
+		if (Auth::user()->isRadiationExpert() || (Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction())) {
+			if (Auth::user()->isRadiationExpert())
 				$users = $this->user->get();
 			else {
 				$users = Auth::user()->rcshifts->reject(function($rcshift)  // get all run coordinator shifts for the logged in user
@@ -461,6 +478,31 @@ class UsersController extends \BaseController {
 					$msg .= ' is no longer a run coordinator';
 
 				return Redirect::route('users.run_coordinators', ['users' => $this->user->all()])->with('success', $msg);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Toggle radiation expert flag for user with the id $id
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function toggleRadiationExpert($id)
+	{
+		if (Auth::user()->isAdmin()) {
+				$user = $this->user->find($id);
+				$user->toggleRadiationExpert();
+				$user->save();
+
+				$msg = 'User ' . $user->get_full_name();
+				if ($user->isRadiationExpert())
+					$msg .= ' is now a radiation expert';
+				else
+					$msg .= ' is no longer a radiation expert';
+
+				return Redirect::route('users.radiation_experts', ['users' => $this->user->all()])->with('success', $msg);
 		} else
 			return Redirect::to('/users');
 	}

@@ -29,10 +29,12 @@ Route::get('users/{users}/shifts', array('as' => 'users.shifts', 'uses' => 'User
 Route::patch('users/{users}/radiation', array('as' => 'users.radiation', 'uses' => 'UsersController@renewRadiationInstruction'))->before('auth');
 Route::get('users/manage', array('as' => 'users.manage', 'uses' => 'UsersController@manageUsers'))->before('auth');
 Route::get('users/admins', array('as' => 'users.admins', 'uses' => 'UsersController@viewAdmins'))->before('auth');
+Route::get('users/radiation_experts', array('as' => 'users.radiation_experts', 'uses' => 'UsersController@viewRadiationExperts'))->before('auth');
 Route::get('users/run_coordinators', array('as' => 'users.run_coordinators', 'uses' => 'UsersController@viewRunCoordinators'))->before('auth');
 Route::get('users/principle_investigators', array('as' => 'users.principle_investigators', 'uses' => 'UsersController@viewPrincipleInvestigators'))->before('auth');
 Route::get('users/radiation', array('as' => 'users.radiation', 'uses' => 'UsersController@viewRadiationInstruction'))->before('auth');
 Route::patch('users/{users}/admin', array('as' => 'users.toggleAdmin', 'uses' => 'UsersController@toggleAdmin'))->before('auth');
+Route::patch('users/{users}/re', array('as' => 'users.toggleRadiationExpert', 'uses' => 'UsersController@toggleRadiationExpert'))->before('auth');
 Route::patch('users/{users}/rc', array('as' => 'users.toggleRunCoordinator', 'uses' => 'UsersController@toggleRunCoordinator'))->before('auth');
 Route::patch('users/{users}/pi', array('as' => 'users.togglePrincipleInvestigators', 'uses' => 'UsersController@togglePrincipleInvestigator'))->before('auth');
 Route::resource('users', 'UsersController');

@@ -24,10 +24,11 @@ User Management
     <ul>
       @if (Auth::user()->isAdmin())
       <li>{{ link_to("/users/admins", "Manage admins") }}</li>
+      <li>{{ link_to("/users/radiation_experts", "Manage radiation experts") }}</li>
       @endif
       <li>{{ link_to("/users/run_coordinators", "Manage run coordinators") }}</li>
       <li>{{ link_to("/users/principle_investigators", "Manage principle investigators") }}</li>
-      @if (Auth::user()->isAdmin() || Auth::user()->hasRadiationInstruction())
+      @if (Auth::user()->isRadiationExpert())
       <li>{{ link_to("/users/radiation", "Renew Radiation Instruction") }}</li>
       @endif
       <li>{{ link_to("/users/enable", "Enable new users") }}</li>
