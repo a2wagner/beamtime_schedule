@@ -44,7 +44,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	//const SOMETHING = 2 || 4;
 	const RUN_COORDINATOR = 8;
 	const AUTHOR = 16;
-	//const SOMETING_ELSE = 32;
+	const RADIATION_EXPERT = 32;
 	const PI = 64;
 	const ADMIN = 128;  // use the highest bit for admins
 
@@ -244,6 +244,36 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public function toggleRunCoordinator()
 	{
 		$this->role ^= self::RUN_COORDINATOR;
+	}
+
+	/**
+	 * Check if the current user is a radiation expert
+	 *
+	 * @return boolean
+	 */
+	public function isRadiationExpert()
+	{
+		return $this->isFlagSet(self::RADIATION_EXPERT);
+	}
+
+	/**
+	 * Set the current user as a radiation expert
+	 *
+	 * @return void
+	 */
+	public function setRadiationExpert()
+	{
+		$this->role |= self::RADIATION_EXPERT;
+	}
+
+	/**
+	 * Toggle the radiation expert flag of a user role
+	 *
+	 * @return void
+	 */
+	public function toggleRadiationExpert()
+	{
+		$this->role ^= self::RADIATION_EXPERT;
 	}
 
 	/**
