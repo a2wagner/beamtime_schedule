@@ -175,7 +175,7 @@ $(document).ready(function() {
           @if ($shift->users->count() < $shift->n_crew)  {{-- only allow subscription if the shift's not full already --}}
           {{ Form::open(['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'role' => 'form']) }}
               {{ Form::hidden('action', 'subscribe') }}
-              <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Subscribe"><i class="fa fa-check fa-lg"></i></button>
+              <button type="submit" ondblclick="location.reload();" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Subscribe"><i class="fa fa-check fa-lg"></i></button>
           {{ Form::close() }}
           @endif
           @else
