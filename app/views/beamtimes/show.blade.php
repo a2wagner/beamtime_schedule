@@ -54,7 +54,7 @@ function sub(e) {
             sessionStorage.setItem('msg', data[1]);
         }
     });
-    window.location.reload();
+    setTimeout(window.location.reload(), 50);
     return false;
 }
 </script>
