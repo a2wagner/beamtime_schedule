@@ -4,12 +4,59 @@
 {{ $beamtime->name }}
 @stop
 
+@section('css')
+{{ HTML::style('css/animate.min.css') }}
+@parent
+@stop
+
 @section('scripts')
+{{ HTML::script('js/bootstrap-notify.min.js') }}
 <script type="text/javascript">
 $(document).ready(function() {
     //$("[rel='tooltip']").tooltip();
     $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+    var msg = sessionStorage.getItem('msg');
+    var type = sessionStorage.getItem('type');
+    sessionStorage.removeItem('msg');
+    sessionStorage.removeItem('type');
+    if (msg) {
+        var notify = $.notify({
+            message: msg
+          },{
+            element: 'body',
+            position: null,
+            type: type,
+            allow_dismiss: true,
+            newest_on_top: false,
+            showProgressbar: false,
+            placement: {
+                from: "top",
+                align: "center"
+            },
+            offset: 60,
+            spacing: 10,
+            z_index: 1031,
+            delay: 2500,
+        });
+    }
 });
+
+function sub(e) {
+    $btn = $(document.activeElement).attr("disabled", true);
+    $.ajax({
+        url: e.action,
+        type: e.method,
+        data: {_method: e._method.value, event: e.event.value},
+        success: function(data, textStatus, jqXHR)
+        {
+            sessionStorage.setItem('type', data[0]);
+            sessionStorage.setItem('msg', data[1]);
+        }
+    });
+    window.location.reload();
+    return false;
+}
 </script>
 @stop
 
@@ -173,14 +220,14 @@ $(document).ready(function() {
           @if (!$shift->maintenance && $now < new DateTime($shift->start))
           @if (!$shift->users->find(Auth::user()->id))
           @if ($shift->users->count() < $shift->n_crew)  {{-- only allow subscription if the shift's not full already --}}
-          {{ Form::open(['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'role' => 'form']) }}
-              {{ Form::hidden('action', 'subscribe') }}
-              <button type="submit" ondblclick="location.reload();" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Subscribe"><i class="fa fa-check fa-lg"></i></button>
+          {{ Form::open(['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'role' => 'form', 'onsubmit' => 'return sub(this);']) }}
+              {{ Form::hidden('event', 'subscribe') }}
+              <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Subscribe"><i class="fa fa-check fa-lg"></i></button>
           {{ Form::close() }}
           @endif
           @else
-          {{ Form::open(['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'style' => 'float: left; margin-right: 5px;', 'role' => 'form']) }}
-              {{ Form::hidden('action', 'unsubscribe') }}
+          {{ Form::open(['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'style' => 'float: left; margin-right: 5px;', 'role' => 'form', 'onsubmit' => 'return sub(this);']) }}
+              {{ Form::hidden('event', 'unsubscribe') }}
               <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Unsubscribe"><i class="fa fa-times fa-lg"></i></button>
           {{ Form::close() }}
           {{ Form::open(['route' => array('swaps.create', $shift->id), 'class' => 'hidden-print', 'style' => 'float: left;', 'role' => 'form']) }}
