@@ -16,6 +16,8 @@ $(document).ready(function() {
     //$("[rel='tooltip']").tooltip();
     $("body").tooltip({ selector: '[data-toggle=tooltip]' });
 
+    $(".btn-default").attr("disabled", false);
+
     var msg = sessionStorage.getItem('msg');
     var type = sessionStorage.getItem('type');
     sessionStorage.removeItem('msg');
@@ -43,7 +45,7 @@ $(document).ready(function() {
 });
 
 function sub(e) {
-    $btn = $(document.activeElement).attr("disabled", true);
+    $(document.activeElement).attr("disabled", true);
     $.ajax({
         url: e.action,
         type: e.method,
@@ -52,9 +54,9 @@ function sub(e) {
         {
             sessionStorage.setItem('type', data[0]);
             sessionStorage.setItem('msg', data[1]);
+            window.location.reload();
         }
     });
-    setTimeout(window.location.reload(), 50);
     return false;
 }
 </script>
