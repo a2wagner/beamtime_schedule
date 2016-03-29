@@ -23,8 +23,7 @@ class SessionsController extends \BaseController {
 	public function create()
 	{
 		if (Auth::check())
-			//return Redirect::to('')->with('success', 'You are already logged in');
-			return Redirect::to('/admin');
+			return Redirect::to('')->with('success', 'You are already logged in');
 		return View::make('sessions.login');
 	}
 
@@ -169,7 +168,6 @@ class SessionsController extends \BaseController {
 	{
 		Auth::logout();
 
-		//return Redirect::route('sessions.create');
 		return Redirect::to('')->with('success', 'You are logged out');
 	}
 
