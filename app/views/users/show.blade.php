@@ -34,7 +34,7 @@ Profile of {{ $user->username }}
           </tr>
           <tr>
             <td>Email</td>
-            <td>{{ $user->email }}</td>
+            <td><a href="mailto:{{{ $user->email }}}" style="color: inherit; text-decoration: none;">{{ $user->email }}</a></td>
           </tr>
           <tr>
             <td>Workgroup</td>
