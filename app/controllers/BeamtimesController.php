@@ -183,9 +183,28 @@ class BeamtimesController extends \BaseController {
 					// if there is maintenance during this shift, set the shift workers to zero
 					$shift->n_crew = 0;
 					$shift->maintenance = true;
-					// if users are subscribed to this shift, remove them
-					if (!$shift->users->isEmpty())
+					// if users are subscribed to this shift, send them an email and remove them
+					if (!$shift->users->isEmpty()) {
+						// mail content
+						$subject = 'Automatic Cancellation of Shift Subscription';
+						$msg = "Hello [USER],\r\n\r\n";
+						$msg.= 'you\'ve subscribed to the shift on '. date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift->start)) . ". This shift has been changed to a maintenance shift and you were automatically unsubscribed from this shift.\r\n\r\n";
+						$msg.= "In case you don't know why and haven't got any further information yet, you might want to contact one of the following run coordinators:\r\n\r\n";
+						$beamtime->run_coordinators()->each(function($user) use(&$msg)
+						{
+							$msg.= $user->get_full_name() . ': ' . $user->email . "\r\n";
+						});
+						$msg.= "\r\nA2 Beamtime Scheduler";
+						$success = true;
+
+						// send the mail to every user from the shift
+						$shift->users->each(function($user) use(&$success, $subject, $msg)
+						{
+							$success &= $user->mail($subject, str_replace(array('[USER]'), array($user->first_name), $msg));
+						});
+
 						$shift->users()->detach();
+					}
 				} else {
 					// else set the given number of shift workers for this shift
 					if (!array_key_exists($id, $n))  // in case no radio button was selected, prevent an error and set the number of shift workers to 2
