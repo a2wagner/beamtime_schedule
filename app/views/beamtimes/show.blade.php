@@ -167,7 +167,7 @@ function sub(e) {
         	$rc_day->each(function($rc_shift) use(&$rc_info)
         	{
         		if ($rc_shift->user->count())
-        			$rc_info[] = $rc_shift->type() . ': ' . $rc_shift->user->first()->get_full_name();
+        			$rc_info[] = $rc_shift->type() . ': ' . link_to("/users/" . $rc_shift->user->first()->username, $rc_shift->user->first()->get_full_name(), ['style' => 'color: inherit; text-decoration: none;']);
         		else
         			$rc_info[] = $rc_shift->type() . ': open';
         	});
@@ -179,7 +179,7 @@ function sub(e) {
         ?>
         <thead>
           <tr class="active" style="padding-left:20px;">
-            <th colspan=7>{{ $day }} &emsp;&emsp;&emsp; {{{ $rc }}}</th>
+            <th colspan=7>{{ $day }} &emsp;&emsp;&emsp; {{ $rc }}</th>
           </tr>
         </thead>
         @endif
