@@ -51,7 +51,6 @@ Route::group(array('before' => 'auth'), function()
 	Route::patch('users/{users}/re', array('as' => 'users.toggleRadiationExpert', 'uses' => 'UsersController@toggleRadiationExpert'));
 	Route::patch('users/{users}/rc', array('as' => 'users.toggleRunCoordinator', 'uses' => 'UsersController@toggleRunCoordinator'));
 	Route::patch('users/{users}/pi', array('as' => 'users.togglePrincipleInvestigators', 'uses' => 'UsersController@togglePrincipleInvestigator'));
-	Route::resource('users', 'UsersController');
 
 	Route::resource('beamtimes', 'BeamtimesController');
 	Route::get('statistics', array('as' => 'statistics', 'uses' => 'BeamtimesController@statistics'));
@@ -65,4 +64,6 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('swaps/{swap}', array('as' => 'swaps.show', 'uses' => 'SwapsController@show'));
 	Route::put('swaps/{swap}', array('as' => 'swaps.update', 'uses' => 'SwapsController@update'));
 });
+// the following routes have to be _after_ all the other users/something routes above, otherwise they will be caught earlier by the show method of the UsersController
+Route::resource('users', 'UsersController');
 
