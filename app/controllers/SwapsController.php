@@ -103,24 +103,6 @@ class SwapsController extends \BaseController {
 			$swap->delete();  // delete this request in case the mail(s) could not be send
 			return Redirect::to('beamtimes/' . $beamtime_id)->with('error', 'Swap request couldn\'t be sent, mailing error...');
 		}
-
-/*echo Request::root();
-echo '<br />';
-echo url();
-echo '<br />';
-echo asset('/');
-echo '<br />';
-echo URL::to('/'); //App::make('url')->to('/');
-echo '<br />';
-echo Request::getHost();
-echo '<br />';
-echo Request::getHttpHost();
-echo '<br />';
-echo $_SERVER['HTTP_HOST'];
-echo '<br />';
-echo $_SERVER['SERVER_NAME'];
-echo '<br />';*/
-
 	}
 
 
