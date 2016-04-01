@@ -99,6 +99,29 @@ class ShiftsController extends \BaseController {
 		} elseif (Input::get('event') === 'unsubscribe') {
 			$shift->users()->detach(Auth::user()->id);
 			$msg = 'Unsubscribed from shift';
+			// check if the shift will start soon
+			$start = new DateTime($shift->start);
+			$diff = $start->getTimeStamp() - time();
+			$diff /= 86400;
+			// if the shift will start in less than 7 days, send an email to the run coordinators of the corresponding day
+			if ($diff < 7) {
+				$date = strtok($shift->start, ' ');
+				$rc = RCShift::where('start', 'LIKE', $date.'%')->get()->user->unique();
+				$beamtime = $shift->beamtime;
+				// mail content
+				$subject = 'Someone unsubscribed from a shift on ' . $date;
+				$msg = "Hello [USER],\r\n\r\n";
+				$msg.= Auth::user()->get_full_name() . ' unsubscribed from the shift on '. date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift->start)) . '. This is an automatic notification to inform you of the now free shift starting in ' . round($diff, 1) . " days.\r\n\r\n";
+				$msg.= 'You can use the following link to view the corresponding beamtime \'' . $beamtime->name . '\': ' . url() . '/beamtime/' . $beamtime->id . "\r\n\r\n";
+				$msg.= "A2 Beamtime Scheduler";
+				$success = true;
+				// send the mail to the run coordinators
+				$rc->each(function($user) use(&$success, $subject, $msg)
+				{
+					$success &= $user->mail($subject, str_replace(array('[USER]'), array($user->first_name), $msg));
+				});
+				return ['warning', 'You unsubscribed from a shift which will start in less than a week!'];
+			}
 		}
 
 		return ['success', $msg];
