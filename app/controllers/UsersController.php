@@ -23,9 +23,13 @@ class UsersController extends \BaseController {
 		//TODO: check to append search query etc. to pagination query and try if it works - http://laravel.com/docs/pagination#appending-to-pagination-links
 		if (Input::has('search')) {
 			$s = Input::get('search');
+			$workgroups = Workgroup::where('name', 'LIKE', '%'.$s.'%')
+				->orWhere('country', 'LIKE', '%'.$s.'%')
+				->get()->lists('id');
 			$users = $this->user->where('username', 'LIKE', '%'.$s.'%')
 				->orWhere('first_name', 'LIKE', '%'.$s.'%')
 				->orWhere('last_name', 'LIKE', '%'.$s.'%')
+				->orWhereIn('workgroup_id', $workgroups)
 				->orderBy('last_name', 'asc')->paginate(20);
 			return View::make('users.index', ['users' => $users]);
 		}
