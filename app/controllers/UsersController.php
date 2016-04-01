@@ -20,7 +20,6 @@ class UsersController extends \BaseController {
 			return Redirect::guest('login');
 
 		// this will only work when the search string will be send as GET from the form because users.index is adressed as GET in the routes
-		//TODO: check to append search query etc. to pagination query and try if it works - http://laravel.com/docs/pagination#appending-to-pagination-links
 		if (Input::has('search')) {
 			$s = Input::get('search');
 			$workgroups = Workgroup::where('name', 'LIKE', '%'.$s.'%')

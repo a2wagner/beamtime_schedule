@@ -60,7 +60,13 @@ Registered Users
       </tbody>
     </table>
     </div>
+    @if (Input::has('search'))
+    {{ $users->appends(['search' => Input::get('search')])->links() }}
+    @elseif (Input::has('sort'))
+    {{ $users->appends(['sort' => Input::get('sort')])->links() }}
+    @else
     {{ $users->links() }}
+    @endif
     @else
     <h3 class="text-danger">No users found</h3>
     @endif
