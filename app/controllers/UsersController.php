@@ -29,8 +29,11 @@ class UsersController extends \BaseController {
 			$users = $this->user->where('username', 'LIKE', '%'.$s.'%')
 				->orWhere('first_name', 'LIKE', '%'.$s.'%')
 				->orWhere('last_name', 'LIKE', '%'.$s.'%')
-				->orWhereIn('workgroup_id', $workgroups)
-				->orderBy('last_name', 'asc')->paginate(20);
+				->orWhereIn('workgroup_id', $workgroups);
+			if (count($workgroups))
+				$users = $users->orderBy('workgroup_id', 'asc')->paginate(50);
+			else
+				$users = $users->orderBy('last_name', 'asc')->paginate(20);
 			return View::make('users.index', ['users' => $users]);
 		}
 
