@@ -47,7 +47,7 @@ The database can be accessed from your local machine via 127.0.0.1 on port 33060
 
 ## Intalling on a server
 
-If you want to install Laravel and this app on a server, follow the instructions from the [Laravel Docs](http://laravel.com/docs/installation). When Laravel is installed, most files of this repository can be used to replace the existing files in the root directory of the Laravel installation. To do this, remove the follwing already existing folders and files: 
+If you want to install Laravel and this app on a server, follow the instructions from the [Laravel Docs](http://laravel.com/docs/installation). An additional dependency to use the LDAP functionality to retrieve user data and authenticate them against the LDAP server, the package ``php5-ldap`` is required. When Laravel is installed, most files of this repository can be used to replace the existing files in the root directory of the Laravel installation. To do this, remove the follwing already existing folders and files: 
 
 * app/
 * public/
