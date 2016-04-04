@@ -433,6 +433,13 @@ class UsersController extends \BaseController {
 				$user->enable();
 				$user->save();
 
+				// send the enabled user a mail
+				$subject = 'Account enabled';
+				$msg = 'Hello ' . $user->first_name . ",\r\n\r\n";
+				$msg.= 'your account has been enabled. You should be able to login and subscribe to shifts now. Please check your account information: ' . url() . '/users/' . $user->username . "/edit\r\n\r\n";
+				$msg.= "A2 Beamtime Scheduler";
+				$success = $user->mail($subject, $msg);
+
 				return Redirect::route('users.new', ['users' => $this->user->where('role', '!&', User::ENABLED)->get()])->with('success', 'User ' . $user->username . ' enabled successfully');
 		} else
 			return Redirect::to('/users');
