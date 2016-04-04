@@ -112,7 +112,7 @@ class ShiftsController extends \BaseController {
 				$subject = 'Someone unsubscribed from a shift on ' . $date;
 				$msg = "Hello [USER],\r\n\r\n";
 				$msg.= Auth::user()->get_full_name() . ' unsubscribed from the shift on '. date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift->start)) . '. This is an automatic notification to inform you of the now free shift starting in ' . round($diff, 1) . " days.\r\n\r\n";
-				$msg.= 'You can use the following link to view the corresponding beamtime \'' . $beamtime->name . '\': ' . url() . '/beamtime/' . $beamtime->id . "\r\n\r\n";
+				$msg.= 'You can use the following link to view the corresponding beamtime \'' . $beamtime->name . '\': ' . url() . '/beamtimes/' . $beamtime->id . "\r\n\r\n";
 				$msg.= "A2 Beamtime Scheduler";
 				$success = true;
 				// send the mail to the run coordinators

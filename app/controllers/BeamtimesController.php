@@ -189,7 +189,7 @@ class BeamtimesController extends \BaseController {
 						$subject = 'Automatic Cancellation of Shift Subscription';
 						$msg = "Hello [USER],\r\n\r\n";
 						$msg.= 'you\'ve subscribed to the shift on '. date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift->start)) . ". This shift has been changed to a maintenance shift and you were automatically unsubscribed from this shift.\r\n\r\n";
-						$msg.= 'You can use the following link to view the corresponding beamtime \'' . $beamtime->name . '\': ' . url() . '/beamtime/' . $beamtime->id . "\r\n\r\n";
+						$msg.= 'You can use the following link to view the corresponding beamtime \'' . $beamtime->name . '\': ' . url() . '/beamtimes/' . $beamtime->id . "\r\n\r\n";
 						$msg.= "In case you don't know why and haven't got any further information yet, you might want to contact one of the following run coordinators:\r\n\r\n";
 						$beamtime->run_coordinators()->each(function($user) use(&$msg)
 						{
