@@ -61,14 +61,14 @@ $(".change-date").on("click", function() {
 @stop
 
 @section('content')
-@if (Auth::user()->isAdmin() || Auth::user()->isRunCoordinator())
+@if (Auth::user()->isRadiationExpert() || Auth::user()->isRunCoordinator())
 <div class="col-lg-10 col-lg-offset-1">
     <div class="page-header">
         <h2>Renew Radiation Protection Instruction</h2>
     </div>
 
     @if ($users->count())
-    <h3>Registered Shift Workers</h3>
+    @if (Auth::user()->isRadiationExpert())<h3>Registered Shift Workers</h3>@endif
     <div class="table-responsive">
     <table class="table table-striped table-hover">
       <thead>
