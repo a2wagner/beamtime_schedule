@@ -39,7 +39,7 @@ class UsersController extends \BaseController {
 		//$users = $this->user->all();
 		// use pagination instead
 		if (Input::has('sort'))
-			$users = $this->user->orderBy('username', Input::get('sort'))->paginate(20);
+			$users = $this->user->orderBy('last_name', Input::get('sort'))->paginate(20);
 		else
 			$users = $this->user->paginate(20);
 
@@ -405,14 +405,26 @@ class UsersController extends \BaseController {
 				->beamtime->unique()  // get the corresponding beamtimes
 				->shifts->users->unique();  // get all users from these beamtimes
 			}
-			// sort the users by the date they got the last radiation instruction renewal
-			$users->sortBy(function($user)
-			{
-				if ($user->radiation_instructions()->count())
-					return strtotime($user->radiation_instructions()->orderBy('begin', 'desc')->first()->begin);  // convert date string to timestamp, otherwise the sorting is wrong sometimes
+			if (Input::has('sort')) {
+				if (Input::get('sort') === 'asc')
+					$users->sortBy(function($user)
+					{
+						return strtolower($user->last_name);
+					});
 				else
-					return 1;
-			});
+					$users->sortByDesc(function($user)
+					{
+						return strtolower($user->last_name);
+					});
+			} else
+				// sort the users by the date they got the last radiation instruction renewal
+				$users->sortBy(function($user)
+				{
+					if ($user->radiation_instructions()->count())
+						return strtotime($user->radiation_instructions()->orderBy('begin', 'desc')->first()->begin);  // convert date string to timestamp, otherwise the sorting is wrong sometimes
+					else
+						return 1;
+				});
 
 			return View::make('users.radiation')->with('users', $users);
 		} else
