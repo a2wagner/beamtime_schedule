@@ -54,7 +54,7 @@ class WorkgroupTableSeeder extends Seeder {
 		]);
 
 		$group = Workgroup::create([
-			'name' => 'Univerity of Bonn', 
+			'name' => 'University of Bonn', 
 			'country' => 'Germany', 
 			'short' => 'Bonn'
 		]);
