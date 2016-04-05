@@ -32,7 +32,12 @@
     <div class="page-header">
         <h2>Most recent beamtimes</h2>
     </div>
-    <?php $beamtimes = Beamtime::orderBy('id', 'desc')->take(5)->get(); ?>
+    <?php
+    	$beamtimes = Beamtime::all();
+    	foreach ($beamtimes as $beamtime)
+    		$beamtime->start = $beamtime->shifts()->first()->start;
+    	$beamtimes = $beamtimes->sortByDesc('start')->take(5);
+    ?>
     @if ($beamtimes->count())
     <div class="table-responsive">
     <table class="table table-striped table-hover">

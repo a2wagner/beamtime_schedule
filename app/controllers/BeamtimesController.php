@@ -16,17 +16,23 @@ class BeamtimesController extends \BaseController {
 	 */
 	public function index()
 	{
-		//$beamtimes = Beamtime::all();
-		//$beamtimes = $this->beamtime->paginate(20);
 		// sort beamtimes in decreasing order by id to show the last created beamtime at the top
-		$beamtimes = $this->beamtime->orderBy('id', 'desc')->paginate(20);
+		//$beamtimes = $this->beamtime->orderBy('id', 'desc')->paginate(20);
+		$beamtimes = Beamtime::all();
 
-#TODO doesn't work at the moment, trying to get property of non-object
-#		// Add the start of the beamtime to every entry of the Collection of Beamtimes
-#		foreach ($beamtimes as $beamtime)
-#			$beamtime = array_add($beamtime, 'start', $beamtime->shifts()->first()->start);
-#		// Sort the beamtimes by decreasing order
-#		$beamtimes->orderBy('start', 'desc')->paginate(20);
+		// Add the start of the beamtime to every entry of the Collection of Beamtimes
+		foreach ($beamtimes as $beamtime)
+			$beamtime->start = $beamtime->shifts()->first()->start;
+		// Sort the beamtimes by decreasing order
+		$beamtimes->sortByDesc('start');
+
+		// prepare pagination manually because it works on queries, not on collections
+		$perPage = 20;
+		$page = 1;
+		if (Input::has('page'))
+			$page = Input::get('page');
+		$offset = ($page - 1) * $perPage;
+		$beamtimes = Paginator::make($beamtimes->slice($offset, $perPage, true)->all(), $beamtimes->count(), $perPage);
 
 		return View::make('beamtimes.index', ['beamtimes' => $beamtimes]);
 	}
