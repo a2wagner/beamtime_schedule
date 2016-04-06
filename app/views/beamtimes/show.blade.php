@@ -99,9 +99,9 @@ function sub(e) {
       @if ($now < $start)
       <?php $diff = $now->diff($start); ?>
       <p class="text-primary">Beamtime will start in <?php  // show time difference until beamtime starts according to the time span
-      	if ($diff->d > 0)
+      	if ($diff->days > 0)
       		echo $diff->format('%a days and %h hours.');
-      	elseif ($diff->d === 0 && $diff->h > 0)
+      	elseif ($diff->days === 0 && $diff->h > 0)
       		echo $diff->format('%h hours and %i minutes.');
       	else
       		echo $diff->format('%i minutes.');

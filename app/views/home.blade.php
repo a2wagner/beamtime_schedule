@@ -72,9 +72,9 @@
           @if ($now < $start)
           <?php $diff = $now->diff($start); ?>
           <td><span class="text-primary">Beamtime will start <?php  // show time difference until beamtime starts according to the time span
-          	if ($diff->d > 0)
+          	if ($diff->days > 0)
           		echo $diff->format('in %a days and %h hours.');
-          	elseif ($diff->d === 0 && $diff->h > 0)
+          	elseif ($diff->days === 0 && $diff->h > 0)
           		echo $diff->format('in %h hours and %i minutes.');
           	elseif ($diff->h === 0 && $diff->i > 2)
           		echo $diff->format('in %i minutes.');
@@ -90,9 +90,9 @@
           	$diff = $now->diff($start);
           ?>
           <td><span class="text-success">Running for <?php  // show time span for how long beamtime is running more precise
-          	if ($diff->d > 0)
+          	if ($diff->days > 0)
           		echo $diff->format('%a days and %h hours.');
-          	elseif ($diff->d === 0 && $diff->h > 0)
+          	elseif ($diff->days === 0 && $diff->h > 0)
           		echo $diff->format('%h hours and %i minutes.');
           	else
           		echo $diff->format('%i minutes.');
