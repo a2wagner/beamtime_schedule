@@ -74,8 +74,14 @@ Profile of {{ $user->username }}
             @endif
             </td>
           </tr>
+          @if ($roles = $user->get_roles_string())
           <tr>
-            <td>{{ link_to("/users/$user->username/shifts", "Total shifts", ['style' => 'color: inherit; text-decoration: none;']) }}</td>
+            <td>Roles</td>
+            <td>{{ $roles }}</td>
+          </tr>
+          @endif
+          <tr>
+            <td>@if (Auth::id() == $user->id){{ link_to("/users/$user->username/shifts", "Total shifts", ['style' => 'color: inherit; text-decoration: none;']) }}@else Total shifts @endif</td>
             <td>
               {{ $user->shifts->count() }}&emsp;@if ($user->shifts->count())(day: {{ $day = $user->shifts->sum(function($shift) {
               		return $shift->is_day();

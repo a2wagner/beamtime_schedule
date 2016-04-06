@@ -197,6 +197,41 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
+	 * Get all different roles of a user
+	 *
+	 * @return array $roles
+	 */
+	public function get_roles()
+	{
+		$roles = array();
+
+		if (!$this->isEnabled())
+			array_push($roles, 'Not enabled');
+		if ($this->isAdmin())
+			array_push($roles, 'Admin');
+		if ($this->isPI())
+			array_push($roles, 'PI');
+		if ($this->isRadiationExpert())
+			array_push($roles, 'Radiation Expert');
+		if ($this->isRunCoordinator())
+			array_push($roles, 'Run Coordinator');
+
+		return $roles;
+	}
+
+	/**
+	 * Get all different roles of a user
+	 *
+	 * @return string $roles
+	 */
+	public function get_roles_string()
+	{
+		$roles = implode(', ', $this->get_roles());
+
+		return $roles;
+	}
+
+	/**
 	 * Check if the current user is enabled
 	 *
 	 * @return boolean
