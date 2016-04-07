@@ -119,7 +119,7 @@ class UsersController extends \BaseController {
 		if (!$this->user->fill($input)->isValid())
 			return Redirect::back()->withInput()->withErrors($this->user->errors);
 
-		$this->user->password = Hash::make(Input::get('password'));  //TODO try to guard password as it's not mass assigned here, just for security reasons...
+		$this->user->password = Hash::make(Input::get('password'));
 		$this->user->save();
 
 		// if this is the first user, we set him as an admin and enable him by default
@@ -128,7 +128,25 @@ class UsersController extends \BaseController {
 			$this->user->toggleAdmin();
 			$this->user->enable();
 			$this->user->save();
+
+			return Redirect::to('')->with('success', 'Account created successfully. Set as Admin and enabled by default as it\'s the first user account.');
 		}
+
+		// send amdins a notification about the new registration
+		$admins = User::where('role', '&', User::ADMIN)->get();
+		// mail content
+		$subject = 'New Account Registered';
+		$msg = "Hello [USER],\r\n\r\n";
+		$msg.= $this->user->get_full_name() . ' from ' . $this->user->workgroup->name . " has registered a new account for the Beamtime Scheduler.\r\n\r\n";
+		$msg.= 'You can use the following link to view all non-enabled users: ' . url() . "/users/enable\r\n\r\n";
+		$msg.= "A2 Beamtime Scheduler";
+		$success = true;
+
+		// send the mail to every user from the shift
+		$admins->each(function($user) use(&$success, $subject, $msg)
+		{
+			$success &= $user->mail($subject, str_replace(array('[USER]'), array($user->first_name), $msg));
+		});
 
 		// added an enabled option, new users have first to get activated, return them to the homepage with an appropriate message
 		return Redirect::to('')->with('success', 'Account created successfully. Please wait until your account gets activated by an Admin before you can login.');
