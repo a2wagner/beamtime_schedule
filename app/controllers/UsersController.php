@@ -348,6 +348,9 @@ class UsersController extends \BaseController {
 			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
 			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
 
+			if (Input::has('sort'))
+				$this->sort_collection($users, Input::get('sort'));
+
 			return View::make('users.admins', ['users' => $users]);
 		} else
 			return Redirect::to('/users');
@@ -364,6 +367,9 @@ class UsersController extends \BaseController {
 		if (Auth::user()->isAdmin() || Auth::user()->isPI()) {
 			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
 			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
+
+			if (Input::has('sort'))
+				$this->sort_collection($users, Input::get('sort'));
 
 			return View::make('users.run_coordinators', ['users' => $users]);
 		} else
@@ -382,6 +388,9 @@ class UsersController extends \BaseController {
 			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
 			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
 
+			if (Input::has('sort'))
+				$this->sort_collection($users, Input::get('sort'));
+
 			return View::make('users.radiation_experts', ['users' => $users]);
 		} else
 			return Redirect::to('/users');
@@ -398,6 +407,9 @@ class UsersController extends \BaseController {
 		if (Auth::user()->isAdmin() || Auth::user()->isPI()) {
 			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
 			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
+
+			if (Input::has('sort'))
+				$this->sort_collection($users, Input::get('sort'));
 
 			return View::make('users.principle_investigators', ['users' => $users]);
 		} else
@@ -423,18 +435,9 @@ class UsersController extends \BaseController {
 				->beamtime->unique()  // get the corresponding beamtimes
 				->shifts->users->unique();  // get all users from these beamtimes
 			}
-			if (Input::has('sort')) {
-				if (Input::get('sort') === 'asc')
-					$users->sortBy(function($user)
-					{
-						return strtolower($user->last_name);
-					});
-				else
-					$users->sortByDesc(function($user)
-					{
-						return strtolower($user->last_name);
-					});
-			} else
+			if (Input::has('sort'))
+				$this->sort_collection($users, Input::get('sort'));
+			else
 				// sort the users by the date they got the last radiation instruction renewal
 				$users->sortBy(function($user)
 				{
@@ -573,6 +576,30 @@ class UsersController extends \BaseController {
 				return Redirect::route('users.principle_investigators', ['users' => $this->user->all()])->with('success', $msg);
 		} else
 			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Sort a collection in a given order
+	 *
+	 * @param
+	 * @param Collection $collection
+	 * @return sorted collection
+	 */
+	public function sort_collection($collection, $order)
+	{
+		if ($order === 'asc')
+			$collection->sortBy(function($user)
+			{
+				return strtolower($user->last_name);
+			});
+		else
+			$collection->sortByDesc(function($user)
+			{
+				return strtolower($user->last_name);
+			});
+
+		return $collection;
 	}
 
 

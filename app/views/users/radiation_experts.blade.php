@@ -26,7 +26,7 @@ Manage Radiation Experts
     <table class="table table-striped table-hover">
       <thead>
         <tr>
-          <th>Name</th>
+          <th>Name {{ link_to('users/radiation_experts?sort=asc', '', ['class' => 'nounderline fa fa-sort-alpha-asc hidden-print']) }} {{ link_to('users/radiation_experts?sort=desc', '', ['class' => 'nounderline fa fa-sort-alpha-desc hidden-print']) }}</th>
           <th>Workgroup</th>
           <th>Email</th>
           <th class="text-center">Action</th>
