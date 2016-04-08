@@ -11,6 +11,8 @@ Shifts of {{ $user->get_full_name() }}
     <div class="page-header">
         <h2>Your taken shifts</h2>
     </div>
+    Total shifts taken: {{ $user->shifts->count() }}<br />
+    Time on shifts: {{ $user->shifts->sum('duration') }} hours
     <div>
       <table class="table table-striped table-hover">
 <?php $shifts->groupBy('beamtime_id')->each(function($item){
