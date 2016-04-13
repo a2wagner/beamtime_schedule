@@ -23,7 +23,18 @@ Profile of {{ $user->username }}
     		$phone = array_add($phone, 'Private', $user->phone_private);
     ?>
     <div class="page-header">
-        <h2>Account of {{ $user->first_name." ".$user->last_name }}</h2>
+      <table width="100%">
+        <tr>
+          <td>
+            <h2>Account of {{ $user->get_full_name() }}</h2>
+          </td>
+          @if (Auth::id() == $user->id || Auth::user()->isAdmin())
+          <td class="text-right hidden-print">
+            <a class="btn btn-primary btn-sm" href="/users/{{{$user->username}}}/edit"><span class="fa fa-pencil"></span>&nbsp;&nbsp;&nbsp;Edit</a>
+          </td>
+          @endif
+        </tr>
+      </table>
     </div>
     <div>
       <table class="table table-striped table-hover">
