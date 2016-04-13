@@ -48,14 +48,17 @@ Beamtimes
           ?>
           @if ($now < $start)
           <?php $diff = $now->diff($start); ?>
-          <td class="text-primary">Beamtime will start in <?php  // show time difference until beamtime starts according to the time span
+          <td><span class="text-primary">Beamtime will start in <?php  // show time difference until beamtime starts according to the time span
           	if ($diff->days > 0)
           		echo $diff->format('%a days and %h hours.');
           	elseif ($diff->days === 0 && $diff->h > 0)
           		echo $diff->format('%h hours and %i minutes.');
+          	elseif ($diff->h === 0 && $diff->i > 2)
+          		echo $diff->format('in %i minutes.');
           	else
-          		echo $diff->format('%i minutes.');
-          ?></td>
+          		echo 'shortly.';
+          ?></span><br />
+          Shifts: {{ $beamtime->shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }}/{{ $beamtime->shifts->filter(function($shift){ return !$shift->maintenance; })->count() }} open ({{ $beamtime->shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) }}/{{ $beamtime->shifts->sum('n_crew') }} individual)</td>
           @elseif ($now > $end)
           <?php $diff = $now->diff($end); ?>
           <td class="text-muted">Ended {{{ $diff->format('%a days ago') }}}</td>
@@ -63,14 +66,15 @@ Beamtimes
           <?php  // calculate progress of the current beamtime
           	$diff = $now->diff($start);
           ?>
-          <td class="text-success">Running for <?php  // show time span for how long beamtime is running more precise
+          <td><span class="text-success">Running for <?php  // show time span for how long beamtime is running more precise
           	if ($diff->days > 0)
           		echo $diff->format('%a days and %h hours.');
           	elseif ($diff->days === 0 && $diff->h > 0)
           		echo $diff->format('%h hours and %i minutes.');
           	else
           		echo $diff->format('%i minutes.');
-          ?></td>
+          ?></span><br />
+          Shifts: {{ $beamtime->shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }}/{{ $beamtime->shifts->filter(function($shift){ return !$shift->maintenance; })->count() }} open ({{ $beamtime->shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) }}/{{ $beamtime->shifts->sum('n_crew') }} individual)</td>
           @endif
           @if (Auth::user()->isAdmin() || Auth::user()->isRunCoordinator())
           <td class="text-center">
