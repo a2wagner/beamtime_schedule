@@ -81,7 +81,7 @@ Profile of {{ $user->username }}
             <td>Instructions</td>
             <td{{ !$instruction ? ' class="text-danger"' : ''}}>&#9762; Radiation Protection {{ $radiation_string }}
             @if (Auth::user()->isAdmin())
-            <a href="/users/{{{$user->id}}}/radiation" data-method="patch" class="btn btn-success btn-xs" style="float: right;"><span class="fa fa-check-circle"></span> Renew</a>
+            <a href="/users/{{{$user->id}}}/radiation" data-method="patch" class="btn btn-success btn-xs hidden-print" style="float: right;"><span class="fa fa-check-circle"></span> Renew</a>
             @endif
             </td>
           </tr>
