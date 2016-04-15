@@ -106,6 +106,14 @@ class SessionsController extends \BaseController {
 				// Authenticate and redirect the user to the intended page, otherwise as the default to home
 				Auth::login($user);
 				return Redirect::intended('')->with('success', 'You have logged in successfully');
+			} elseif (User::whereUsername($userdata['username'])->first()->password !== 'ldap') {  // if the user has a LDAP account, but a different password
+				if (Auth::attempt($userdata)) {
+					// Redirect the user to the intended page, otherwise as the default to home
+					return Redirect::intended('')->with('success', 'You have logged in successfully');
+				} else {
+					// Redirect to the login page
+					return Redirect::back()->withErrors(array('password' => 'Password invalid'))->withInput(Input::except('password'));
+				}
 			} else {
 				// Redirect to the login page
 				return Redirect::back()->withErrors(array('password' => 'Password invalid'))->withInput(Input::except('password'));
