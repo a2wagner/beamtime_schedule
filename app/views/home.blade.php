@@ -104,7 +104,9 @@
           @endif
           @if (Auth::user()->isRunCoordinator())
           <td>
+            @if ($now < $end)
             <a class='btn btn-warning btn-xs' href="/beamtimes/{{{$beamtime->id}}}/rc"><span class="fa fa-calendar-o"></span> RC shifts</a>
+            @endif
           </td>
           @endif
           @endif  {{-- end of check if beamtime contains shifts --}}

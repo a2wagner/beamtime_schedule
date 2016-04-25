@@ -82,7 +82,7 @@ Beamtimes
             <a class='btn btn-primary btn-xs' href="/beamtimes/{{{$beamtime->id}}}/edit"><span class="fa fa-pencil"></span> Edit</a>
             <a href="/beamtimes/{{{$beamtime->id}}}" data-method="delete" data-confirm="Are you sure to delete this beamtime?" class="btn btn-danger btn-xs"><span class="fa fa-times"></span> Del</a>
             @endif
-            @if (Auth::user()->isRunCoordinator())
+            @if (Auth::user()->isRunCoordinator() && $now < $end)
             <a class='btn btn-warning btn-xs' href="/beamtimes/{{{$beamtime->id}}}/rc"><span class="fa fa-calendar-o"></span> RC shifts</a>
             @endif
           </td>
