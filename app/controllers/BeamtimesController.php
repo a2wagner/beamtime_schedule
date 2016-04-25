@@ -22,7 +22,7 @@ class BeamtimesController extends \BaseController {
 
 		// Add the start of the beamtime to every entry of the Collection of Beamtimes
 		foreach ($beamtimes as $beamtime)
-			$beamtime->start = $beamtime->shifts()->first()->start;
+			$beamtime->start = $beamtime->start_string();
 		// Sort the beamtimes by decreasing order
 		$beamtimes->sortByDesc('start');
 

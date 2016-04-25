@@ -35,7 +35,7 @@
     <?php
     	$beamtimes = Beamtime::all();
     	foreach ($beamtimes as $beamtime)
-    		$beamtime->start = $beamtime->shifts()->first()->start;
+    		$beamtime->start = $beamtime->start_string();
     	$beamtimes = $beamtimes->sortByDesc('start')->take(5);
     ?>
     @if ($beamtimes->count())
@@ -63,14 +63,12 @@
           @endif
           @else
           <td style="vertical-align: middle;">{{ link_to("/beamtimes/{$beamtime->id}", $beamtime->name) }}</td>
-          <td style="vertical-align: middle;">{{ $beamtime->shifts->first()->start }}</td>
+          <td style="vertical-align: middle;">{{ $beamtime->start_string() }}</td>
           <td style="vertical-align: middle;">{{ $beamtime->shifts()->count() }}</td>
-          <?php  // calculate some time information of the beamtime
+          <?php
           	$now = new DateTime();
-          	$start = new DateTime($beamtime->shifts->first()->start);
-          	$end = new DateTime($beamtime->shifts->last()->start);
-          	$dur = 'PT' . $beamtime->shifts->last()->duration . 'H';
-          	$end->add(new DateInterval($dur));
+          	$start = $beamtime->start();
+          	$end = $beamtime->end();
           ?>
           @if ($now < $start)
           <?php $diff = $now->diff($start); ?>

@@ -187,4 +187,44 @@ class Beamtime extends \Eloquent {
 		// if the if condition above was not true, the beamtime lies not in the given range
 		return false;
 	}
+
+	/**
+	 * Return start of the beamtime
+	 *
+	 * @return DateTime
+	 */
+	public function start()
+	{
+		return new DateTime($this->shifts->first()->start);
+	}
+
+        /**
+         * Return start string of the beamtime
+         *
+         * @return string
+         */
+        public function start_string()
+        {
+                return $this->shifts->first()->start;
+        }
+
+        /**
+         * Return end of the beamtime
+         *
+         * @return DateTime
+         */
+        public function end()
+        {
+                return $this->shifts->last()->end();
+        }
+
+	/**
+	 * Return end string of the beamtime
+	 *
+	 * @return string
+	 */
+	public function end_string()
+	{
+		return $this->shifts->last()->end()->format('Y-m-d H:i:s');
+	}
 }

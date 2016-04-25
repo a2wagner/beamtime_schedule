@@ -61,10 +61,10 @@ $(document).ready(function() {
     @else
     <div class="hidden-print">
       <h3>Progress</h3>
-      <?php  // calculate some time information for later usage
+      <?php
       	$now = new DateTime();
-      	$start = new DateTime($beamtime->shifts->first()->start);
-      	$end = $beamtime->shifts->last()->end();
+      	$start = $beamtime->start();
+      	$end = $beamtime->end();
       ?>
       @if ($now < $start)
       <?php $diff = $now->diff($start); ?>

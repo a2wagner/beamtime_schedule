@@ -39,12 +39,12 @@ Beamtimes
           @endif
           @else
           <td>{{ link_to("/beamtimes/{$beamtime->id}", $beamtime->name) }}</td>
-          <td>{{ $beamtime->shifts->first()->start }}</td>
+          <td>{{ $beamtime->start_string() }}</td>
           <td>{{ $beamtime->shifts()->count() }}</td>
-          <?php  // calculate some time information of the beamtime
+          <?php
           	$now = new DateTime();
-          	$start = new DateTime($beamtime->shifts->first()->start);
-          	$end = $beamtime->shifts->last()->end();
+          	$start = $beamtime->start();
+          	$end = $beamtime->end();
           ?>
           @if ($now < $start)
           <?php $diff = $now->diff($start); ?>
