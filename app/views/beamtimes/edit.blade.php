@@ -173,7 +173,7 @@ function toggleRadio(id)
           </td>
           {{ $td }}@if ($shift->users->count() == 0) <a href="#" class="btn btn-danger btn-sm disabled">Empty</a>
           @elseif ($shift->users->sum('rating') < 5 ) <a href="#" class="btn btn-warning btn-sm disabled">Bad</a>
-          @elseif ($shift->users->sum('rating') < 8 ) <a href="#" class="btn btn-primary btn-sm disabled">Okay</a>
+          @elseif ($shift->users->sum('rating') < 8 ) <a href="#" class="btn btn-primary btn-sm disabled">Good</a>
           @else <a href="#" class="btn btn-success btn-sm disabled">Perfect</a>
           @endif</td>
           {{ $td }}</td>
