@@ -47,6 +47,9 @@
           <th>Start</th>
           <th>#Shifts</th>
           <th>Status</th>
+          @if (Auth::user()->isRunCoordinator())
+          <th>Action</th>
+          @endif
         </tr>
       </thead>
       <tbody>
@@ -98,6 +101,11 @@
           		echo $diff->format('%i minutes.');
           ?></span><br />
           Shifts: {{ $beamtime->shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }}/{{ $beamtime->shifts->filter(function($shift){ return !$shift->maintenance; })->count() }} open ({{ $beamtime->shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) }}/{{ $beamtime->shifts->sum('n_crew') }} individual shifts open)</td>
+          @endif
+          @if (Auth::user()->isRunCoordinator())
+          <td>
+            <a class='btn btn-warning btn-xs' href="/beamtimes/{{{$beamtime->id}}}/rc"><span class="fa fa-calendar-o"></span> RC shifts</a>
+          </td>
           @endif
           @endif  {{-- end of check if beamtime contains shifts --}}
         </tr>
