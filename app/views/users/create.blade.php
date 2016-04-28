@@ -99,13 +99,16 @@ Create New Profile
                 {{ Form::label('rating', 'Rating: ', array('class' => 'col-lg-3 control-label')) }}
                 <div class="col-lg-8">
                     {{ Form::select('rating', array(
-                        '1' => 'I\'m totally new', 
-                        '2' => 'I did only a few shifts', 
-                        '3' => 'I know how to do shifts', 
-                        '4' => 'I\'m experienced', 
-                        '5' => 'I\'m an expert'), '1', ['class' => 'form-control', 'id' => 'inputError2']) }}
+                        '1' => '1&ensp;&mdash;&ensp;New/Inexperienced', 
+                        '2' => '2&ensp;&mdash;&ensp;Basic Knowledge', 
+                        '3' => '3&ensp;&mdash;&ensp;Experienced', 
+                        '4' => '4&ensp;&mdash;&ensp;Expert'), '1', ['class' => 'form-control', 'id' => 'inputError2']) }}
                     {{ $errors->has('rating') ? '<span class="glyphicon glyphicon-remove form-control-feedback"></span>' : '' }}
                     <p class="help-block">{{ $errors->first('rating') }}</p>
+                    <div style="padding-left: 20px; padding-bottom: 10px;">
+                        <button type="button" class="btn-xs btn-primary" data-toggle="modal" data-target=".rating-modal-lg">Rating Help</button>
+                        <?php $guide = new RatingGuide(); $guide->modal('rating-modal'); ?>
+                    </div>
                 </div>
             </div>
 

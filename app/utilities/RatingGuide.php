@@ -46,10 +46,42 @@ class RatingGuide
 	    ';
 
 	/**
+	 * A modal including the rating guide
+	 *
+	 * @var string
+	 */
+	protected $modal = '
+	    <div class="modal fade rating-modal-lg" tabindex="-1" role="dialog" aria-labelledby="[LABEL]">
+	      <div class="modal-dialog modal-lg">
+	        <div class="modal-content">
+	          <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	            <h3 class="modal-title" id="[LABEL]">Rating Guidance for Shift Experience</h3>
+	          </div>
+	          <div class="modal-body">
+	            [GUIDE]
+	          </div>
+	          <div class="modal-footer">
+	            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	    ';
+
+	/**
 	 * Print the rating guide
 	 */
 	public function show()
 	{
 		echo $this->guide;
+	}
+
+	/**
+	 * Print the rating guide within a modal
+	 */
+	public function modal($label = 'rating-guide-modal')
+	{
+		echo str_replace(array('[LABEL]', '[GUIDE]'), array($label, $this->guide), $this->modal);
 	}
 }
