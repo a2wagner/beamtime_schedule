@@ -114,17 +114,17 @@ function hide()
 
             <div class="form-group {{{ $errors->has('rating') ? 'has-error' : '' }}}">
                 {{ Form::label('rating', 'Rating: ', array('class' => 'col-lg-2 control-label')) }}
-                <div class="col-lg-10">
+                <div class="col-lg-7">
                     {{ Form::select('rating', array(
                         '1' => '1&ensp;&mdash;&ensp;New/Inexperienced', 
                         '2' => '2&ensp;&mdash;&ensp;Basic Knowledge', 
                         '3' => '3&ensp;&mdash;&ensp;Experienced', 
                         '4' => '4&ensp;&mdash;&ensp;Expert'), Input::old('rating'), ['class' => 'form-control']) }}
                     {{ $errors->first('rating') }}
-                    <div style="padding-top: 10px; padding-left: 20px; padding-bottom: 10px;">
-                        <button type="button" class="btn-xs btn-primary" data-toggle="modal" data-target=".rating-modal-lg">Rating Help</button>
-                        <?php $guide = new RatingGuide(); $guide->modal('rating-modal'); ?>
-                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target=".rating-modal-lg">Rating Help</button>
+                    <?php $guide = new RatingGuide(); $guide->modal('rating-modal'); ?>
                 </div>
             </div>
 
