@@ -78,7 +78,7 @@ class ShiftsController extends \BaseController {
 		$shift = Shift::find($id);
 		if (Input::get('event') === 'subscribe') {
 			if ($shift->users->count() < $shift->n_crew) {
-				if ($shift->users->contains($id))
+				if ($shift->users->contains(Auth::user()->id))
 					return ['error', "You're subscribed to this shift already!"];
 				$shift->users()->attach(Auth::user()->id);
 				// shorter
