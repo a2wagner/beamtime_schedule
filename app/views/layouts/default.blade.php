@@ -61,7 +61,7 @@
                           <ul class="dropdown-menu">
                             <li><a href="/beamtimes"><i class="fa fa-bars fa-fw"></i> Overview</a></li>
                             <li><a href="/beamtimes/create"><i class="fa fa-plus fa-fw"></i> Create</a></li>
-                            <li><a href="/statistics"><span class="glyphicon glyphicon-stats fa-fw"></span> Statistics</a></li>
+                            <li><a href="/statistics"><i class="fa fa-bar-chart fa-fw"></i> Statistics</a></li>
                             <li class="divider"></li>
                             <li><a href="#">Some other stuff</a></li>
                           </ul>
@@ -70,11 +70,12 @@
                           <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-users fa-fw"></i> Users <span class="fa fa-caret-down"></span></a>
                           <ul class="dropdown-menu">
                             <li><a href="/users"><i class="fa fa-bars fa-fw"></i> All Users</a></li>
+                            <li class="divider"></li>
                             <li><a href="/users/enable"><i class="fa fa-check-square-o fa-fw"></i> Enable Users</a></li>
                             @if((Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction()) || Auth::user()->isRadiationExpert())
                             <li><a href="/users/radiation"><i class="fa">&thinsp;&#9762;&nbsp;</i> Radiation Instruction</a></li>
                             @endif
-                            <li><a href="/users/manage"><i class="fa fa-wrench fa-fw"></i> Manage Users</a></li>
+                            <li><a href="/users/manage"><i class="fa fa-sliders fa-fw"></i> Manage Users</a></li>
                           </ul>
                         </li>
                         @elseif ((Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction()) || Auth::user()->isRadiationExpert())
