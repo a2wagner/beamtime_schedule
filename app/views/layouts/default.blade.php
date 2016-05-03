@@ -122,7 +122,7 @@
         <!-- Container -->
         <div class="container">
 
-            @if (!Auth::user()->ldap_id)
+            @if (Auth::user() && !Auth::user()->ldap_id)
             <div class="alert alert-warning hidden-print">
                 <h4>Important</h4>
                 You do not have a KPH account yet. Please request an account with <a style="color: black;" href="http://edv.kph.uni-mainz.de/files/benutzerantrag.pdf">this form</a>.<br />
