@@ -122,6 +122,13 @@
         <!-- Container -->
         <div class="container">
 
+            @if (!Auth::user()->ldap_id)
+            <div class="alert alert-warning hidden-print">
+                <h4>Important</h4>
+                You do not have a KPH account yet. Please request an account with <a style="color: inherit; -webkit-filter: invert(100%); filter: invert(100%);" href="http://edv.kph.uni-mainz.de/files/benutzerantrag.pdf">this form</a>.<br />More information can be found <a style="color: inherit; -webkit-filter: invert(100%); filter: invert(100%);" href="http://edv.kph.uni-mainz.de/en/zentrale-dienste/benutzer-verwaltung.html">here</a>.
+            </div>
+            @endif
+
             <!-- Success-Messages -->
             @if ($message = Session::get('success'))
             <div class="alert alert-success alert-dismissable fade in hidden-print">
