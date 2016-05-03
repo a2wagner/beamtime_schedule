@@ -34,6 +34,14 @@ User Management
       <li>{{ link_to("/users/enable", "Enable new users") }}</li>
       <li>{{ link_to("/users", "Go to users overview") }}</li>
     </ul>
+
+    @if (Auth::user()->isAdmin())
+    <h4>KPH account related operations</h4>
+    <ul>
+      <li>{{ link_to("/users/non-kph", "Show users without KPH account") }}</li>
+      <li>{{ link_to("/users/kph", "Enable users for KPH account usage") }}</li>
+    </ul>
+    @endif
 </div>
 @else
 <div class="col-lg-10 col-lg-offset-1">

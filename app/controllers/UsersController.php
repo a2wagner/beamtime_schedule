@@ -1,5 +1,7 @@
 <?php
 
+use \Exception;
+
 class UsersController extends \BaseController {
 
 	protected $user;
@@ -580,10 +582,99 @@ class UsersController extends \BaseController {
 
 
 	/**
+	 * Show users without KPH account
+	 *
+	 * @return Response
+	 */
+	public function viewNonKPH()
+	{
+		if (Auth::user()->isAdmin()) {
+			$users = $this->user->whereNull('ldap_id')->get();
+
+			return View::make('users.non-kph', ['users' => $users]);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Show a form with all users without KPH account
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function ViewMakeKPH($id = NULL)
+	{
+		if (Auth::user()->isAdmin()) {
+			$none = false;
+			$users = $this->user->whereNull('ldap_id')->get();
+			if (!$users->count())
+				$none = true;
+			else {
+				foreach ($users as $user)
+					$user->name = $user->get_full_name() . ' (' . $user->username . ')';
+				$users = $users->lists('name', 'id');
+			}
+
+			if ($id) {
+				$user = $this->user->find($id);
+				return View::make('users.kph', ['users' => $users, 'none' => $none])->with('selected', $user);
+			}
+
+			return View::make('users.kph', ['users' => $users, 'none' => $none]);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Change the account type for a user to a KPH account
+	 *
+	 * @return Response
+	 */
+	public function activateKPHaccount()
+	{
+		if (Auth::user()->isAdmin()) {
+			$data = Input::all();
+			$rules = User::$rulesKPH;
+			$rules['username'] = 'required|unique:users,username,' . Input::get('user_id');
+			$validator = Validator::make($data, $rules);
+			if ($validator->fails())
+				return Redirect::back()->withInput()->withErrors($validator);
+			$user = $this->user->whereId(Input::get('user_id'))->first();
+
+			// check if we can connect to the LDAP server
+			$ld = new LDAP();  // Create an instance of the LDAP helper class
+			$ldap = $ld->test_connection();
+
+			if (!$ldap)
+				return Redirect::back()->withInput()->with('error', "The KPH LDAP server is not available. You can't change the user's account type now.");
+
+			// check if the username exists on the LDAP server
+			if ($ld->user_exists($data['username']))
+				$ldap_data = $ld->search_user($data['username']);
+			else
+				return Redirect::back()->withInput()->withErrors(array('username' => 'Username does not exist on LDAP server!'));
+
+			// change the user's account to the KPH credentials and set the ldap_id accordingly
+			$user->username = $data['username'];
+			$user->ldap_id = $ldap_data['uidnumber'][0];
+			$user->password = 'ldap';
+			$user->save();
+
+			$users = $this->user->whereNull('ldap_id')->get();
+
+			return Redirect::to('/users/non-kph')->with('users', $users)->with('success', 'Account of ' . $user->get_full_name() . ' successfully changed to a KPH account.');
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
 	 * Sort a collection in a given order
 	 *
-	 * @param
 	 * @param Collection $collection
+	 * @param string $order
 	 * @return sorted collection
 	 */
 	public function sort_collection($collection, $order)

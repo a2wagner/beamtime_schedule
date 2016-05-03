@@ -16,6 +16,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		self::$rules_edit = array_except(static::$rules, array('username', 'password', 'password_confirmation'));
 		// keep only the password related fields and add an entry which will be used to check if the old password is correct
 		self::$rules_pwChange = array_add(array_only(static::$rules, array('password', 'password_confirmation')), 'password_old', 'required');
+		// only the username and the corresponding id is needed to change the user account to a KPH account
+		self::$rulesKPH = array_add(array_only(static::$rules, array('username')), 'user_id', 'required|integer');
 	}
 
 	//protected $fillable = ['first_name', 'last_name', 'user_name', 'email', 'password', 'rating'];
@@ -36,6 +38,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	public static $rules_edit;
 	public static $rules_pwChange;
+	public static $rulesKPH;
 
 	public $errors;
 

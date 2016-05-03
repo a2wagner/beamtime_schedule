@@ -75,6 +75,9 @@
                             @if((Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction()) || Auth::user()->isRadiationExpert())
                             <li><a href="/users/radiation"><i class="fa">&thinsp;&#9762;&nbsp;</i> Radiation Instruction</a></li>
                             @endif
+                            @if(Auth::user()->isAdmin())
+                            <li><a href="/users/kph"><i class="fa fa-user-plus fa-fw"></i> Add KPH Account</a></li>
+                            @endif
                             <li><a href="/users/manage"><i class="fa fa-sliders fa-fw"></i> Manage Users</a></li>
                           </ul>
                         </li>
