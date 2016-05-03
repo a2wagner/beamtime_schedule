@@ -462,18 +462,18 @@ class UsersController extends \BaseController {
 	public function enable($id)
 	{
 		if (Auth::user()->isAdmin()) {
-				$user = $this->user->find($id);
-				$user->enable();
-				$user->save();
+			$user = $this->user->find($id);
+			$user->enable();
+			$user->save();
 
-				// send the enabled user a mail
-				$subject = 'Account enabled';
-				$msg = 'Hello ' . $user->first_name . ",\r\n\r\n";
-				$msg.= 'your account has been enabled. You should be able to login and subscribe to shifts now. Please check your account information: ' . url() . '/users/' . $user->username . "/edit\r\n\r\n";
-				$msg.= "A2 Beamtime Scheduler";
-				$success = $user->mail($subject, $msg);
+			// send the enabled user a mail
+			$subject = 'Account enabled';
+			$msg = 'Hello ' . $user->first_name . ",\r\n\r\n";
+			$msg.= 'your account has been enabled. You should be able to login and subscribe to shifts now. Please check your account information: ' . url() . '/users/' . $user->username . "/edit\r\n\r\n";
+			$msg.= "A2 Beamtime Scheduler";
+			$success = $user->mail($subject, $msg);
 
-				return Redirect::route('users.new', ['users' => $this->user->where('role', '!&', User::ENABLED)->get()])->with('success', 'User ' . $user->username . ' enabled successfully');
+			return Redirect::route('users.new', ['users' => $this->user->where('role', '!&', User::ENABLED)->get()])->with('success', 'User ' . $user->username . ' enabled successfully');
 		} else
 			return Redirect::to('/users');
 	}
@@ -488,17 +488,17 @@ class UsersController extends \BaseController {
 	public function toggleAdmin($id)
 	{
 		if (Auth::user()->isAdmin()) {
-				$user = $this->user->find($id);
-				$user->toggleAdmin();
-				$user->save();
+			$user = $this->user->find($id);
+			$user->toggleAdmin();
+			$user->save();
 
-				$msg = 'User ' . $user->first_name . ' ' . $user->last_name;
-				if ($user->isAdmin())
-					$msg .= ' is now an admin';
-				else
-					$msg .= ' is no longer an admin';
+			$msg = 'User ' . $user->first_name . ' ' . $user->last_name;
+			if ($user->isAdmin())
+				$msg .= ' is now an admin';
+			else
+				$msg .= ' is no longer an admin';
 
-				return Redirect::route('users.admins', ['users' => $this->user->all()])->with('success', $msg);
+			return Redirect::route('users.admins', ['users' => $this->user->all()])->with('success', $msg);
 		} else
 			return Redirect::to('/users');
 	}
@@ -513,17 +513,17 @@ class UsersController extends \BaseController {
 	public function toggleRunCoordinator($id)
 	{
 		if (Auth::user()->isAdmin() || Auth::user()->isPI()) {
-				$user = $this->user->find($id);
-				$user->toggleRunCoordinator();
-				$user->save();
+			$user = $this->user->find($id);
+			$user->toggleRunCoordinator();
+			$user->save();
 
-				$msg = 'User ' . $user->first_name . ' ' . $user->last_name;
-				if ($user->isRunCoordinator())
-					$msg .= ' is now a run coordinator';
-				else
-					$msg .= ' is no longer a run coordinator';
+			$msg = 'User ' . $user->first_name . ' ' . $user->last_name;
+			if ($user->isRunCoordinator())
+				$msg .= ' is now a run coordinator';
+			else
+				$msg .= ' is no longer a run coordinator';
 
-				return Redirect::route('users.run_coordinators', ['users' => $this->user->all()])->with('success', $msg);
+			return Redirect::route('users.run_coordinators', ['users' => $this->user->all()])->with('success', $msg);
 		} else
 			return Redirect::to('/users');
 	}
@@ -538,17 +538,17 @@ class UsersController extends \BaseController {
 	public function toggleRadiationExpert($id)
 	{
 		if (Auth::user()->isAdmin()) {
-				$user = $this->user->find($id);
-				$user->toggleRadiationExpert();
-				$user->save();
+			$user = $this->user->find($id);
+			$user->toggleRadiationExpert();
+			$user->save();
 
-				$msg = 'User ' . $user->get_full_name();
-				if ($user->isRadiationExpert())
-					$msg .= ' is now a radiation expert';
-				else
-					$msg .= ' is no longer a radiation expert';
+			$msg = 'User ' . $user->get_full_name();
+			if ($user->isRadiationExpert())
+				$msg .= ' is now a radiation expert';
+			else
+				$msg .= ' is no longer a radiation expert';
 
-				return Redirect::route('users.radiation_experts', ['users' => $this->user->all()])->with('success', $msg);
+			return Redirect::route('users.radiation_experts', ['users' => $this->user->all()])->with('success', $msg);
 		} else
 			return Redirect::to('/users');
 	}
@@ -563,17 +563,17 @@ class UsersController extends \BaseController {
 	public function togglePrincipleInvestigator($id)
 	{
 		if (Auth::user()->isAdmin() || Auth::user()->isPI()) {
-				$user = $this->user->find($id);
-				$user->togglePI();
-				$user->save();
+			$user = $this->user->find($id);
+			$user->togglePI();
+			$user->save();
 
-				$msg = 'User ' . $user->first_name . ' ' . $user->last_name;
-				if ($user->isPI())
-					$msg .= ' is now a principle investigator';
-				else
-					$msg .= ' is no longer a principle investigator';
+			$msg = 'User ' . $user->first_name . ' ' . $user->last_name;
+			if ($user->isPI())
+				$msg .= ' is now a principle investigator';
+			else
+				$msg .= ' is no longer a principle investigator';
 
-				return Redirect::route('users.principle_investigators', ['users' => $this->user->all()])->with('success', $msg);
+			return Redirect::route('users.principle_investigators', ['users' => $this->user->all()])->with('success', $msg);
 		} else
 			return Redirect::to('/users');
 	}
