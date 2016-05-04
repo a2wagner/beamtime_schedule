@@ -131,6 +131,8 @@ class UsersController extends \BaseController {
 			$this->user->enable();
 			$this->user->save();
 
+			Auth::login($this->user);  // authenticate user
+
 			return Redirect::to('')->with('success', 'Account created successfully. Set as Admin and enabled by default as it\'s the first user account.');
 		}
 

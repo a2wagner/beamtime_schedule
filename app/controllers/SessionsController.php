@@ -100,6 +100,17 @@ class SessionsController extends \BaseController {
 					$user->save();
 
 					Auth::login($user);  // authenticate user
+
+					// if this is the first user, we set him as an admin and enable him by default
+					if ($user->id == 1) {
+						$user->toggleAdmin();
+						$user->save();
+
+						return Redirect::to('/users/' . $userdata['username'] . '/edit')
+								->with('success', 'Account created successfully. Set as Admin by default as it\'s the first user account. Check the information below and update them if needed.');
+					}
+
+					Auth::login($user);  // authenticate user
 					return Redirect::to('/users/' . $userdata['username'] . '/edit')
 							->with('info', 'You\'ve logged in for the first time. Check the information below and update them if needed.');
 				}
