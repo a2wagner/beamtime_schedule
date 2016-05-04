@@ -30,6 +30,11 @@
                 padding-top: 60px;
                 padding-bottom: 60px;
             }
+            @media print {
+                a[href]:after {
+                    content: "" !important;
+                }
+            }
             @show
         </style>
     </head>
