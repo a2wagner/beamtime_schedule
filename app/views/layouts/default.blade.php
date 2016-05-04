@@ -16,7 +16,11 @@
         <!-- CSS are placed here -->
         @section('css')
         {{ HTML::style('css/source-sans-pro.css') }}
+        @if (Auth::check())
+        {{ HTML::style('css/bootstrap.min.'.Auth::user()->css.'.css') }}
+        @else
         {{ HTML::style('css/bootstrap.min.css') }}
+        @endif
         {{ HTML::style('css/font-awesome.min.css') }}
         @show
 
@@ -104,6 +108,8 @@
                             <li><a href="/users/{{ Auth::user()->username }}"><i class="fa fa-eye fa-fw"></i> View</a></li>
                             <li><a href="/users/{{ Auth::user()->username }}/edit"><i class="fa fa-edit fa-fw"></i> Edit</a></li>
                             <li><a href="/users/{{ Auth::user()->username }}/shifts"><i class="fa fa-list-alt fa-fw"></i> Shifts</a></li>
+                            <li class="divider"></li>
+                            <li><a href="/users/settings"><i class="fa fa-sliders fa-fw"></i> Settings</a></li>
                           </ul>
                         </li>
                     </ul>

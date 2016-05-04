@@ -673,6 +673,37 @@ class UsersController extends \BaseController {
 
 
 	/**
+	 * Return view with settings like different styles which can be applied
+	 *
+	 * @return Response
+	 */
+	public function settings()
+	{
+		$style = Auth::user()->css;
+
+		return View::make('users.settings', ['style' => $style]);
+	}
+
+
+	/**
+	 * Update the user's settings
+	 *
+	 * @return Response
+	 */
+	public function updateSettings($style)
+	{
+		if (empty($style))
+			return Redirect::back()->withInput()->withErrors(array('error' => 'No style chosen. Please choose a style which you want to use.'));
+
+		$user = Auth::user();
+		$user->css = $style;
+		$user->save();
+
+		return Redirect::back()->with('style', $style)->with('success', 'Style changed to ' . ucfirst($style) . ' successfully.');
+	}
+
+
+	/**
 	 * Sort a collection in a given order
 	 *
 	 * @param Collection $collection

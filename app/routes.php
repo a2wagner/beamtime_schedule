@@ -50,6 +50,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('users/non-kph', array('as' => 'users.nonKPH', 'uses' => 'UsersController@viewNonKPH'));
 	Route::get('users/kph', array('as' => 'users.makeKPH', 'uses' => 'UsersController@viewMakeKPH'));
 	Route::get('users/kph/{users}', array('as' => 'users.makeKPH', 'uses' => 'UsersController@viewMakeKPH'));
+	Route::get('users/settings', array('as' => 'users.settings', 'uses' => 'UsersController@settings'));
+	Route::patch('users/settings/{styles}', array('as' => 'users.updateSettings', 'uses' => 'UsersController@updateSettings'));
 	Route::patch('users/{users}/admin', array('as' => 'users.toggleAdmin', 'uses' => 'UsersController@toggleAdmin'));
 	Route::patch('users/{users}/re', array('as' => 'users.toggleRadiationExpert', 'uses' => 'UsersController@toggleRadiationExpert'));
 	Route::patch('users/{users}/rc', array('as' => 'users.toggleRunCoordinator', 'uses' => 'UsersController@toggleRunCoordinator'));
