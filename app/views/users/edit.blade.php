@@ -144,7 +144,7 @@ function hide()
     @if ($user->ldap_id)
     <p class="col-lg-offset-2">
       You can change your password via the KPH internal pages: <br />
-      <a href="http://kph.uni-mainz.de/de/interne-seiten/benutzer-menu/benutzer-profil.html" target="_blank">KPH user menu</a>
+      <a href="http://kph.uni-mainz.de/en/interne-seiten/benutzer-menu/benutzer-profil.html" target="_blank">KPH user menu</a>
     </p>
     @else
     {{ Form::open(['route' => array('users.update', $user->id), 'method' => 'PUT', 'class' => 'form-horizontal']) }}
