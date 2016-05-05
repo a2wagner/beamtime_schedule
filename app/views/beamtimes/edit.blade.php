@@ -75,7 +75,7 @@ function toggleRadio(id)
 {{ Form::open(['route' => array('beamtimes.update', $beamtime->id), 'method' => 'PATCH']) }}
 <div class="col-lg-10 col-lg-offset-1">
     <div class="page-header">
-      <table width="100%">
+      <table style="background-color: initial;" width="100%">
         <tr>
           <td>
             <div class="form-group {{{ $errors->has('name') ? 'has-error has-feedback' : '' }}}" style="padding-left: 15px;">

@@ -156,6 +156,9 @@ $(document).ready(function(){
             pie: {
                 show: true,
                 radius: 1,
+                stroke: {
+                    width: 0
+                },
                 label: {
                     show: true,
                     radius: 2/3,

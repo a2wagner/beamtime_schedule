@@ -23,7 +23,7 @@ Profile of {{ $user->username }}
     		$phone = array_add($phone, 'Private', $user->phone_private);
     ?>
     <div class="page-header">
-      <table width="100%">
+      <table style="background-color: initial;" width="100%">
         <tr>
           <td>
             <h2>Account of {{ $user->get_full_name() }}</h2>
@@ -117,6 +117,9 @@ Profile of {{ $user->username }}
                     pie: {
                       show: true,
                       radius: 1,
+                      stroke: {
+                        width: 0
+                      },
                       label: {
                         show: true,
                         radius: 2/3,
