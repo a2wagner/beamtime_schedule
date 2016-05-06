@@ -17,7 +17,7 @@ $(document).ready(function() {
 <div class="col-lg-10 col-lg-offset-1">
     <div class="page-header">
       @if (!empty($current))
-      <table width="100%">
+      <table style="background-color: initial;" width="100%">
         <tr>
           <td>
             <h2>Beamtime: {{{ $beamtime->name }}}</h2>
