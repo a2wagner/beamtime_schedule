@@ -141,7 +141,7 @@ class Shift extends \Eloquent {
 
 		// check if start and end order is correct
 		if ($start > $end)
-			return $this->date_in_range($end, $start, $ref_start, $ref_end);
+			return $this->date_overlap($end, $start, $ref_start, $ref_end);
 
 		// figure out which is the later start time
 		$lastStart = $start >= $ref_start ? $start : $ref_start;
