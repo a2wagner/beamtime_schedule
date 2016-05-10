@@ -126,6 +126,30 @@ class Shift extends \Eloquent {
 	}
 
 	/**
+	* Check if a specific date is during the shift
+	*
+	* @param $date
+	* @return boolean
+	*/
+	public function is_inside($date)
+	{
+		$start = strtotime($this->start);
+		$end = $this->end()->getTimeStamp();
+		$date = is_int($date) || $date instanceof DateTime ? $date->getTimeStamp() : strtotime($date);
+		return $date > $start && $date < $end;
+	}
+
+	/**
+	* Check if the shift is the current one
+	*
+	* @return boolean
+	*/
+	public function is_current()
+	{
+		return $this->is_inside('now');
+	}
+
+	/**
 	* Check if a given date is between to other dates
 	*
 	* @param $start, $end, $ref_start, $ref_end
