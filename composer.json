@@ -4,7 +4,8 @@
 	"keywords": ["framework", "laravel"],
 	"license": "MIT",
 	"require": {
-		"laravel/framework": "4.2.*"
+		"laravel/framework": "4.2.*",
+		"eluceo/ical": ">=0.10.0"
 	},
 	"require-dev": {
 		"way/generators": "~2.0"

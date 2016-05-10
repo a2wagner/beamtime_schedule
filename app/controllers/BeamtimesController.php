@@ -276,6 +276,51 @@ class BeamtimesController extends \BaseController {
 
 
 	/**
+	 * Return an iCalendar file including all shifts the logged in user has taken in the specific beamtime.
+	 *
+	 * @param  int  $id
+	 * @return ics file
+	 */
+	public function ics($id)
+	{
+		if (Auth::guest())
+			return Redirect::guest('login');
+
+		$user = Auth::user();
+		$shifts = $user->shifts->filter(function($shift) use($id)
+		{
+			return $shift->beamtime_id == $id;
+		});
+
+		if (!$shifts->count())
+			return Redirect::back()->with('error', "You haven't taken any shifts in this beamtime");
+
+		date_default_timezone_set('Europe/Berlin');
+
+		$vCalendar = new \Eluceo\iCal\Component\Calendar("Shifts of " . $user->get_full_name());
+
+		$shifts->each(function($shift) use(&$vCalendar)
+		{
+			$vEvent = new \Eluceo\iCal\Component\Event();
+			$vEvent->setDtStart(new DateTime($shift->start));
+			$vEvent->setDtEnd($shift->end());
+			$vEvent->setUseTimezone(true);
+			$vEvent->setSummary('Shift');
+			$vEvent->setDescription("Shift in beamtime \"" . $shift->beamtime->name . "\"");
+			$vEvent->setDescriptionHTML('<b>Shift</b> in beamtime "<a href="' . url() . "/beamtimes/$shift->beamtime_id" . '">' . $shift->beamtime->name . '</a>"');
+			$vEvent->setLocation("Institut für Kernphysik \nMainz \nGermany", 'A2 Counting Room', '49.991, 8.237');
+
+			$vCalendar->addComponent($vEvent);
+		});
+
+		header('Content-Type: text/calendar; charset=utf-8');
+		header('Content-Disposition: attachment; filename="cal.ics"');
+
+		return $vCalendar->render();
+	}
+
+
+	/**
 	 * Display the run coordinator shifts for the specified beamtime.
 	 *
 	 * @param  int  $id

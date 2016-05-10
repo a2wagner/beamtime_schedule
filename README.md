@@ -68,7 +68,7 @@ Now we have all required files for this project.
 
 ### Final set up
 
-The [Laravel 4 Generators by Jeffrey Way](https://github.com/JeffreyWay/Laravel-4-Generators) were used in this project to create skeleton classes, to use them the composer.json has already been edited regarding the description from the linked Github repository. Before the first use run ``composer update --dev`` (or composer.phar, depends on the installation method used) like above. 
+The [Laravel 4 Generators by Jeffrey Way](https://github.com/JeffreyWay/Laravel-4-Generators) were used in this project to create skeleton classes as well as the [eluceo — iCal package from Markus Poerschke](https://github.com/markuspoerschke/iCal) to crate iCal files. To use them the composer.json has already been edited. Before the first use run ``composer update --dev`` (or composer.phar, depends on the installation method used) like above. 
 
 In the ``app/config/database.php`` the section regarding the used database system has to be adapted. In this case MySQL is used. To create the database, login to mysql with ``mysql -u root -p`` and insert your password. Inside the mysql client execute the command ``CREATE DATABASE beamtime;`` and ``quit`` afterwards. Edit the database name in ``app/config/database.php`` accordingly. The already prepared database has to be migrated via ``php artisan migrate``. The workgroups can be filled in the database using ``php artisan db:seed``. 
 

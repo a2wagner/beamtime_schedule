@@ -11,8 +11,13 @@ Shifts of {{ $user->get_full_name() }}
     <div class="page-header">
         <h2>Your taken shifts</h2>
     </div>
-    Total shifts taken: {{ $user->shifts->count() }}<br />
-    Time on shifts: {{ $user->shifts->sum('duration') }} hours
+    <div style="margin-left: 20px;">
+      <p>
+        Total shifts taken: {{ $user->shifts->count() }}<br />
+        Time on shifts: {{ $user->shifts->sum('duration') }} hours
+      </p>
+      <p>Download your shifts as calendar file:&ensp;{{ link_to("/users/$user->username/ics", 'iCal', ['class' => 'btn btn-success btn-xs']) }}</p>
+    </div>
     <div>
       <table class="table table-striped table-hover">
 <?php $shifts->groupBy('beamtime_id')->each(function($item){

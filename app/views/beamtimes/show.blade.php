@@ -248,7 +248,8 @@ function sub(e) {
     </table>
     </div>
     <div>
-      Total shifts: {{{ $shifts_total }}} ({{{ $shifts_open }}} open), {{{ $shifts->count() - $shifts_total }}} maintenance shifts, individual shifts: {{{ $individual }}} ({{{ $individual_open }}} open), TODO: button iCal export...
+      <p>Total shifts: {{{ $shifts_total }}} ({{{ $shifts_open }}} open), {{{ $shifts->count() - $shifts_total }}} maintenance shifts, individual shifts: {{{ $individual }}} ({{{ $individual_open }}} open)</p>
+      <p>Download your shifts as calendar file:&ensp;{{ link_to("/beamtimes/$beamtime->id/ics", 'iCal', ['class' => 'btn btn-success btn-xs']) }}</p>
     </div>
     @else
     <h3 class="text-danger">Beamtime not found!</h3>

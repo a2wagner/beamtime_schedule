@@ -40,6 +40,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('users/enable', array('as' => 'users.new', 'uses' => 'UsersController@viewNew'));
 	Route::patch('users/{users}/enable', array('as' => 'users.enable', 'uses' => 'UsersController@enable'));
 	Route::get('users/{users}/shifts', array('as' => 'users.shifts', 'uses' => 'UsersController@shifts'));
+	Route::get('users/{users}/ics', array('as' => 'users.ics', 'uses' => 'UsersController@ics'));
 	Route::patch('users/{users}/radiation', array('as' => 'users.radiation', 'uses' => 'UsersController@renewRadiationInstruction'));
 	Route::get('users/manage', array('as' => 'users.manage', 'uses' => 'UsersController@manageUsers'));
 	Route::get('users/admins', array('as' => 'users.admins', 'uses' => 'UsersController@viewAdmins'));
@@ -62,6 +63,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('statistics', array('as' => 'statistics', 'uses' => 'BeamtimesController@statistics'));
 	Route::get('statistics/{year}', array('as' => 'statistics', 'uses' => 'BeamtimesController@statistics'));
 	Route::post('statistics/{year}', array('as' => 'statistics', 'uses' => 'BeamtimesController@statistics'));
+	Route::get('beamtimes/{id}/ics', array('as' => 'beamtimes.ics', 'uses' => 'BeamtimesController@ics'));
 	Route::get('beamtimes/{id}/rc', array('as' => 'beamtimes.rc_show', 'uses' => 'BeamtimesController@rc_show'));
 	Route::patch('beamtimes/{id}/rc', array('as' => 'beamtimes.rc_update', 'uses' => 'BeamtimesController@rc_update'));
 	Route::patch('shifts/{shifts}', array('as' => 'shifts.update', 'uses' => 'ShiftsController@update'));
