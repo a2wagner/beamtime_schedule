@@ -140,7 +140,7 @@
             <div class="alert alert-warning hidden-print">
                 <h4>Important</h4>
                 You do not have a KPH account yet. Please request an account with <a style="color: black;" href="https://portal.kph.uni-mainz.de/registration/">this form</a>.<br />
-                More information can be found <a style="color: black;" href="http://edv.kph.uni-mainz.de/en/zentrale-dienste/benutzer-verwaltung.html">here</a>.
+                More information can be found <a style="color: black;" href="http://edv.kph.uni-mainz.de/en/accounts.html">here</a>.
             </div>
             @endif
 
