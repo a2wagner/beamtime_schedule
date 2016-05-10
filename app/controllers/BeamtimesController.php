@@ -314,7 +314,7 @@ class BeamtimesController extends \BaseController {
 		});
 
 		header('Content-Type: text/calendar; charset=utf-8');
-		header('Content-Disposition: attachment; filename="cal.ics"');
+		header('Content-Disposition: attachment; filename="' . $user->username . '_beamtime' . $id . '.ics"');
 
 		return $vCalendar->render();
 	}
