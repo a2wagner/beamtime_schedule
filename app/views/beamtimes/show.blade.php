@@ -183,7 +183,11 @@ function sub(e) {
           </tr>
         </thead>
         @endif
+        @if ($shift->is_current())
+        <tr style="background-color: rgb(128, 223, 255); background-color: rgba(68, 208, 255, 0.4);">
+        @else
         <tr>
+        @endif
           <?php $td = ""; if ($n = $shift->users->count() > 0) $td = '<td rowspan="' . $n . '">'; else $td = '<td>'; ?>
           {{ $td }}<span{{ $shift->users->count() < $shift->n_crew ? ' class="text-danger"' : ''}}>{{ ++$i }}&emsp;({{{ $shift->type() }}})</span></td>
           {{ $td }}<span{{ $shift->users->count() < $shift->n_crew ? ' class="text-danger"' : ''}}>{{ $shift->start }}</span></td>
