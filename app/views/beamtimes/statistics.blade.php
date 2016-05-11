@@ -22,45 +22,63 @@ $(document).ready(function(){
 @section('content')
 <?php
 $current_year = date('Y');
-if (!$year)
+if (empty($year))
 	$year = $current_year;
 ?>
 <div class="row">
-  <div class="col-lg-4 col-lg-offset-1">
+  <div class="col-lg-5 col-lg-offset-1">
     <div class="panel panel-default">
       <div class="panel-body">
-        Total beamtimes: {{{ Beamtime::all()->count() }}} <br />
+        {{ link_to('/statistics/all', 'Total beamtimes: ' . Beamtime::all()->count(), ['style' => 'color: inherit;']) }}
       </div>
     </div>
     <div class="panel panel-primary">
       <div class="panel-heading">
-        <h4 class="panel-title">Please select a year</h3>
+        <h3 class="panel-title">Select a year</h3>
       </div>
       <div class="panel-body">
-{{ Form::open(['route' => 'statistics', 'class' => 'form-horizontal', 'role' => 'form']) }}
-{{ Form::selectYear('year', 2015, $current_year, $year, array('id' => 'select-year')) }}
-{{ Form::close() }}
+        {{ Form::open(['route' => 'statistics', 'class' => 'form-horizontal', 'role' => 'form']) }}
+          <div style="margin-left: 10px;">
+            {{ Form::selectYear('year', Session::get('first'), Session::get('last'), $year, array('id' => 'select-year')) }}
+          </div>
+        {{ Form::close() }}
+      </div>
+    </div>
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Select a year range</h3>
+      </div>
+      <div class="panel-body">
+        {{ Form::open(['route' => array('statistics', 'range'), 'class' => 'form-inline', 'role' => 'form']) }}
+          <div class="form-group">
+            {{ Form::label('year1', 'From: ', array('class' => 'col-lg-4 control-label')) }}
+            <div class="col-lg-2">
+              {{ Form::selectYear('year1', Session::get('first'), Session::get('last'), $year, array('id' => 'select-year')) }}
+            </div>
+          </div>
+          <div class="form-group">
+            {{ Form::label('year2', 'To: ', array('class' => 'col-lg-2 control-label')) }}
+            <div class="col-lg-2">
+              {{ Form::selectYear('year2', Session::get('first'), Session::get('last'), $year, array('id' => 'select-year')) }}
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-2 col-lg-offset-1">
+              {{ Form::submit('Submit', array('class' => 'btn btn-primary btn-sm')) }}
+            </div>
+          </div>
+        {{ Form::close() }}
       </div>
     </div>
   </div>
 </div>
 <div class="row">
   <div class="col-lg-10 col-lg-offset-1">
+    @if (!$beamtimes->count())
+    <h3 class="text-info">No beamtimes found for {{{ empty($range) ? $year : $range }}}!</h3>
+    @else
 
 <?php
-$beamtimes = Beamtime::all()
-	->filter(function($beamtime) use($year)
-	{
-		return $beamtime->is_year($year);
-		//return $beamtime->is_in_years($year);
-		//return $beamtime->is_in_range(2016, 2014);
-	});
-
-if (!$beamtimes->count())
-	echo '<h3 class="text-info">No beamtimes found for ' . $year . "!</h3>\n";
-else {
-
-
 $hours = $beamtimes->sum(function($beamtime)
 	{
 		return $beamtime->shifts->sum('duration');
@@ -71,8 +89,6 @@ $shifts = $beamtimes->shifts->reject(function($shift)
 	{
 		return $shift->maintenance;
 	});
-
- // --> $results = $articles->groupBy('category');
 
 $info = array();
 // initialise array with every contributing workgroup and the total shift amount
@@ -109,27 +125,25 @@ $beamtimes->shifts->each(function($shift) use(&$info)
 				$info[$workgroup->id]['night']++;
 			});
 	});
-//dd($info);
 
 ?>
 
-<div class="page-header">
-    <h2>Statistics for {{{ $year }}}</h2>
-</div>
+      <div class="page-header">
+        <h2>Statistics for {{{ empty($range) ? $year : $range }}}</h2>
+      </div>
 
-{{{ $beamtimes->count() }}} beamtimes with {{{ $shifts->count() }}} shifts (plus {{{ $beamtimes->shifts->count() - $shifts->count() }}} maintenance shifts, {{{ $beamtimes->shifts->count() }}} total)<br />
-{{{ $beamtimes->shifts->users->count() }}} total individual shifts taken of possible {{{ $beamtimes->shifts->sum('n_crew') }}} individual shifts<br />
-{{-- dd( $beamtimes->shifts->users->workgroup->groupBy('name', 'country')->orderBy('country')->orderBy('name') ) --}}
+      {{{ $beamtimes->count() }}} beamtimes with {{{ $shifts->count() }}} shifts (plus {{{ $beamtimes->shifts->count() - $shifts->count() }}} maintenance shifts, {{{ $beamtimes->shifts->count() }}} total)<br />
+      {{{ $beamtimes->shifts->users->count() }}} total individual shifts taken of possible {{{ $beamtimes->shifts->sum('n_crew') }}} individual shifts<br />
+      {{-- dd( $beamtimes->shifts->users->workgroup->groupBy('name', 'country')->orderBy('country')->orderBy('name') ) --}}
 
+      Total beamtime: {{{ $hours }}} hours ({{{ round($hours/24, 1) }}} days)
 
-
-   {{-- oben ist einfacher, remove (nur da für später, falls ich was ähnliches brauche) --}}
-   <!--{{{ $beamtimes->count() }}} beamtimes with {{{ $beamtimes->sum(function($beamtime){ return $beamtime->shifts->count(); }) }}} shifts<br />-->
-Total beamtime: {{{ $hours }}} hours ({{{ round($hours/24, 1) }}} days)
-
-<h3>Contributing Workgroups:</h3>
-{{-- jQuery needs to be loaded before the other Javascript parts need it --}}
-{{ HTML::script('js/jquery-2.1.1.min.js') }}
+      @if (!$beamtimes->shifts->users->count())
+      <h3 class="text-info">No shifts taken!</h3>
+      @else
+      <h3>Contributing Workgroups:</h3>
+      {{-- jQuery needs to be loaded before the other Javascript parts need it --}}
+      {{ HTML::script('js/jquery-2.1.1.min.js') }}
 <?php
 foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
@@ -188,9 +202,9 @@ $(document).ready(function(){
 	echo '<div id="flotcontainer'.$group['id'].'" style="width: 400px; height: 250px; margin-bottom: 2em;"></div></p>';
 }
 
-}
 ?>
-
+      @endif  {{-- Workgroups --> shifts taken? --}}
+    @endif  {{-- Beamtimes found? --}}
   </div>
 </div>
 @stop

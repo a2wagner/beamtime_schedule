@@ -269,9 +269,58 @@ class BeamtimesController extends \BaseController {
 		if (!Auth::user()->isAdmin() && !Auth::user()->isPI())
 			return Redirect::to('beamtimes');
 
+		$beamtimes = Beamtime::all();
+		// add start of the beamtime to each beamtime
+		foreach ($beamtimes as $beamtime)
+			$beamtime->start = $beamtime->start_string();
+		// sort the beamtimes
+		$beamtimes->sortBy('start');
+		// get the first and last year with a beamtime
+		$first = intval(substr($beamtimes->first()->start, 0, 4));
+		$last = intval(substr($beamtimes->last()->start, 0, 4));
+		Session::flash('first', $first);
+		Session::flash('last', $last);
+
+		if ($year === 'all')
+			return View::make('beamtimes.statistics')->with('beamtimes', $beamtimes)->with('range', 'all Beamtimes');
+		if (Input::has('year1') && Input::has('year2')) {
+			$year1 = Input::get('year1');
+			$year2 = Input::get('year2');
+			$beamtimes = Beamtime::all()->filter(function($beamtime) use($year1, $year2)
+				{
+					return $beamtime->is_in_range($year1, $year2);
+				});
+			return View::make('beamtimes.statistics')->with('beamtimes', Beamtimes::all())->with('range', $year1 . ' &ndash; ' . $year2);
+		} else if (strpos($year, '-') !== false) {
+			$years = explode('-', $year);
+			if (count($years) !== 2)
+				return Redirect::route('statistics')->with('error', 'Too many dash separated values.');
+			$year1 = intval($years[0]);
+			$year2 = intval($years[1]);
+			if ($year1 < 2 || $year2 < 2)
+				return Redirect::route('statistics')->with('error', 'Wrong data format entered.');
+			if (($year1 + $year2) < (2*$first) && ($year1 + $year2) > (2*$last))
+				return Redirect::route('statistics')->with('error', 'Entered years do not match with the available years with beamtime.');
+			$beamtimes = Beamtime::all()->filter(function($beamtime) use($year1, $year2)
+				{
+					return $beamtime->is_in_range($year1, $year2);
+				});
+			return View::make('beamtimes.statistics')->with('beamtimes', $beamtimes)->with('range', $year1 . ' &ndash; ' . $year2);
+		}
+
 		if (!$year)
 			$year = Input::get('year', NULL);
-		return View::make('beamtimes.statistics')->with('year', $year);
+		$year = intval($year);
+		// check if $year is an int (NULL becomes 0 as well as strings or empty arrays)
+		if ($year == 0)
+			$year = date('Y');
+
+		$beamtimes = Beamtime::all()->filter(function($beamtime) use($year)
+			{
+				return $beamtime->is_year($year);
+			});
+
+		return View::make('beamtimes.statistics')->with('beamtimes', $beamtimes)->with('year', $year);
 	}
 
 
