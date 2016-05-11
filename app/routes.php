@@ -34,9 +34,12 @@ Route::get('logout', 'SessionsController@destroy');
 // without post it's not possible to create accounts
 Route::when('users', 'auth', array('put', 'delete'));
 
+// iCal link should be accessible without login
+Route::get('ical/{hash}', array('as' => 'ical', 'uses' => 'UsersController@ical'));
 // group all routes to controllers etc which should only be accessible when authenticated
 Route::group(array('before' => 'auth'), function()
 {
+	Route::patch('ical/{users}', array('as' => 'ical.generate', 'uses' => 'UsersController@generate_ical'));
 	Route::get('users/enable', array('as' => 'users.new', 'uses' => 'UsersController@viewNew'));
 	Route::patch('users/{users}/enable', array('as' => 'users.enable', 'uses' => 'UsersController@enable'));
 	Route::get('users/{users}/shifts', array('as' => 'users.shifts', 'uses' => 'UsersController@shifts'));

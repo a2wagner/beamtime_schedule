@@ -327,6 +327,66 @@ class UsersController extends \BaseController {
 
 
 	/**
+	 * Return an iCalendar file including all shifts a user has taken.
+	 *
+	 * @param string $id
+	 * @return Response
+	 */
+	public function generate_ical($id)
+	{
+		if (Auth::guest())
+			return Redirect::guest('login');
+		else if (Auth::user()->username !== $id) {
+			$user = $this->user->whereUsername($id)->first();
+			return View::make('users.show', ['user' => $user]);
+		}
+
+		$user = Auth::user();
+		$hash_id = hash('crc32', $user->id);
+		$hash_user = hash('crc32', $user->username);
+		$hash = $hash_id . $hash_user;
+
+		$user->ical = $hash;
+		$user->save();
+
+		return Redirect::route('users.settings')->with('success', 'iCal link generated successfully: ' . url() . '/ical/' . $hash);
+	}
+
+
+	/**
+	 * Return an iCalendar file including all shifts a user has taken.
+	 *
+	 * @param string $hash
+	 * @return ics file
+	 */
+	public function ical($hash)
+	{
+		date_default_timezone_set('Europe/Berlin');
+
+		$user = User::whereIcal($hash)->first();
+		$shifts = $user->shifts;
+
+		$vCalendar = new \Eluceo\iCal\Component\Calendar("Shifts of " . $user->get_full_name());
+
+		$shifts->each(function($shift) use(&$vCalendar)
+		{
+			$vEvent = new \Eluceo\iCal\Component\Event();
+			$vEvent->setDtStart(new DateTime($shift->start));
+			$vEvent->setDtEnd($shift->end());
+			$vEvent->setUseTimezone(true);
+			$vEvent->setSummary('Shift');
+			$vEvent->setDescription("Shift in beamtime \"" . $shift->beamtime->name . "\"");
+			$vEvent->setDescriptionHTML('<b>Shift</b> in beamtime "<a href="' . url() . "/beamtimes/$shift->beamtime_id" . '">' . $shift->beamtime->name . '</a>"');
+			$vEvent->setLocation("Institut für Kernphysik \nMainz \nGermany", 'A2 Counting Room', '49.991, 8.237');
+
+			$vCalendar->addComponent($vEvent);
+		});
+
+		return $vCalendar->render();
+	}
+
+
+	/**
 	 * Renew Radiation Protection Instruction for the user.
 	 *
 	 * @param  int  $id

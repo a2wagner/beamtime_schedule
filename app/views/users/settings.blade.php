@@ -20,6 +20,18 @@ Settings
     </div>
 
     <div class="page-header">
+        <h3>iCal Link for Calendar Integration</h3>
+    </div>
+    @if (!Auth::user()->ical)
+    <p>You can generate an individual link where you can access all your shifts without login. This can be used for integration in other calendars like Google Calendar or Thunderbird.</p>
+    {{ link_to("/ical/" . Auth::user()->username, 'Generate iCal Link', ['class' => 'btn btn-primary', 'data-method' => 'patch']) }}
+    @else
+    <p>The following link can be used to integrate and update your shifts in a calendar like Google Calendar or Thunderbird:</p>
+    <?php $link = url() . '/ical/' . Auth::user()->ical; ?>
+    {{ link_to($link, $link, ['style' => 'color: inherit;']) }}
+    @endif
+
+    <div class="page-header">
         <h3>Available Styles</h3>
     </div>
     <p style="margin: 30px;">
