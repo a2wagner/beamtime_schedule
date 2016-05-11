@@ -314,7 +314,8 @@ class UsersController extends \BaseController {
 			$vEvent->setSummary('Shift');
 			$vEvent->setDescription("Shift in beamtime \"" . $shift->beamtime->name . "\"");
 			$vEvent->setDescriptionHTML('<b>Shift</b> in beamtime "<a href="' . url() . "/beamtimes/$shift->beamtime_id" . '">' . $shift->beamtime->name . '</a>"');
-			$vEvent->setLocation("Institut für Kernphysik \nMainz \nGermany", 'A2 Counting Room', '49.991, 8.237');
+			//$vEvent->setLocation("Institut für Kernphysik \nMainz \nGermany", 'A2 Counting Room', '49.991, 8.237');
+			$vEvent->setLocation("Institut für Kernphysik \nMainz \nGermany");
 
 			$vCalendar->addComponent($vEvent);
 		});
@@ -377,7 +378,8 @@ class UsersController extends \BaseController {
 			$vEvent->setSummary('Shift');
 			$vEvent->setDescription("Shift in beamtime \"" . $shift->beamtime->name . "\"");
 			$vEvent->setDescriptionHTML('<b>Shift</b> in beamtime "<a href="' . url() . "/beamtimes/$shift->beamtime_id" . '">' . $shift->beamtime->name . '</a>"');
-			$vEvent->setLocation("Institut für Kernphysik \nMainz \nGermany", 'A2 Counting Room', '49.991, 8.237');
+			//$vEvent->setLocation("Institut für Kernphysik \nMainz \nGermany", 'A2 Counting Room', '49.991, 8.237');
+			$vEvent->setLocation("Institut für Kernphysik \nMainz \nGermany");
 
 			$vCalendar->addComponent($vEvent);
 		});
