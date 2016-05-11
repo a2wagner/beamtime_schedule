@@ -17,6 +17,10 @@ Shifts of {{ $user->get_full_name() }}
         Time on shifts: {{ $user->shifts->sum('duration') }} hours
       </p>
       <p>Download your shifts as calendar file:&ensp;{{ link_to("/users/$user->username/ics", 'iCal', ['class' => 'btn btn-success btn-xs']) }}</p>
+      <p>
+        In the {{ link_to('/users/settings', 'settings') }} you can get a link to a calendar file<br />
+        for integration with other calendar applications.
+      </p>
     </div>
     <div>
       <table class="table table-striped table-hover">
