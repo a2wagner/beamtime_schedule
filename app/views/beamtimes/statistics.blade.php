@@ -63,7 +63,7 @@ if (empty($year))
             </div>
           </div>
           <div class="form-group">
-            <div class="col-lg-2 col-lg-offset-1">
+            <div class="col-lg-2">
               {{ Form::submit('Submit', array('class' => 'btn btn-primary btn-sm')) }}
             </div>
           </div>
