@@ -198,25 +198,25 @@ class Beamtime extends \Eloquent {
 		return new DateTime($this->shifts->first()->start);
 	}
 
-        /**
-         * Return start string of the beamtime
-         *
-         * @return string
-         */
-        public function start_string()
-        {
-                return $this->shifts->first()->start;
-        }
+	/**
+	 * Return start string of the beamtime
+	 *
+	 * @return string
+	 */
+	public function start_string()
+	{
+		return $this->shifts->first()->start;
+	}
 
-        /**
-         * Return end of the beamtime
-         *
-         * @return DateTime
-         */
-        public function end()
-        {
-                return $this->shifts->last()->end();
-        }
+	/**
+	 * Return end of the beamtime
+	 *
+	 * @return DateTime
+	 */
+	public function end()
+	{
+		return $this->shifts->last()->end();
+	}
 
 	/**
 	 * Return end string of the beamtime
