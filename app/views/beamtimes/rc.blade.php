@@ -129,7 +129,7 @@ function toggleButton(btn)
     </table>
     </div>
     <div>
-      <table border=0 width=95%>
+      <table style="background-color: initial;" border=0 width=95%>
         <tr>
           <td>Total {{ $rc_shifts->count() }} run coordinator shifts</td>
           <td align="right">

@@ -183,7 +183,7 @@ function toggleRadio(id)
     </table>
     </div>
     <div>
-      <table border=0 width=95%>
+      <table style="background-color: initial;" border=0 width=95%>
         <tr>
           <td>Total {{ $shifts->filter(function($shift){ return !$shift->maintenance; })->count() }} shifts, {{{ $shifts->filter(function($shift){ return $shift->maintenance; })->count() }}} maintenance shifts, {{ $shifts->sum('n_crew') }} individual shifts</td>
           <td align="right">
