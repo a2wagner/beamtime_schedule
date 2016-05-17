@@ -135,7 +135,11 @@ function sub(e) {
         <div class="progress-bar progress-bar-danger" style="width: {{{ $empty }}}%"></div>
       </div>
       <p>
+        @if ($individual_open > 0)
         {{{ $shifts_open }}} of {{{ $shifts_total }}} total shifts open, {{{ $individual_open }}} of {{{ $individual }}} individual shifts open. (<span class="text-success">full</span>, <span class="text-warning">partly filled</span>, <span class="text-danger">empty</span>)
+        @else
+        All shifts filled ({{{ $shifts_total }}} total, {{{ $individual }}} individual).
+        @endif
       </p>
     </div>
     <div class="table-responsive">
@@ -248,7 +252,11 @@ function sub(e) {
     </table>
     </div>
     <div>
+      @if ($individual_open > 0)
       <p>Total shifts: {{{ $shifts_total }}} ({{{ $shifts_open }}} open), {{{ $shifts->count() - $shifts_total }}} maintenance shifts, individual shifts: {{{ $individual }}} ({{{ $individual_open }}} open)</p>
+      @else
+      <p>Total shifts: {{{ $shifts_total }}}, {{{ $shifts->count() - $shifts_total }}} maintenance shifts, individual shifts: {{{ $individual }}}, all shifts filled</p>
+      @endif
       <p>Download your shifts as calendar file:&ensp;{{ link_to("/beamtimes/$beamtime->id/ics", 'iCal', ['class' => 'btn btn-success btn-xs']) }}</p>
     </div>
     @else
