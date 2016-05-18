@@ -51,9 +51,9 @@ class SwapsController extends \BaseController {
 		$shift_request = Shift::find($req);
 		$beamtime_id = $shift_request->beamtime->id;
 		if ($beamtime_id != $shift_org->beamtime->id)
-			return Redirect::back()->with('error', 'The shifts don\'t belong to the same beamtime, please use the interface corretly!');
+			return Redirect::back()->with('error', 'The shifts don\'t belong to the same beamtime, please use the interface correctly!');
 		if (!$shift_org->users->find(Auth::id())->count())
-			return Redirect::back()->with('error', 'You\'re not subscribed to the original shift, please use the interface corretly!');
+			return Redirect::back()->with('error', 'You\'re not subscribed to the original shift, please use the interface correctly!');
 
 		// the query seems reasonable, create an entry in the database for this request and send emails to the users of this shift
 		$swap = new Swap();
@@ -84,7 +84,7 @@ class SwapsController extends \BaseController {
 		// mail content
 		$subject = 'Swap Request from ' . Auth::user()->get_full_name();
 		$msg = "Hello [USER],\r\n\r\n";
-		$msg.= Auth::user()->first_name . ' wants to swap shifts. ' . Auth::user()->first_name . ' is assigned to the shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift_org->start)) . ' and wants to change to your shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift_request->start)) . ".\r\n";
+		$msg.= Auth::user()->first_name . ' wants to swap shifts. ' . Auth::user()->first_name . ' is assigned to the shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift_org->start)) . ' and wants to change to a shift slot of your shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift_request->start)) . ".\r\n";
 		$msg.= 'You can view the swap request for the related beamtime in detail here: ' . url() . '/swaps/' . $hash . "\r\n\r\n";
 		$msg.= 'A2 Beamtime Scheduler';
 		// check if mailing worked

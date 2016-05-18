@@ -62,7 +62,7 @@ class Swap extends \Eloquent
 	}
 
 	/**
-	* Create the CRC32 hash for the swap request
+	* Create the hash for the swap request
 	*
 	* @param int $user_id, int $shift_org, int $shift_req
 	* @return string
@@ -73,7 +73,7 @@ class Swap extends \Eloquent
 	}
 
 	/**
-	* Validate the CRC32 hash for the swap request
+	* Validate the hash for the swap request
 	*
 	* @param string $hash, int $user_id, int $shift_org, int $shift_req
 	* @return string
