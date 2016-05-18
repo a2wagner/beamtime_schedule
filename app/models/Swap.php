@@ -82,4 +82,30 @@ class Swap extends \Eloquent
 	{
 		return $hash === hash(self::$algorithm, $user_id . ':' . $shift_org . ',' . $shift_req);
 	}
+
+	/**
+	* Check if the current swap is a shift request
+	*
+	* @return boolean
+	*/
+	public function is_request()
+	{
+		if ($this->original_shift_id !== $this->request_shift_id)
+			return false;
+
+		return $this->validate_hash($this->hash, $this->user_id, 0, $this->request_shift_id);
+	}
+
+	/**
+	* Check if the current swap is a shift offer
+	*
+	* @return boolean
+	*/
+	public function is_offer()
+	{
+		if ($this->original_shift_id !== $this->request_shift_id)
+			return false;
+
+		return $this->validate_hash($this->hash, $this->user_id, $this->original_shift_id, 0);
+	}
 }
