@@ -172,9 +172,9 @@ class SwapsController extends \BaseController {
 				$msg.= 'A2 Beamtime Scheduler';
 				User::find($user_id)->mail($subject, $msg);
 
-				return Redirect::to('beamtimes/' . $shift_org->beamtime->id)->with('error', 'Swap request deleted, you unsibscribed from the shift since the swap request has been submitted!');
+				return Redirect::to('beamtimes/' . $shift_org->beamtime->id)->with('error', 'Swap request deleted, you unsubscribed from the shift since the swap request has been submitted!');
 			}
-			return Redirect::to('beamtimes/' . $shift_org->beamtime->id)->with('error', 'You unsibscribed from the shift since the swap request has been submitted!');
+			return Redirect::to('beamtimes/' . $shift_org->beamtime->id)->with('error', 'You unsubscribed from the shift since the swap request has been submitted!');
 		}
 		// additionally check if the current user is not subscribed to the original shift
 		if ($shift_org->users->find(Auth::id())) {
