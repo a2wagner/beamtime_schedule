@@ -228,6 +228,13 @@ class SwapsController extends \BaseController {
 			// delete the swap request
 			$swap->delete();
 
+			// inform the original user about the update
+			$subject = 'Update on Swap Request ' . $id;
+			$msg = 'Hello ' . User::find($user_id)->first_name . ",\r\n\r\n";
+			$msg.= Auth::user()->first_name . " accepted your swap request. The swap has been performed successfully.\r\n\r\n";
+			$msg.= 'A2 Beamtime Scheduler';
+			User::find($user_id)->mail($subject, $msg);
+
 			return Redirect::to('beamtimes/' . $shift_org->beamtime->id)->with('success', 'Shift workers swapped successfully.');
 		}
 	}
@@ -366,6 +373,13 @@ class SwapsController extends \BaseController {
 
 			// delete the swap request
 			$swap->delete();
+
+			// inform the requesting user about the update
+			$subject = 'Update on Shift Request ' . $hash;
+			$msg = 'Hello ' . $user->first_name . ",\r\n\r\n";
+			$msg.= Auth::user()->first_name . ' accepted your shift request. You have been successfully subscribed to the shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift->start)) . ".\r\n\r\n";
+			$msg.= 'A2 Beamtime Scheduler';
+			$user->mail($subject, $msg);
 
 			return Redirect::to('beamtimes/' . $shift->beamtime->id)->with('success', 'Shift workers exchanged successfully.');
 		}
