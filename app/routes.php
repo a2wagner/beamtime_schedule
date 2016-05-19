@@ -70,6 +70,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('beamtimes/{id}/rc', array('as' => 'beamtimes.rc_show', 'uses' => 'BeamtimesController@rc_show'));
 	Route::patch('beamtimes/{id}/rc', array('as' => 'beamtimes.rc_update', 'uses' => 'BeamtimesController@rc_update'));
 	Route::patch('shifts/{shifts}', array('as' => 'shifts.update', 'uses' => 'ShiftsController@update'));
+	Route::post('shifts/{shift}/request', array('as' => 'shifts.request', 'uses' => 'SwapsController@request'));
+	Route::patch('swaps/{swap}', array('as' => 'swaps.shift_request', 'uses' => 'SwapsController@store_request'));
 	Route::post('swaps/{shift_org_id}', array('as' => 'swaps.create', 'uses' => 'SwapsController@create'));
 	Route::post('swaps/{shift_org_id}/{shift_req_id}', array('as' => 'swaps.store', 'uses' => 'SwapsController@store'));
 	Route::get('swaps/{swap}', array('as' => 'swaps.show', 'uses' => 'SwapsController@show'));

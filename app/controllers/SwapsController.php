@@ -245,4 +245,131 @@ class SwapsController extends \BaseController {
 	}
 
 
+	/**
+	 * Request a shift slot from other users which have subscribed to a shift.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function request($id)
+	{
+		$shift = Shift::find($id);
+		$beamtime_id = $shift->beamtime->id;
+		if (!empty($shift->users->find(Auth::id())))
+			return Redirect::back()->with('error', 'You\'re subscribed to the requested shift already, please use the interface correctly!');
+
+		// the query seems reasonable, create an entry in the database for this request and send emails to the users of this shift
+		$swap = new Swap();
+		$hash = $swap->create_hash(Auth::id(), 0, $id);
+
+		// check if this request is already in the database
+		if (Swap::whereHash($hash)->count())
+			return Redirect::to('beamtimes/' . $beamtime_id)->with('error', 'This shift request has been sent already!');
+
+		// create database entry
+		$swap->user_id = Auth::id();
+		$swap->hash = $hash;
+		$swap->original_shift_id = $id;
+		$swap->request_shift_id = $id;
+		$swap->save();
+
+		// mail the users the request
+		$users = $shift->users;
+		// mail content
+		$subject = 'Shift Request from ' . Auth::user()->get_full_name();
+		$msg = "Hello [USER],\r\n\r\n";
+		$msg.= Auth::user()->first_name . ' wants to take a shift slot of the shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift->start)) . " you're subscribed to.\r\n";
+		$msg.= 'You can view the shift request for the related beamtime in detail here: ' . url() . '/swaps/' . $hash . "\r\n\r\n";
+		$msg.= 'A2 Beamtime Scheduler';
+		// check if mailing worked
+		$success = true;
+
+		// send the mail to every user who should receive it and attach these users to the swap request
+		$users->each(function($user) use(&$success, $subject, $msg, $swap)
+		{
+			$swap->request_users()->attach($user);
+			$success &= $user->mail($subject, str_replace(array('[USER]'), array($user->first_name), $msg));
+		});
+
+		if ($success)
+			return Redirect::back()->with('success', 'Shift request sent successfully to ' . implode(' and ', $users->lists('first_name')));
+		else {
+			$swap->delete();  // delete this request in case the mail(s) could not be sent
+			return Redirect::back()->with('error', 'Shift request couldn\'t be sent, mailing error...');
+		}
+	}
+
+
+	/**
+	 * Perform the shift request.
+	 *
+	 * @param string $hash
+	 * @return Response
+	 */
+	public function store_request($hash)
+	{
+		if (!$swap = $this->swap->whereHash($hash)->first())
+			return Redirect::to('')->with('warning', 'This shift request is not available. It may have already been performed.');
+
+		if (!$swap->is_request())
+			return Redirect::to('')->with('error', 'This request is not a shift request. Something might have gone wrong.');
+
+		$shift = Shift::find($swap->request_shift_id);
+		$user = User::find($swap->user_id);
+
+		// check if the current user is on the requested shift
+		if (!$shift->users->find(Auth::id())) {
+			// detach the user from the swap request
+			$swap->request_users()->detach(Auth::id());
+			// delete the swap request if no more users are attached to it
+			if (!$swap->request_users()->count()) {
+				$swap->delete();
+				// inform the original user about the deletion
+				$subject = 'Update on Shift Request ' . $hash;
+				$msg = 'Hello ' . $user->first_name . ",\r\n\r\n";
+				$msg.= Auth::user()->first_name . " is no longer subscribed to the shift you requested to take. The request was deleted automatically.\r\n";
+				$msg.= 'A2 Beamtime Scheduler';
+				$user->mail($subject, $msg);
+
+				return Redirect::to('beamtimes/' . $shift->beamtime->id)->with('error', 'Shift request deleted, you unsubscribed from the shift since the shift request has been submitted!');
+			}
+			return Redirect::to('beamtimes/' . $shift->beamtime->id)->with('error', 'You unsubscribed from the shift since the shift request has been submitted!');
+		}
+
+		if (Input::get('action') === 'decline') {  // detach user from the swap request, inform requesting user
+			$swap->request_users()->detach(Auth::id());
+			// delete the swap request if no more users are attached to it
+			if (!$swap->request_users()->count()) {
+				$swap->delete();
+				// inform the original user about the deletion
+				$subject = 'Update on Shift Request ' . $hash;
+				$msg = 'Hello ' . $user->first_name . ",\r\n\r\n";
+				$msg.= Auth::user()->first_name . " declined your shift request. Since he was the last attached user to this request, it was deleted automatically.\r\n";
+				$msg.= 'A2 Beamtime Scheduler';
+				$user->mail($subject, $msg);
+
+				return Redirect::to('beamtimes/' . $shift->beamtime->id)->with('success', 'You have been detached from the shift request successfully, request deleted.');
+			}
+			// inform the original user about the update
+			$subject = 'Update on Shift Request ' . $hash;
+			$msg = 'Hello ' . $user->first_name . ",\r\n\r\n";
+			$msg.= Auth::user()->first_name . " declined your shift request. There is still a user attached to it, so this request is pending.\r\n";
+			$msg.= 'You can view the shift request for the related beamtime in detail here: ' . url() . '/swaps/' . $hash . "\r\n\r\n";
+			$msg.= 'A2 Beamtime Scheduler';
+			$user->mail($subject, $msg);
+
+			return Redirect::to('beamtimes/' . $shift->beamtime->id)->with('success', 'You have been detached from the shift request successfully.');
+		} else {  // perform swap request
+			// if everything is okay, change the users
+			$shift->users()->detach(Auth::id());
+			$shift->users()->attach($user->id);
+
+			// delete the swap request
+			$swap->delete();
+
+			return Redirect::to('beamtimes/' . $shift->beamtime->id)->with('success', 'Shift workers exchanged successfully.');
+		}
+	}
+
+
 }

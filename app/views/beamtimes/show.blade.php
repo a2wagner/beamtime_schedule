@@ -234,6 +234,11 @@ function sub(e) {
               {{ Form::hidden('event', 'subscribe') }}
               <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Subscribe"><i class="fa fa-check fa-lg"></i></button>
           {{ Form::close() }}
+          @else
+          <?php $users = implode(' and ', $shift->users->first_name->all()); ?>
+          {{ Form::open(['route' => array('shifts.request', $shift->id), 'class' => 'hidden-print', 'role' => 'form', 'onsubmit' => "return confirm('Do you really want to send a shift request to $users?');"]) }}
+              <button type="submit" class="btn btn-link btn-sm" data-toggle="tooltip" data-placement="top" title="Can I haz shift?" style="color: inherit;"><i class="fa fa-arrow-left fa-lg" style="padding: 0px 1.5px;"></i></button>
+          {{ Form::close() }}
           @endif
           @else
           {{ Form::open(['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'style' => 'float: left; margin-right: 5px;', 'role' => 'form', 'onsubmit' => 'return sub(this);']) }}

@@ -42,16 +42,24 @@ $(document).ready(function() {
     <table width="100%">
       <tr>
         <td>
-          <h3 class="text-warning"><b>Swap Request</b></h3>
-          <p>Do you accept this swap request from {{{ User::find(Swap::whereHash($swap)->first()->user_id)->get_full_name() }}}?</p>
+          <?php
+          	$type = 'Swap Request';
+          	$route = 'swaps.update';
+          	$method = 'PUT';
+          	if (Swap::whereHash($swap)->first()->is_request()) {
+          		$type = 'Shift Request';
+          		$route = 'swaps.shift_request';
+          		$method = 'PATCH';
+          	}
+          ?>
+          <h3 class="text-warning"><b>{{{ $type }}}</b></h3>
+          <p>Do you accept this {{ strtolower($type) }} from {{{ User::find(Swap::whereHash($swap)->first()->user_id)->get_full_name() }}}?</p>
         </td>
         <td style="padding-left:20px; padding-top:15px;">
-          {{ Form::open(['route' => array('swaps.update', $swap), 'class' => 'hidden-print', 'style' => 'float: left; margin-right: 5px;', 'role' => 'form']) }}
-            {{ Form::hidden('_method', 'PUT') }}
+          {{ Form::open(['route' => array($route, $swap), 'method' => $method, 'class' => 'hidden-print', 'style' => 'float: left; margin-right: 5px;', 'role' => 'form']) }}
             {{ Form::submit('Accept', array('class' => 'btn btn-primary')) }}
           {{ Form::close() }}
-          {{ Form::open(['route' => array('swaps.update', $swap), 'class' => 'hidden-print', 'role' => 'form']) }}
-            {{ Form::hidden('_method', 'PUT') }}
+          {{ Form::open(['route' => array($route, $swap), 'method' => $method, 'class' => 'hidden-print', 'role' => 'form']) }}
             {{ Form::hidden('action', 'decline') }}
             {{ Form::submit('Decline', array('class' => 'btn btn-danger')) }}
           {{ Form::close() }}
