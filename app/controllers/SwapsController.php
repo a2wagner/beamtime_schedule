@@ -213,7 +213,7 @@ class SwapsController extends \BaseController {
 			$subject = 'Update on Swap Request ' . $id;
 			$msg = 'Hello ' . User::find($user_id)->first_name . ",\r\n\r\n";
 			$msg.= Auth::user()->first_name . " declined your swap request. There is still a user attached to it, so this request is pending.\r\n";
-			$msg.= 'You can view the swap request for the related beamtime in detail here: ' . Request::root() . '/swaps/' . $id . "\r\n\r\n";
+			$msg.= 'You can view the swap request for the related beamtime in detail here: ' . url() . '/swaps/' . $id . "\r\n\r\n";
 			$msg.= 'A2 Beamtime Scheduler';
 			User::find($user_id)->mail($subject, $msg);
 
