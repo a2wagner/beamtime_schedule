@@ -25,7 +25,7 @@ class CreateDatabase extends Migration {
 			$table->increments('id');
 			$table->string('first_name', 50);
 			$table->string('last_name', 50);
-			$table->string('username', 10)->unique();
+			$table->string('username', 20)->unique();
 			$table->string('email', 70)->unique();
 			$table->string('password', 80);
 			$table->integer('workgroup_id')->unsigned()->index();
