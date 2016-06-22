@@ -4,9 +4,6 @@ class RadiationInstruction extends \Eloquent {
 
 	protected $guarded = ['id'];
 
-	// Do not use timestamps for this model
-	public $timestamps = false;
-
 	/**
 	 * The database table used by the model.
 	 *

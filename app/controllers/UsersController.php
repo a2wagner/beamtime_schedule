@@ -408,6 +408,7 @@ class UsersController extends \BaseController {
 			$rad = new RadiationInstruction;
 			$rad->user_id = $id;
 			$rad->begin = new DateTime($date);
+			$rad->renewed_by = Auth::user()->id;
 			$rad->save();
 
 			return Redirect::back()->with('success', 'Successfully extended Radiation Protection Instruction for ' . User::find($id)->get_full_name());
