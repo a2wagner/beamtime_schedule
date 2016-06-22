@@ -22,6 +22,20 @@ class RadiationInstruction extends \Eloquent {
 	}
 
 	/**
+	* Get the user who renewed the radiation instruction
+	* If no user is assigned, return NULL
+	*
+	* @return User
+	*/
+	public function renewedBy()
+	{
+		if (is_null($this->renewed_by))
+			return NULL;
+
+		return User::find($this->renewed_by);
+	}
+
+	/**
 	 * Return the date when the Radiation Protection Instruction expires
 	 *
 	 * @return end date

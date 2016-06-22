@@ -404,7 +404,7 @@ class UsersController extends \BaseController {
 		if (Input::has('date'))
 			$date = Input::get('date');
 
-		if (Auth::user()->isAdmin() || (Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction($date))) {
+		if (Auth::user()->isAdmin() || Auth::user()->isRadiationExpert() || (Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction($date))) {
 			$rad = new RadiationInstruction;
 			$rad->user_id = $id;
 			$rad->begin = new DateTime($date);

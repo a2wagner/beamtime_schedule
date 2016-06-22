@@ -66,10 +66,15 @@ Profile of {{ $user->username }}
           <?php
           	$radiation_string = 'missing';
           	$instruction = false;
+          	$renewed_by = NULL;
           	if ($user->radiation_instructions()->count()) {
           		$radiation = $user->radiation_instructions()->orderBy('begin', 'desc')->first();
           		$date = new DateTime($radiation->end());
           		$date = date_format($date, 'jS F Y');
+          		if (!is_null($radiation->renewed_by)) {
+		      		$renewed_by = $radiation->renewedBy()->get_full_name();
+		      		$renew_date = explode(' ', $radiation->created_at)[0];
+          		}
           		if ($user->hasRadiationInstruction()) {
           			$radiation_string = 'until ' . $date;
           			$instruction = true;
@@ -80,8 +85,11 @@ Profile of {{ $user->username }}
           <tr>
             <td>Instructions</td>
             <td{{ !$instruction ? ' class="text-danger"' : ''}}>&#9762; Radiation Protection {{ $radiation_string }}
-            @if (Auth::user()->isAdmin())
+            @if (Auth::user()->isAdmin() || Auth::user()->isRadiationExpert())
             <a href="/users/{{{$user->id}}}/radiation" data-method="patch" class="btn btn-success btn-xs hidden-print" style="float: right;"><span class="fa fa-check-circle"></span> Renew</a>
+            @if (!is_null($renewed_by))
+            <br /> &emsp;(Last renewed by {{{ $renewed_by }}} on {{{ $renew_date }}})
+            @endif
             @endif
             </td>
           </tr>
@@ -145,6 +153,36 @@ Profile of {{ $user->username }}
               </script>
               <div id="flotcontainer" style="width: 300px; height: 250px; margin-top: 10px"></div>
               @endif
+            </td>
+          </tr>
+          {{-- If the logged in user is radiation expert but not an admin or the currently viewed user, show the radiation related information nonetheless --}}
+          @elseif (Auth::user()->isRadiationExpert())
+          <?php
+          	$radiation_string = 'missing';
+          	$instruction = false;
+          	$renewed_by = NULL;
+          	if ($user->radiation_instructions()->count()) {
+          		$radiation = $user->radiation_instructions()->orderBy('begin', 'desc')->first();
+          		$date = new DateTime($radiation->end());
+          		$date = date_format($date, 'jS F Y');
+          		if (!is_null($radiation->renewed_by)) {
+		      		$renewed_by = $radiation->renewedBy()->get_full_name();
+		      		$renew_date = explode(' ', $radiation->created_at)[0];
+          		}
+          		if ($user->hasRadiationInstruction()) {
+          			$radiation_string = 'until ' . $date;
+          			$instruction = true;
+          		} else
+          			$radiation_string = 'expired ' . $date;
+          	}
+          ?>
+          <tr>
+            <td>Instructions</td>
+            <td{{ !$instruction ? ' class="text-danger"' : ''}}>&#9762; Radiation Protection {{ $radiation_string }}
+            <a href="/users/{{{$user->id}}}/radiation" data-method="patch" class="btn btn-success btn-xs hidden-print" style="float: right;"><span class="fa fa-check-circle"></span> Renew</a>
+            @if (!is_null($renewed_by))
+            <br /> &emsp;(Last renewed by {{{ $renewed_by }}} on {{{ $renew_date }}})
+            @endif
             </td>
           </tr>
           {{-- Allow run coordinators to see the rating and the radiation protection instruction for the user if they took run coordinator shifts in a beamtime with shifts at least partly in the future and the user took regular shifts in this beamtime --}}
