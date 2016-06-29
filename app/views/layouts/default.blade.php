@@ -139,8 +139,9 @@
             @if (Auth::user() && !Auth::user()->ldap_id)
             <div class="alert alert-warning hidden-print">
                 <h4>Important</h4>
-                You do not have a KPH account yet. Please request an account with <a style="color: black;" href="https://portal.kph.uni-mainz.de/registration/">this form</a>.<br />
-                More information can be found <a style="color: black;" href="http://edv.kph.uni-mainz.de/en/accounts.html">here</a>.
+                <p>You do not have a KPH account yet. Please request an account with <a style="color: black;" href="https://portal.kph.uni-mainz.de/registration/">this form</a>.<br />
+                More information can be found <a style="color: black;" href="http://edv.kph.uni-mainz.de/en/accounts.html">here</a>.</p>
+                <p>If you have a KPH account, please contact one of the admins to change your account accordingly.</p>
             </div>
             @endif
 
