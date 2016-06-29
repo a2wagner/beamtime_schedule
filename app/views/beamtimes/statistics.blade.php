@@ -106,6 +106,11 @@ $beamtimes->shifts->users->workgroup
 			'night' => 0
 		);
 	});
+// sort the workgroup order according to the sum of taken shifts; use uasort to maintain key association
+uasort($info, function($a, $b)
+	{
+		return $b['sum'] - $a['sum'];
+	});
 // add the specific shift type information to the array
 $beamtimes->shifts->each(function($shift) use(&$info)
 	{
