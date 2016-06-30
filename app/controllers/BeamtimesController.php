@@ -290,7 +290,7 @@ class BeamtimesController extends \BaseController {
 				{
 					return $beamtime->is_in_range($year1, $year2);
 				});
-			return View::make('beamtimes.statistics')->with('beamtimes', Beamtimes::all())->with('range', $year1 . ' &ndash; ' . $year2);
+			return View::make('beamtimes.statistics')->with('beamtimes', $beamtimes)->with('range', $year1 . ' &ndash; ' . $year2);
 		} else if (strpos($year, '-') !== false) {
 			$years = explode('-', $year);
 			if (count($years) !== 2)
