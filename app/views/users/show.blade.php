@@ -41,7 +41,12 @@ Profile of {{ $user->username }}
         <tbody>
           <tr>
             <td>Username</td>
-            <td>{{ $user->username }}</td>
+            <td>
+              {{ $user->username }}
+              @if (Auth::user()->isAdmin() && !$user->ldap_id)
+              &emsp;<span class="text-warning">(no KPH account)</span>
+              @endif
+            </td>
           </tr>
           <tr>
             <td>Email</td>
