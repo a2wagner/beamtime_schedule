@@ -82,9 +82,14 @@
           	else
           		echo 'shortly.';
           ?></span><br />
-          <?php $individual_open = $beamtime->shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }); ?>
+          <?php $individual_open = $beamtime->shifts->sum(function($shift){
+          	if ($shift->users->count() > $shift->n_crew)
+      			return 0;
+      		else
+      			return $shift->n_crew - $shift->users->count();
+          }); ?>
           @if ($individual_open > 0)
-          Shifts: {{ $beamtime->shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }}/{{ $beamtime->shifts->filter(function($shift){ return !$shift->maintenance; })->count() }} open ({{ $individual_open }}/{{ $beamtime->shifts->sum('n_crew') }} individual shifts open)</td>
+          Shifts: {{ $beamtime->shifts->filter(function($shift){ return $shift->users->count() < $shift->n_crew; })->count() }}/{{ $beamtime->shifts->filter(function($shift){ return !$shift->maintenance; })->count() }} open ({{ $individual_open }}/{{ $beamtime->shifts->sum('n_crew') }} individual shifts open)</td>
           @else
           All shifts filled.
           @endif
@@ -103,9 +108,14 @@
           	else
           		echo $diff->format('%i minutes.');
           ?></span><br />
-          <?php $individual_open = $beamtime->shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }); ?>
+          <?php $individual_open = $beamtime->shifts->sum(function($shift){
+          	if ($shift->users->count() > $shift->n_crew)
+      			return 0;
+      		else
+      			return $shift->n_crew - $shift->users->count();
+          }); ?>
           @if ($individual_open > 0)
-          Shifts: {{ $beamtime->shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count() }}/{{ $beamtime->shifts->filter(function($shift){ return !$shift->maintenance; })->count() }} open ({{ $individual_open }}/{{ $beamtime->shifts->sum('n_crew') }} individual shifts open)</td>
+          Shifts: {{ $beamtime->shifts->filter(function($shift){ return $shift->users->count() < $shift->n_crew; })->count() }}/{{ $beamtime->shifts->filter(function($shift){ return !$shift->maintenance; })->count() }} open ({{ $individual_open }}/{{ $beamtime->shifts->sum('n_crew') }} individual shifts open)</td>
           @else
           All shifts filled.
           @endif

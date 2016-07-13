@@ -122,9 +122,14 @@ function sub(e) {
       <h3>Shift Status</h3>
       <?php  // calculate shift status
       	$shifts_total = $shifts->filter(function($shift){ return !$shift->maintenance; })->count();
-      	$shifts_open = $shifts->filter(function($shift){ return $shift->users->count() != $shift->n_crew; })->count();
+      	$shifts_open = $shifts->filter(function($shift){ return $shift->users->count() < $shift->n_crew; })->count();
       	$individual = $shifts->sum('n_crew');
-      	$individual_open = $shifts->sum(function($shift){ return $shift->n_crew - $shift->users->count(); }) ;
+      	$individual_open = $shifts->sum(function($shift){
+      		if ($shift->users->count() > $shift->n_crew)
+      			return 0;
+      		else
+      			return $shift->n_crew - $shift->users->count();
+      	});
       	$empty_shifts = $shifts->sum(function($shift){ return $shift->users->isEmpty() && !$shift->maintenance; });
       	$full = round(($shifts_total - $shifts_open)/$shifts_total * 100, 2);
       	$empty = round($empty_shifts/$shifts_total * 100, 2);
