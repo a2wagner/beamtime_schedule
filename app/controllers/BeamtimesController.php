@@ -184,43 +184,44 @@ class BeamtimesController extends \BaseController {
 			$shift->remark = $remarks[$id];
 
 			/* check for maintenance now */
-			if (Input::get('maintenance')) {  // prevents an error if no maintenance shifts are set
-				if (is_int(array_search($id, Input::get('maintenance')))) {  // array_search() returns the index of the value if it was found, so check if the returned value is an int which is true in case of maintenance
-					// if there is maintenance during this shift, set the shift workers to zero
-					$shift->n_crew = 0;
-					$shift->maintenance = true;
-					// if users are subscribed to this shift, send them an email and remove them
-					if (!$shift->users->isEmpty()) {
-						// mail content
-						$subject = 'Automatic Cancellation of Shift Subscription';
-						$msg = "Hello [USER],\r\n\r\n";
-						$msg.= 'you\'ve subscribed to the shift on '. date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift->start)) . ". This shift has been changed to a maintenance shift and you were automatically unsubscribed from this shift.\r\n\r\n";
-						$msg.= 'You can use the following link to view the corresponding beamtime \'' . $beamtime->name . '\': ' . url() . '/beamtimes/' . $beamtime->id . "\r\n\r\n";
-						$msg.= "In case you don't know why and haven't got any further information yet, you might want to contact one of the following run coordinators:\r\n\r\n";
-						$beamtime->run_coordinators()->each(function($user) use(&$msg)
-						{
-							$msg.= $user->get_full_name() . ': ' . $user->email . "\r\n";
-						});
-						$msg.= "\r\nA2 Beamtime Scheduler";
-						$success = true;
+			// array_search() returns the index of the value if it was found, so check if the returned value is an int which is true in case of maintenance
+			if (Input::get('maintenance') && is_int(array_search($id, Input::get('maintenance')))) {
+				// if there is maintenance during this shift, set the shift workers to zero
+				$shift->n_crew = 0;
+				$shift->maintenance = true;
+				// if users are subscribed to this shift, send them an email and remove them
+				if (!$shift->users->isEmpty()) {
+					// mail content
+					$subject = 'Automatic Cancellation of Shift Subscription';
+					$msg = "Hello [USER],\r\n\r\n";
+					$msg.= 'you\'ve subscribed to the shift on '. date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift->start)) . ". This shift has been changed to a maintenance shift and you were automatically unsubscribed from this shift.\r\n\r\n";
+					$msg.= 'You can use the following link to view the corresponding beamtime \'' . $beamtime->name . '\': ' . url() . '/beamtimes/' . $beamtime->id . "\r\n\r\n";
+					$msg.= "In case you don't know why and haven't got any further information yet, you might want to contact one of the following run coordinators:\r\n\r\n";
+					$beamtime->run_coordinators()->each(function($user) use(&$msg)
+					{
+						$msg.= $user->get_full_name() . ': ' . $user->email . "\r\n";
+					});
+					$msg.= "\r\nA2 Beamtime Scheduler";
+					$success = true;
 
-						// send the mail to every user from the shift
-						$shift->users->each(function($user) use(&$success, $subject, $msg)
-						{
-							$success &= $user->mail($subject, str_replace(array('[USER]'), array($user->first_name), $msg));
-						});
+					// send the mail to every user from the shift
+					$shift->users->each(function($user) use(&$success, $subject, $msg)
+					{
+						$success &= $user->mail($subject, str_replace(array('[USER]'), array($user->first_name), $msg));
+					});
 
-						$shift->users()->detach();
-					}
-				} else {
-					// else set the given number of shift workers for this shift
-					if (!array_key_exists($id, $n))  // in case no radio button was selected, prevent an error and set the number of shift workers to 2
-						$shift->n_crew = 2;
-					else  // otherwise assign the selected value
-						$shift->n_crew = $n[$id];
-					$shift->maintenance = false;
+					$shift->users()->detach();
 				}
-			} else  // If there are no maintenance shifts, then it could be the case that maintenance shifts were removed. So check if there are still maintenance shifts and set them to normal shifts.
+			} else {
+				// else set the given number of shift workers for this shift
+				if (!array_key_exists($id, $n))  // in case no radio button was selected, prevent an error and set the number of shift workers to 2
+					$shift->n_crew = 2;
+				else  // otherwise assign the selected value
+					$shift->n_crew = $n[$id];
+				$shift->maintenance = false;
+			}
+			// If there are no maintenance shifts, then it could be the case that maintenance shifts were removed. So check if there are still maintenance shifts and set them to normal shifts.
+			if (!Input::get('maintenance'))
 				if ($shift->maintenance) {
 					// set the given number of shift workers for this shift
 					if (!array_key_exists($id, $n))  // in case no radio button was selected, prevent an error and set the number of shift workers to 2
