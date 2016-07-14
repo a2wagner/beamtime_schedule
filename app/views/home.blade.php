@@ -70,7 +70,10 @@
           	$start = $beamtime->start();
           	$end = $beamtime->end();
           ?>
-          @if ($now < $start)
+          @if ($now > $end)
+          <?php $diff = $now->diff($end); ?>
+          <td class="text-muted">Ended {{{ $diff->format('%a days ago') }}}</td>
+          @elseif ($now < $start)
           <?php $diff = $now->diff($start); ?>
           <td><span class="text-primary">Beamtime will start <?php  // show time difference until beamtime starts according to the time span
           	if ($diff->days > 0)
@@ -82,20 +85,6 @@
           	else
           		echo 'shortly.';
           ?></span><br />
-          <?php $individual_open = $beamtime->shifts->sum(function($shift){
-          	if ($shift->users->count() > $shift->n_crew)
-      			return 0;
-      		else
-      			return $shift->n_crew - $shift->users->count();
-          }); ?>
-          @if ($individual_open > 0)
-          Shifts: {{ $beamtime->shifts->filter(function($shift){ return $shift->users->count() < $shift->n_crew; })->count() }}/{{ $beamtime->shifts->filter(function($shift){ return !$shift->maintenance; })->count() }} open ({{ $individual_open }}/{{ $beamtime->shifts->sum('n_crew') }} individual shifts open)</td>
-          @else
-          All shifts filled.
-          @endif
-          @elseif ($now > $end)
-          <?php $diff = $now->diff($end); ?>
-          <td class="text-muted">Ended {{{ $diff->format('%a days ago') }}}</td>
           @else
           <?php  // calculate progress of the current beamtime
           	$diff = $now->diff($start);
@@ -108,6 +97,8 @@
           	else
           		echo $diff->format('%i minutes.');
           ?></span><br />
+          @endif
+          @if ($now <= $end)
           <?php $individual_open = $beamtime->shifts->sum(function($shift){
           	if ($shift->users->count() > $shift->n_crew)
       			return 0;
@@ -117,7 +108,7 @@
           @if ($individual_open > 0)
           Shifts: {{ $beamtime->shifts->filter(function($shift){ return $shift->users->count() < $shift->n_crew; })->count() }}/{{ $beamtime->shifts->filter(function($shift){ return !$shift->maintenance; })->count() }} open ({{ $individual_open }}/{{ $beamtime->shifts->sum('n_crew') }} individual shifts open)</td>
           @else
-          All shifts filled.
+          All shifts filled.</td>
           @endif
           @endif
           @if (Auth::user()->isRunCoordinator())
