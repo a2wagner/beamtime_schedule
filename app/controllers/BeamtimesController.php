@@ -263,6 +263,67 @@ class BeamtimesController extends \BaseController {
 
 
 	/**
+	 * Show a form to choose beamtimes which will get merged
+	 *
+	 * @return Response
+	 */
+	public function merge()
+	{
+		// only admins are allowed to merge beamtimes
+		if (!Auth::user()->isAdmin())
+			return Redirect::to('beamtimes');
+
+		// show the 5 last created beamtimes for merging
+		$beamtimes = $this->beamtime->orderBy('id', 'desc')->limit(5)->get();
+
+		return View::make('beamtimes.merge')->with('beamtimes', $beamtimes);
+	}
+
+
+	/**
+	 * Merge the chosen beamtimes if they are directly in succession
+	 *
+	 * @return Response
+	 */
+	public function mergeBeamtimes()
+	{
+		// only admins are allowed to merge beamtimes
+		if (!Auth::user()->isAdmin())
+			return Redirect::to('beamtimes');
+
+		$merge = Input::get('merge');
+		if (count($merge) !== 2)
+			return Redirect::back()->with('error', 'You have to choose two beamtimes in order to merge them!');
+
+		$first = Beamtime::find($merge[1]);
+		$second = Beamtime::find($merge[0]);
+		if ($first->start() > $second->start()) {
+			$first = Beamtime::find($merge[0]);
+			$second = Beamtime::find($merge[1]);
+		}
+
+		if ($first->end_string() !== $second->start_string())
+			return Redirect::back()->with('error', 'The beamtimes you chose are not in direct succession. Merging not possible.');
+
+		$id = $first->id;
+		// assign all shifts of the second beamtime to the first one
+		foreach ($second->shifts as $shift) {
+			$shift->beamtime_id = $id;
+			$shift->save();
+		}
+		foreach ($second->rcshifts as $shift) {
+			$shift->beamtime_id = $id;
+			$shift->save();
+		}
+
+		$second->delete();
+
+		// redirect to the beamtimes overview after deletion
+		return Redirect::to('beamtimes/' . $id)->with('success', 'Beamtimes successfully merged!');
+	}
+
+
+	/**
 	 * Show statistical information about the beamtimes
 	 *
 	 * @return Respone

@@ -71,6 +71,7 @@
                             <li><a href="/beamtimes"><i class="fa fa-bars fa-fw"></i> Overview</a></li>
                             @if (Auth::user()->isAdmin())
                             <li><a href="/beamtimes/create"><i class="fa fa-plus fa-fw"></i> Create</a></li>
+                            <li><a href="/beamtimes/merge"><i class="fa fa-compress fa-fw"></i> Merge</a></li>
                             @endif
                             <li class="divider"></li>
                             <li><a href="/statistics"><i class="fa fa-bar-chart fa-fw"></i> Statistics</a></li>

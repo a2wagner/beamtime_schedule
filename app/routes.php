@@ -62,6 +62,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::patch('users/{users}/pi', array('as' => 'users.togglePrincipleInvestigators', 'uses' => 'UsersController@togglePrincipleInvestigator'));
 	Route::patch('users/kph', array('as' => 'users.activateKPHaccount', 'uses' => 'UsersController@activateKPHaccount'));
 
+	Route::get('beamtimes/merge', array('as' => 'merge', 'uses' => 'BeamtimesController@merge'));
+	Route::put('beamtimes/merge', array('as' => 'merge', 'uses' => 'BeamtimesController@mergeBeamtimes'));
 	Route::resource('beamtimes', 'BeamtimesController');
 	Route::get('statistics', array('as' => 'statistics', 'uses' => 'BeamtimesController@statistics'));
 	Route::get('statistics/{year}', array('as' => 'statistics', 'uses' => 'BeamtimesController@statistics'));
