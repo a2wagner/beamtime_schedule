@@ -20,9 +20,12 @@ class BeamtimesController extends \BaseController {
 		//$beamtimes = $this->beamtime->orderBy('id', 'desc')->paginate(20);
 		$beamtimes = Beamtime::all();
 
-		// Add the start of the beamtime to every entry of the Collection of Beamtimes
+		// Add the start of the beamtime to every entry of the Collection of Beamtimes if they contain shifts
 		foreach ($beamtimes as $beamtime)
-			$beamtime->start = $beamtime->start_string();
+			if (!is_null($beamtime->shifts->first()))
+				$beamtime->start = $beamtime->start_string();
+			else
+				$beamtime->start = '9';  // just set a high number that beamtimes with no shifts are shown at the top
 		// Sort the beamtimes by decreasing order
 		$beamtimes->sortByDesc('start');
 

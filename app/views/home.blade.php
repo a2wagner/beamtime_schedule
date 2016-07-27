@@ -34,8 +34,12 @@
     </div>
     <?php
     	$beamtimes = Beamtime::all();
+		// add the start of the beamtime to every entry of the Collection of Beamtimes if they contain shifts
     	foreach ($beamtimes as $beamtime)
-    		$beamtime->start = $beamtime->start_string();
+			if (!is_null($beamtime->shifts->first()))
+				$beamtime->start = $beamtime->start_string();
+			else
+				$beamtime->start = '9';  // just set a high number that beamtimes with no shifts are shown at the top
     	$beamtimes = $beamtimes->sortByDesc('start')->take(5);
     ?>
     @if ($beamtimes->count())
@@ -58,8 +62,8 @@
           {{-- Check if the beamtime contain shifts to avoid errors --}}
           @if (is_null($beamtime->shifts->first()))
           @if (Auth::user()->isAdmin())
-          <td colspan="3"><h4 class="text-danger">Beamtime contains no shifts!</h4></td>
-          <td class="text-center"><a href="/beamtimes/{{{$beamtime->id}}}" data-method="delete" data-confirm="Are you sure to delete this beamtime?" class="btn btn-danger btn-sm"><span class="fa fa-times"></span>Delete</a></td>
+          <td colspan="4"><h4 class="text-danger">Beamtime contains no shifts!</h4></td>
+          <td><a href="/beamtimes/{{{$beamtime->id}}}" data-method="delete" data-confirm="Are you sure to delete this beamtime?" class="btn btn-danger btn-sm"><span class="fa fa-times"></span>Delete</a></td>
           @endif
           @else
           <td style="vertical-align: middle;">{{ link_to("/beamtimes/{$beamtime->id}", $beamtime->name) }}</td>
