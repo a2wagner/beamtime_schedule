@@ -69,7 +69,9 @@
                           <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-calendar fa-fw"></i> Beamtimes <span class="fa fa-caret-down"></span></a>
                           <ul class="dropdown-menu">
                             <li><a href="/beamtimes"><i class="fa fa-bars fa-fw"></i> Overview</a></li>
+                            @if (Auth::user()->isAdmin())
                             <li><a href="/beamtimes/create"><i class="fa fa-plus fa-fw"></i> Create</a></li>
+                            @endif
                             <li class="divider"></li>
                             <li><a href="/statistics"><i class="fa fa-bar-chart fa-fw"></i> Statistics</a></li>
                           </ul>
@@ -79,11 +81,13 @@
                           <ul class="dropdown-menu">
                             <li><a href="/users"><i class="fa fa-bars fa-fw"></i> All Users</a></li>
                             <li class="divider"></li>
+                            @if (Auth::user()->isAdmin())
                             <li><a href="/users/enable"><i class="fa fa-check-square-o fa-fw"></i> Enable Users</a></li>
-                            @if((Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction()) || Auth::user()->isRadiationExpert())
+                            @endif
+                            @if ((Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction()) || Auth::user()->isRadiationExpert())
                             <li><a href="/users/radiation"><i class="fa">&thinsp;&#9762;&nbsp;</i> Radiation Instruction</a></li>
                             @endif
-                            @if(Auth::user()->isAdmin())
+                            @if (Auth::user()->isAdmin())
                             <li><a href="/users/kph"><i class="fa fa-user-plus fa-fw"></i> Add KPH Account</a></li>
                             @endif
                             <li><a href="/users/manage"><i class="fa fa-sliders fa-fw"></i> Manage Users</a></li>

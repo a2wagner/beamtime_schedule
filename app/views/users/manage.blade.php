@@ -31,7 +31,9 @@ User Management
       @if (Auth::user()->isRadiationExpert())
       <li>{{ link_to("/users/radiation", "Renew Radiation Instruction") }}</li>
       @endif
+      @if (Auth::user()->isAdmin())
       <li>{{ link_to("/users/enable", "Enable new users") }}</li>
+      @endif
       <li>{{ link_to("/users", "Go to users overview") }}</li>
     </ul>
 
