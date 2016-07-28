@@ -254,6 +254,16 @@ class Shift extends \Eloquent {
 	}
 
 	/**
+	 * Check if the shift is during a weekend
+	 *
+	 * @return boolean
+	 */
+	public function is_weekend()
+	{
+		return date('N', $this->middle()->getTimestamp()) >= 6;
+	}
+
+	/**
 	 * Return end time of a shift
 	 *
 	 * @return DateTime
@@ -262,6 +272,18 @@ class Shift extends \Eloquent {
 	{
 		$date = new DateTime($this->start);
 		$date->add(new DateInterval('PT' . $this->duration . 'H'));
+		return $date;
+	}
+
+	/**
+	 * Calculates the middle of a shift
+	 *
+	 * @return DateTime
+	 */
+	public function middle()
+	{
+		$date = new DateTime($this->start);
+		$date->add(new DateInterval('PT' . $this->duration/2 . 'H'));
 		return $date;
 	}
 }
