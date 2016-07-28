@@ -103,7 +103,8 @@ $beamtimes->shifts->users->workgroup
 			'sum' => count($item),
 			'day' => 0,
 			'late' => 0,
-			'night' => 0
+			'night' => 0,
+			'weekend' => 0
 		);
 	});
 // sort the workgroup order according to the sum of taken shifts; use uasort to maintain key association
@@ -128,6 +129,11 @@ $beamtimes->shifts->each(function($shift) use(&$info)
 			$shift->users->workgroup->each(function($workgroup) use(&$info)
 			{
 				$info[$workgroup->id]['night']++;
+			});
+		if ($shift->is_weekend())
+			$shift->users->workgroup->each(function($workgroup) use(&$info)
+			{
+				$info[$workgroup->id]['weekend']++;
 			});
 	});
 
@@ -154,6 +160,7 @@ foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
 	echo '<p><h4>' . $workgroup->name . ' (' . $workgroup->country . ")</h4>\n";
 	echo '&emsp;&emsp;has taken a total of ' . $group['sum'] . " shifts<br />\n";
+	echo '&emsp;&emsp;of which ' . $group['weekend'] . " were during the weekend<br />\n";
 	$members = $workgroup->members->count();
 	echo '&emsp;&emsp;shifts/head ratio is ' . round($group['sum']/$members, 2) . "<br />\n";
 	$s = '';

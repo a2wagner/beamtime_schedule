@@ -113,6 +113,8 @@ Profile of {{ $user->username }}
               		return $shift->is_late();
               	}) }}, night: {{ $night = $user->shifts->sum(function($shift) {
               		return $shift->is_night();
+              	}) }}; weekend: {{ $weekend = $user->shifts->sum(function($shift) {
+              		return $shift->is_weekend();
               	}) }})<br />
               {{ round($user->shifts->count()/$user->shifts->groupBy('beamtime_id')->count(), 2) }} shifts/beamtime&emsp;({{ round($user->shifts->count()/Beamtime::All()->count(), 2) }} all beamtimes)
               {{-- jQuery needs to be loaded before the other Javascript parts need it --}}
