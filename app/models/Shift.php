@@ -283,7 +283,8 @@ class Shift extends \Eloquent {
 	public function middle()
 	{
 		$date = new DateTime($this->start);
-		$date->add(new DateInterval('PT' . $this->duration/2 . 'H'));
+		$mid = $this->duration/2 * 60;  // use minutes instead of hours as decimals result in FatalError, even if ISO 8601 allows it...
+		$date->add(new DateInterval('PT' . $mid . 'M'));
 		return $date;
 	}
 }
