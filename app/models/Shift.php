@@ -287,4 +287,24 @@ class Shift extends \Eloquent {
 		$date->add(new DateInterval('PT' . $mid . 'M'));
 		return $date;
 	}
+
+	/**
+	 * Calculate the rating for a shift:
+	 * - If the shift is empty, 0 is returned
+	 * - If the shift is for a single person only, the doubled rating of this user will be the rating
+	 * - Otherwise the combined rating of the shift workers will be returned
+	 *
+	 * @return int
+	 */
+	public function rating()
+	{
+		if ($this->users->count() == 0)
+			return 0;
+
+		$rating = $this->users->sum('rating');
+		if ($this->n_crew == 1 && $this->users->count() == 1)
+			return $rating * 2;
+
+		return $rating;
+	}
 }

@@ -225,9 +225,9 @@ function sub(e) {
           @endif
           {{ $td }}{{ $shift->remark }}</td>
           {{ $td }}@if ($shift->maintenance) <a href="#" class="btn btn-info btn-sm disabled">Maintenance</a>
-          @elseif ($shift->users->count() == 0) <a href="#" class="btn btn-danger btn-sm disabled">Empty</a>
-          @elseif ($shift->users->sum('rating') < 4) <a href="#" class="btn btn-warning btn-sm disabled">Bad</a>
-          @elseif ($shift->users->sum('rating') < 6) <a href="#" class="btn btn-primary btn-sm disabled">Good</a>
+          @elseif ($shift->rating() == 0) <a href="#" class="btn btn-danger btn-sm disabled">Empty</a>
+          @elseif ($shift->rating() < 4) <a href="#" class="btn btn-warning btn-sm disabled">Bad</a>
+          @elseif ($shift->rating() < 6) <a href="#" class="btn btn-primary btn-sm disabled">Good</a>
           @else <a href="#" class="btn btn-success btn-sm disabled">Perfect</a>
           @endif</td>
           {{ $td }}
