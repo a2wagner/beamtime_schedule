@@ -43,6 +43,20 @@ class Shift extends \Eloquent {
 	 */
 	const NIGHT_END = 8;
 
+	/**
+	 * Threshold for the shift rating value at which it begins to count as good
+	 *
+	 * @var int
+	 */
+	const RATING_GOOD = 4;
+
+	/**
+	 * Threshold for the shift rating value at which it begins to count as perfect
+	 *
+	 * @var int
+	 */
+	const RATING_PERFECT = 6;
+
 	protected $fillable = ['beamtime_id', 'start', 'duration', 'n_crew', 'maintenance', 'remark'];
 
 	// Do not use timestamps for this model
