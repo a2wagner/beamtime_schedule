@@ -25,29 +25,31 @@ Shifts of {{ $user->get_full_name() }}
     <div>
       <table class="table table-striped table-hover">
 <?php
-	$shifts->groupBy('beamtime_id')->sort(function($a, $b)
-	{
-		return $a[0]->beamtime->start() < $b[0]->beamtime->start();
-	})->each(function($item)
-	{
-		$beamtime = $item[0]->beamtime;
-		echo "<thead>\n";
-		echo "  <tr>\n";
-		echo "    <td>\n";
-		echo '      <h3>' . link_to("/beamtimes/$beamtime->id", $beamtime->name, ['style' => 'color: inherit; text-decoration: none;']) . "</h3>\n";
-		echo "    </td>\n";
-		echo "  </tr>\n";
-		echo "</thead>\n";
-		echo "<tbody>\n";
-		foreach($item as $shift) {
+	$shifts->groupBy('beamtime_id')
+		->sort(function($a, $b)
+		{
+			return $a[0]->beamtime->start() < $b[0]->beamtime->start();
+		})
+		->each(function($item)
+		{
+			$beamtime = $item[0]->beamtime;
+			echo "<thead>\n";
 			echo "  <tr>\n";
 			echo "    <td>\n";
-			echo '      ' . $shift->start . ' (' . $shift->duration . " hours)<br />\n";
+			echo '      <h3>' . link_to("/beamtimes/$beamtime->id", $beamtime->name, ['style' => 'color: inherit; text-decoration: none;']) . "</h3>\n";
 			echo "    </td>\n";
 			echo "  </tr>\n";
-		}
-		echo "</tbody>\n";
-	});
+			echo "</thead>\n";
+			echo "<tbody>\n";
+			foreach($item as $shift) {
+				echo "  <tr>\n";
+				echo "    <td>\n";
+				echo '      ' . $shift->start . ' (' . $shift->duration . " hours)<br />\n";
+				echo "    </td>\n";
+				echo "  </tr>\n";
+			}
+			echo "</tbody>\n";
+		});
 ?>
       </table>
     </div>
