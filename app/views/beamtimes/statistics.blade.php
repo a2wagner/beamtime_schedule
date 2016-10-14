@@ -104,8 +104,31 @@ $beamtimes->shifts->users->workgroup
 			'day' => 0,
 			'late' => 0,
 			'night' => 0,
-			'weekend' => 0
+			'weekend' => 0,
+			'rc_sum' => 0,
+			'rc_day' => 0,
+			'rc_night' => 0
 		);
+	});
+// count the RC shifts as well
+$beamtimes->rcshifts->user->workgroup
+	->groupBy('name', 'country')
+	->each(function($item) use(&$info)
+	{
+		if (array_key_exists($item[0]->id, $info))
+			$info[$item[0]->id]['rc_sum'] = count($item);
+		else  // the case if only RC shifts have been taken, no normal shifts
+			$info[$item[0]->id] = array(
+				'id' => $item[0]->id,
+				'sum' => 0,
+				'day' => 0,
+				'late' => 0,
+				'night' => 0,
+				'weekend' => 0,
+				'rc_sum' => count($item),
+				'rc_day' => 0,
+				'rc_night' => 0
+			);
 	});
 // sort the workgroup order according to the sum of taken shifts; use uasort to maintain key association
 uasort($info, function($a, $b)
@@ -136,6 +159,17 @@ $beamtimes->shifts->each(function($shift) use(&$info)
 				$info[$workgroup->id]['weekend']++;
 			});
 	});
+// add the RC shift types, too
+$beamtimes->rcshifts->each(function($rcshift) use(&$info)
+	{
+		// skip RC shifts without a subscribed user
+		if (!$rcshift->user->count())
+			return;
+		if ($rcshift->is_day())
+			$info[$rcshift->user->first()->workgroup_id]['rc_day']++;
+		else
+			$info[$rcshift->user->first()->workgroup_id]['rc_night']++;
+	});
 
 ?>
 
@@ -159,7 +193,16 @@ $beamtimes->shifts->each(function($shift) use(&$info)
 foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
 	echo '<p><h4>' . $workgroup->name . ' (' . $workgroup->country . ")</h4>\n";
-	echo '&emsp;&emsp;has taken a total of ' . $group['sum'] . " shifts<br />\n";
+	if ($group['rc_sum'])
+		echo '&emsp;&emsp;contributed with ' . $group['rc_sum'] . ' RC shifts (day: '
+			. $group['rc_day'] . ', night: ' . $group['rc_night'] . ")<br />\n";
+	else
+		echo "&emsp;&emsp;didn't contribute with run coordinator shifts<br />\n";
+	if (!$group['sum']) {
+		echo "&emsp;&emsp;and hasn't taken any shifts<br />\n";
+		continue;
+	}
+	echo '&emsp;&emsp;and has taken a total of ' . $group['sum'] . " shifts<br />\n";
 	echo '&emsp;&emsp;of which ' . $group['weekend'] . " were during the weekend<br />\n";
 	$members = $workgroup->members->count();
 	echo '&emsp;&emsp;shifts/head ratio is ' . round($group['sum']/$members, 2) . "<br />\n";
