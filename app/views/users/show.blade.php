@@ -8,6 +8,13 @@ Profile of {{ $user->username }}
 {{ HTML::script('js/laravel.js') }}
 {{ HTML::script('js/jquery.flot.min.js') }}
 {{ HTML::script('js/jquery.flot.pie.min.js') }}
+
+{{ HTML::script('js/bootstrap-notify.min.js') }}
+<script type="text/javascript">
+$(document).ready(function() {
+    $("[rel='tooltip']").tooltip();
+});
+</script>
 @stop
 
 @section('content')
@@ -104,8 +111,25 @@ Profile of {{ $user->username }}
             <td>{{ $roles }}</td>
           </tr>
           @endif
+          @if ($user->isRunCoordinator() && $user->rc_shifts->count())
           <tr>
-            <td>@if (Auth::id() == $user->id){{ link_to("/users/$user->username/shifts", "Total shifts", ['style' => 'color: inherit; text-decoration: none;']) }}@else Total shifts @endif</td>
+            <td><span rel="tooltip" data-placement="top" title="Run Coordinator">RC</span> shifts</td>
+            <td>{{ $user->rc_shifts->count() }}&emsp;(day: {{ $day = $user->rc_shifts->sum(function($shift) {
+              		return $shift->is_day();
+              	}) }}, night: {{ $night = $user->rc_shifts->sum(function($shift) {
+              		return $shift->is_night();
+              	}) }})<br />
+              {{ round($user->rc_shifts->count()/$user->rc_shifts->groupBy('beamtime_id')->count(), 2) }} RC shifts/contributing beamtime&emsp;({{ round($user->rc_shifts->count()/Beamtime::All()->count(), 2) }} all beamtimes)
+           </td>
+          </tr>
+          @endif
+          <?php
+          	$shift_string = 'Total shifts';
+          	if ($user->isRunCoordinator() && $user->rc_shifts->count())
+          		$shift_string = 'Normal shifts';
+          ?>
+          <tr>
+            <td>@if (Auth::id() == $user->id){{ link_to("/users/$user->username/shifts", "$shift_string", ['style' => 'color: inherit; text-decoration: none;']) }}@else {{ $shift_string }} @endif</td>
             <td>
               {{ $user->shifts->count() }}&emsp;@if ($user->shifts->count())(day: {{ $day = $user->shifts->sum(function($shift) {
               		return $shift->is_day();
