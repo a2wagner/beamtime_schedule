@@ -335,6 +335,9 @@ class BeamtimesController extends \BaseController {
 			return Redirect::to('beamtimes');
 
 		$beamtimes = Beamtime::all();
+		// check if there are beamtimes
+		if (!$beamtimes->count())
+			return View::make('beamtimes.statistics')->with('beamtimes', $beamtimes)->with('year', $year);
 		// add start of the beamtime to each beamtime
 		foreach ($beamtimes as $beamtime)
 			$beamtime->start = $beamtime->start_string();
