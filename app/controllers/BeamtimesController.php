@@ -94,6 +94,7 @@ class BeamtimesController extends \BaseController {
 		$interval = $start->diff($end);
 		// store beamtime information
 		$this->beamtime->fill(Input::only('name', 'description'));
+		$this->beamtime->enforce_rc = Input::has('enforce_rc');
 		$this->beamtime->save();
 		/* create the shifts */
 		$shifts = $this->beamtime->createShifts($start, $end, $duration);
@@ -177,6 +178,7 @@ class BeamtimesController extends \BaseController {
 			return Redirect::back()->withInput()->withErrors($beamtime->errors);
 
 		// save the (new) name and description for this beamtime
+		$beamtime->enforce_rc = Input::has('enforce_rc');
 		$beamtime->save();
 
 		$n = Input::get('n_crew');

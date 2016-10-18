@@ -16,7 +16,8 @@ $(document).ready(function() {
     //$("[rel='tooltip']").tooltip();
     $("body").tooltip({ selector: '[data-toggle=tooltip]' });
 
-    $(".btn-default").attr("disabled", false);
+    //$(".btn-default").attr("disabled", false);
+    $(".nfrc").attr("disabled", false);
 
     var msg = sessionStorage.getItem('msg');
     var type = sessionStorage.getItem('type');
@@ -54,6 +55,7 @@ function sub(e) {
         {
             sessionStorage.setItem('type', data[0]);
             sessionStorage.setItem('msg', data[1]);
+            //$(document.activeElement).attr("disabled", false);
             window.location.reload();
         }
     });
@@ -185,6 +187,8 @@ function sub(e) {
         		$rc = 'Run Coordinators: ' . implode(', ', $rc_info);
         	elseif ($rc_day->count())
         		$rc = "Run Coordinators: TBA";
+        	// enforce RC shifts?
+        	$enforce = $beamtime->enforce_rc && $rc_day->user->isEmpty()
         ?>
         <thead>
           <tr class="active" style="padding-left:20px;">
@@ -237,7 +241,7 @@ function sub(e) {
           @if ($shift->users->count() < $shift->n_crew)  {{-- only allow subscription if the shift's not full already --}}
           {{ Form::open(['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'role' => 'form', 'onsubmit' => 'return sub(this);']) }}
               {{ Form::hidden('event', 'subscribe') }}
-              <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Subscribe"><i class="fa fa-check fa-lg"></i></button>
+              <button type="submit" class="btn btn-default btn-sm {{{ $enforce ? '' : 'nfrc' }}}" data-toggle="tooltip" data-placement="top" {{ $enforce ? 'title="Run Coordinator needed!" disabled' : 'title="Subscribe"' }}><i class="fa fa-check fa-lg"></i></button>
           {{ Form::close() }}
           @else
           <?php $users = implode(' and ', $shift->users->first_name->all()); ?>
@@ -248,7 +252,7 @@ function sub(e) {
           @else
           {{ Form::open(['route' => array('shifts.update', $shift->id), 'method' => 'PATCH', 'class' => 'hidden-print', 'style' => 'float: left; margin-right: 5px;', 'role' => 'form', 'onsubmit' => 'return sub(this);']) }}
               {{ Form::hidden('event', 'unsubscribe') }}
-              <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Unsubscribe"><i class="fa fa-times fa-lg" style="padding: 0px 2px;"></i></button>
+              <button type="submit" class="btn btn-default btn-sm {{{ $enforce ? '' : 'nfrc' }}}" data-toggle="tooltip" data-placement="top" title="Unsubscribe"><i class="fa fa-times fa-lg" style="padding: 0px 2px;"></i></button>
           {{ Form::close() }}
           {{ Form::open(['route' => array('swaps.create', $shift->id), 'class' => 'hidden-print', 'style' => 'float: left;', 'role' => 'form']) }}
               <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Swap Shift"><i class="fa fa-exchange fa-lg"></i></button>

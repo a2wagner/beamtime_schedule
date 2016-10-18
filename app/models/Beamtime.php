@@ -1,9 +1,9 @@
 <?php
 
 class Beamtime extends \Eloquent {
-	protected $fillable = ['name', 'description'];
+	protected $fillable = ['name', 'description', 'enforce_rc'];
 
-	public static $rules = ['name' => 'required|max:100', 'description' => 'max:500'];
+	public static $rules = ['name' => 'required|max:100', 'description' => 'max:500', 'enforce_rc' => 'boolean'];
 
 	public $errors;
 

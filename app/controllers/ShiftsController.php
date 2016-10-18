@@ -80,6 +80,15 @@ class ShiftsController extends \BaseController {
 			if ($shift->users->count() < $shift->n_crew) {
 				if ($shift->users->contains(Auth::user()->id))
 					return ['danger', "You're subscribed to this shift already!"];
+				// enforce RC shifts?
+				$date = new DateTime($shift->start);
+				$rc_day = $shift->beamtime->rcshifts->filter(function($rc_shift) use($date)
+				{
+					$day = new DateTime($rc_shift->start);
+					return $day->format('Y-m-d') === $date->format('Y-m-d');
+				});
+				if ($shift->beamtime->enforce_rc && $rc_day->user->isEmpty())
+					return ['danger', "You can't subscribe to this shift because the Run Coordinator is missing!"];
 				$shift->users()->attach(Auth::user()->id);
 				// shorter
 				//Shift::find($shift_id)->users()->attach($user_id);

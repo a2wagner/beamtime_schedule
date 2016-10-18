@@ -231,6 +231,19 @@ $(".input-number").keydown(function (e) {
             </div>
 
             <div class="form-group">
+                {{ Form::label('enforce_rc', 'Enforce RC: ', array('class' => 'col-lg-2 control-label')) }}
+                <div class="col-lg-8">
+                    <div class="checkbox">
+                        <label>
+                        {{ Form::checkbox('enforce_rc', 1, Input::old('enforce_rc') ? Input::old('enforce_rc') : true) }}
+                        Enforce Run Coordinator subscription
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
                 <div class="col-lg-10 col-lg-offset-2">
                     {{ Form::submit('Create Beamtime', array('class' => 'btn btn-primary')) }}
                 </div>

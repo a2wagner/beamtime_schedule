@@ -33,7 +33,7 @@ $(document).ready(function() {
 
 $("[type='checkbox']").on("click", function() {
   var radios = $("[type='radio']");
-  var checks = $("[type='checkbox']");
+  var checks = $("[type='checkbox'][value!='rc']");
 
   var idx = checks.index($(this));  // index of the clicked checkbox element
 
@@ -52,7 +52,7 @@ $("[type='checkbox']").on("click", function() {
 
 $(document).ready(function() {
   var radios = $("[type='radio']");
-  var checks = $("[type='checkbox']");
+  var checks = $("[type='checkbox'][value!='rc']");
 
   for (var i = 0; i < checks.length; ++i) {
     if (checks[i].checked) {
@@ -96,12 +96,26 @@ function toggleRadio(id)
         </tr>
       </table>
     </div>
-    <div class="col-lg-8 form-group {{{ $errors->has('description') ? 'has-error has-feedback' : '' }}}">
-      {{ Form::label('description', 'Short beamtime description: ', array('class' => 'col-lg-8 control-label')) }}
-      {{ Form::textarea('description', $beamtime->description, array('class' => 'form-control', 'rows' => '3', 'placeholder' => 'optional', 'id' => 'inputError2', 'autofocus' => 'autofocus')) }}
-      {{ $errors->has('description') ? '<span class="glyphicon glyphicon-remove form-control-feedback from-control-feedback-textarea"></span>' : '' }}
-      <p class="help-block">{{ $errors->first('description') }}</p>
-    </div>
+    <table style="background-color: initial;" width="100%">
+        <tr>
+          <td>
+            <div class="col-lg-10 form-group {{{ $errors->has('description') ? 'has-error has-feedback' : '' }}}">
+              {{ Form::label('description', 'Short beamtime description: ', array('class' => 'col-lg-8 control-label')) }}
+              {{ Form::textarea('description', $beamtime->description, array('class' => 'form-control', 'rows' => '3', 'placeholder' => 'optional', 'id' => 'inputError2', 'autofocus' => 'autofocus')) }}
+              {{ $errors->has('description') ? '<span class="glyphicon glyphicon-remove form-control-feedback from-control-feedback-textarea"></span>' : '' }}
+              <p class="help-block">{{ $errors->first('description') }}</p>
+            </div>
+          </td>
+          <td align="right" width="20%">
+            <div class="checkbox">
+              <label>
+                {{ Form::checkbox('enforce_rc', 'rc', $beamtime->enforce_rc) }}
+                Enforce RC subscription
+              </label>
+            </div>
+          </td>
+        </tr>
+      </table>
 
     {{-- Check if the beamtime contain shifts to avoid errors --}}
     @if (is_null($beamtime->shifts->first()))
