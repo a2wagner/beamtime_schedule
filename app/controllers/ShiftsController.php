@@ -79,7 +79,7 @@ class ShiftsController extends \BaseController {
 		if (Input::get('event') === 'subscribe') {
 			if ($shift->users->count() < $shift->n_crew) {
 				if ($shift->users->contains(Auth::user()->id))
-					return ['error', "You're subscribed to this shift already!"];
+					return ['danger', "You're subscribed to this shift already!"];
 				$shift->users()->attach(Auth::user()->id);
 				// shorter
 				//Shift::find($shift_id)->users()->attach($user_id);
@@ -94,7 +94,7 @@ class ShiftsController extends \BaseController {
 						return ['warning', 'You subscribed to another shift within 24 hours!'];
 				}
 			} else {
-				return ['error', "The shift you wanted to subscribe to is already full!"];
+				return ['danger', "The shift you wanted to subscribe to is already full!"];
 			}
 		} elseif (Input::get('event') === 'unsubscribe') {
 			$shift->users()->detach(Auth::user()->id);
