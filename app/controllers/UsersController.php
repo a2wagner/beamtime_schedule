@@ -779,6 +779,71 @@ class UsersController extends \BaseController {
 
 
 	/**
+	 * Show a form to choose user accounts which should get merged
+	 *
+	 * @return Response
+	 */
+	public function merge()
+	{
+		// only admins are allowed to merge user accounts
+		if (!Auth::user()->isAdmin())
+			return Redirect::to('users');
+
+		if (Input::has('sort'))
+			$users = $this->user->orderBy('last_name', Input::get('sort'))->get();
+		else
+			$users = $this->user->all();
+
+		return View::make('users.merge', ['users' => $users])->withInput(Input::all());
+	}
+
+
+	/**
+	 * Merge the chosen user accounts
+	 *
+	 * @return Response
+	 */
+	public function mergeAccounts()
+	{
+		// only admins are allowed to merge user accounts
+		if (!Auth::user()->isAdmin())
+			return Redirect::to('users');
+
+		$merge = Input::get('merge');
+		if (count($merge) !== 2)
+			return Redirect::back()->with('error', 'You have to choose two accounts in order to merge them!');
+
+		$first = User::find($merge[0]);
+		$second = User::find($merge[1]);
+		if (Input::get('keep') === 'later' && strtotime($first->created_at) < strtotime($second->created_at)) {
+			$first = User::find($merge[1]);
+			$second = User::find($merge[0]);
+		}
+
+		// migrate the taken shifts
+		foreach ($second->shifts as $shift) {
+			$shift->users()->detach($second->id);
+			$shift->users()->attach($first->id);
+		}
+		// migrate the run coordinator shifts
+		foreach ($second->rcshifts as $shift) {
+			$shift->user()->detach($second->id);
+			$shift->user()->attach($first->id);
+		}
+		// migrate the radiation instructions
+		foreach ($second->radiation_instructions()->getResults() as $rad) {
+			$rad->user_id = $first->id;
+			$rad->save();
+		}
+
+		$second->delete();
+
+		// redirect to the account of the merged user
+		return Redirect::to('users/' . $first->username)->with('success', 'Users accounts successfully merged!');
+	}
+
+
+	/**
 	 * Return view with settings like different styles which can be applied
 	 *
 	 * @return Response
