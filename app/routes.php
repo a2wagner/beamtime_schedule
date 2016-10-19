@@ -64,8 +64,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('users/merge', array('as' => 'users.merge', 'uses' => 'UsersController@merge'));
 	Route::put('users/merge', array('as' => 'users.merge', 'uses' => 'UsersController@mergeAccounts'));
 
-	Route::get('beamtimes/merge', array('as' => 'merge', 'uses' => 'BeamtimesController@merge'));
-	Route::put('beamtimes/merge', array('as' => 'merge', 'uses' => 'BeamtimesController@mergeBeamtimes'));
+	Route::get('beamtimes/merge', array('as' => 'beamtimes.merge', 'uses' => 'BeamtimesController@merge'));
+	Route::put('beamtimes/merge', array('as' => 'beamtimes.merge', 'uses' => 'BeamtimesController@mergeBeamtimes'));
 	Route::resource('beamtimes', 'BeamtimesController');
 	Route::get('statistics', array('as' => 'statistics', 'uses' => 'BeamtimesController@statistics'));
 	Route::get('statistics/{year}', array('as' => 'statistics', 'uses' => 'BeamtimesController@statistics'));

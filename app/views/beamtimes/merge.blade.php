@@ -16,7 +16,7 @@ $(document).ready(function() {
 @stop
 
 @section('content')
-{{ Form::open(['route' => array('merge'), 'method' => 'PUT']) }}
+{{ Form::open(['route' => array('beamtimes.merge'), 'method' => 'PUT']) }}
 <div class="col-lg-10 col-lg-offset-1">
     <div class="page-header">
         <h2>Last Created Beamtimes</h2>
