@@ -489,7 +489,8 @@ class BeamtimesController extends \BaseController {
 					if (!$shift->user->isEmpty() && $shift->user->first()->id != Auth::id())
 						return Redirect::back()->withInput()->with('error', 'You chose a shift were a user is already subscribed to');
 					// if the shift is empty, subscribe the user to this shift
-					$shift->user()->attach(Auth::id());
+					if ($shift->user->isEmpty())
+						$shift->user()->attach(Auth::id());
 				} else {
 					// else the user might have unsibscribed, so check if there is a subscription from this user and remove the user if this is the case
 					$shift->user()->detach(Auth::id());
@@ -502,7 +503,7 @@ class BeamtimesController extends \BaseController {
 			$shift->save();
 		}
 
-		return Redirect::back()->with('beamtime', $beamtime)->with('rc_shifts', $rc_shifts)->with('success', 'Run coordinator shifts taken successfully');
+		return Redirect::back()->with('beamtime', $beamtime)->with('rc_shifts', $rc_shifts)->with('success', 'Run coordinator shifts updated successfully');
 	}
 
 }
