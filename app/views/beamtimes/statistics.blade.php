@@ -18,6 +18,50 @@ $(document).ready(function(){
         form.submit();
     });
 });
+
+/* flot bar chart tooltip */
+var previousPoint = null, previousLabel = null;
+
+$.fn.UseTooltip = function () {
+    $(this).bind("plothover", function (event, pos, item) {
+        if (item) {
+            if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
+                previousPoint = item.dataIndex;
+                previousLabel = item.series.label;
+                $("#tooltip").remove();
+
+                var x = item.datapoint[0];
+                var y = item.datapoint[1];
+
+                var color = item.series.color;
+
+                showTooltip(item.pageX,
+                        item.pageY,
+                        color,
+                        "<strong>" + item.series.label + "</strong><br />" + item.series.xaxis.ticks[x].label + " : <strong>" + y + "</strong>");
+            }
+        } else {
+            $("#tooltip").remove();
+            previousPoint = null;
+        }
+    });
+};
+
+function showTooltip(x, y, color, contents) {
+    $('<div id="tooltip">' + contents + '</div>').css({
+        position: 'absolute',
+        display: 'none',
+        top: y - 40,
+        left: x - 100,
+        border: '2px solid ' + color,
+        padding: '3px',
+        'font-size': '10px',
+        'border-radius': '5px',
+        'background-color': 'inherit',
+        //'font-family': 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+        opacity: 0.9
+    }).appendTo("body").fadeIn(200);
+}
 </script>
 @stop
 
@@ -222,8 +266,12 @@ $shift_data = array_fill(0, max($shifts_count)+1, 0);
 foreach ($shifts_count as $count)
 	$shift_data[$count]++;
 $count = 0;
-foreach ($shift_data as $val)
-	$shift_data[$count] = [$count++, $val ? $val : null];
+$shift_ticks = array();
+foreach ($shift_data as $val) {
+	$shift_data[$count] = [$count, $val ? $val : null];
+	array_push($shift_ticks, [$count, strval($count)]);
+	$count++;
+}
 $no_shifts = User::all()->count() - sizeof($shifts_count);
 if ($no_shifts)
 	$shift_data[0] = [0, $no_shifts];
@@ -282,6 +330,7 @@ if ($no_shifts)
         };
 
         $.plot($("#flot-shift-head-ratio"), dataset, options);
+        $("#flot-shift-head-ratio").UseTooltip();
         });
       </script>
       <div id="flot-shift-head-ratio" style="width: 500px; height: 250px; margin: 20px 0 2em 1em;"></div></p>
@@ -289,6 +338,7 @@ if ($no_shifts)
       <script type="text/javascript">
         $(document).ready(function(){
         var data = {{ json_encode($shift_data) }};
+        var ticks = {{ json_encode($shift_ticks) }};
         var dataset = [
             { label: "taken shifts per user", data: data, xaxis: 1, yaxis: 1, color: "#5482FF" }
         ];
@@ -306,7 +356,8 @@ if ($no_shifts)
             xaxis: {
                 axisLabel: "#Shifts",
                 axisLabelUseCanvas: false,
-                axisLabelPadding: 10
+                axisLabelPadding: 10,
+                ticks: ticks
             },
             yaxis: {
                 axisLabel: "#Users",
@@ -325,6 +376,7 @@ if ($no_shifts)
         };
 
         $.plot($("#flot-shift-hist"), dataset, options);
+        $("#flot-shift-hist").UseTooltip();
         });
       </script>
       <div id="flot-shift-hist" style="width: 500px; height: 250px; margin: 20px 0 2em 1em;"></div>
