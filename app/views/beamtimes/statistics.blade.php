@@ -236,11 +236,16 @@ $beamtimes->rcshifts->each(function($rcshift) use(&$info)
         <h2>Statistics for {{{ empty($range) ? $year : $range }}}</h2>
       </div>
 
-      {{{ $beamtimes->count() }}} beamtimes with {{{ $shifts->count() }}} shifts (plus {{{ $beamtimes->shifts->count() - $shifts->count() }}} maintenance shifts, {{{ $beamtimes->shifts->count() }}} total)<br />
-      {{{ $beamtimes->shifts->users->count() }}} total individual shifts taken out of possible {{{ $beamtimes->shifts->sum('n_crew') }}} individual shifts ({{{ round($beamtimes->shifts->users->count()/$beamtimes->shifts->sum('n_crew')*100, 1) }}}%)<br />
-      {{-- dd( $beamtimes->shifts->users->workgroup->groupBy('name', 'country')->orderBy('country')->orderBy('name') ) --}}
+      <h3>General Overview:</h3>
+      <p>Total number of registered users: {{{ User::all()->count() }}}<br />
+      Contributing users during the selected period: {{{ $beamtimes->shifts->users->unique()->count() }}}</p>
 
-      Total beamtime: {{{ $hours }}} hours ({{{ round($hours/24, 1) }}} days)
+      <p>{{{ $beamtimes->count() }}} beamtimes with {{{ $shifts->count() }}} shifts (plus {{{ $beamtimes->shifts->count() - $shifts->count() }}} maintenance shifts, {{{ $beamtimes->shifts->count() }}} total)<br />
+      {{{ $beamtimes->shifts->users->count() }}} total individual shifts taken out of possible {{{ $beamtimes->shifts->sum('n_crew') }}} individual shifts ({{{ round($beamtimes->shifts->users->count()/$beamtimes->shifts->sum('n_crew')*100, 1) }}}%)<br />
+
+      Total beamtime: {{{ $hours }}} hours ({{{ round($hours/24, 1) }}} days)</p>
+
+      <p style="padding-bottom: 20px;">{{{ $beamtimes->rcshifts->user->count() }}} run coordinator shifts taken out of possible {{{ $beamtimes->rcshifts->count() }}} RC shifts ({{{ round($beamtimes->rcshifts->user->count()/$beamtimes->rcshifts->count()*100, 1) }}}%)</p>
 
       @if (!$beamtimes->shifts->users->count())
       <h3 class="text-info">No shifts taken!</h3>
@@ -276,7 +281,6 @@ $no_shifts = User::all()->count() - sizeof($shifts_count);
 if ($no_shifts)
 	$shift_data[0] = [0, $no_shifts];
 ?>
-      <h3>General Overview:</h3>
       <p><h4>&emsp;Shifts/Head Ratio for contributing workgroups</h4>
       <script type="text/javascript">
         $(document).ready(function(){
