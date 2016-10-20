@@ -8,6 +8,8 @@
 @section('scripts')
 {{ HTML::script('js/jquery.flot.min.js') }}
 {{ HTML::script('js/jquery.flot.pie.min.js') }}
+{{ HTML::script('js/jquery.flot.axislabels.min.js') }}
+
 <script type='text/javascript'>
 $(document).ready(function(){
     $('#select-year').on('change', function(e){
@@ -17,6 +19,19 @@ $(document).ready(function(){
     });
 });
 </script>
+@stop
+
+@section('styles')
+@parent
+  .axisLabels {
+    font-size: 15px;
+  }
+  .xaxisLabel {
+    color: #545454;
+  }
+  .yaxisLabel {
+    color: #545454;
+  }
 @stop
 
 @section('content')
@@ -178,7 +193,7 @@ $beamtimes->rcshifts->each(function($rcshift) use(&$info)
       </div>
 
       {{{ $beamtimes->count() }}} beamtimes with {{{ $shifts->count() }}} shifts (plus {{{ $beamtimes->shifts->count() - $shifts->count() }}} maintenance shifts, {{{ $beamtimes->shifts->count() }}} total)<br />
-      {{{ $beamtimes->shifts->users->count() }}} total individual shifts taken of possible {{{ $beamtimes->shifts->sum('n_crew') }}} individual shifts<br />
+      {{{ $beamtimes->shifts->users->count() }}} total individual shifts taken out of possible {{{ $beamtimes->shifts->sum('n_crew') }}} individual shifts ({{{ round($beamtimes->shifts->users->count()/$beamtimes->shifts->sum('n_crew')*100, 1) }}}%)<br />
       {{-- dd( $beamtimes->shifts->users->workgroup->groupBy('name', 'country')->orderBy('country')->orderBy('name') ) --}}
 
       Total beamtime: {{{ $hours }}} hours ({{{ round($hours/24, 1) }}} days)
@@ -186,9 +201,135 @@ $beamtimes->rcshifts->each(function($rcshift) use(&$info)
       @if (!$beamtimes->shifts->users->count())
       <h3 class="text-info">No shifts taken!</h3>
       @else
-      <h3>Contributing Workgroups:</h3>
       {{-- jQuery needs to be loaded before the other Javascript parts need it --}}
       {{ HTML::script('js/jquery-2.1.1.min.js') }}
+<?php
+$data = array();
+$ticks = array();
+$count = 0;
+foreach ($info as $group) {
+	$workgroup = Workgroup::find($group['id']);
+	array_push($data, [$count, round($group['sum']/$workgroup->members->count(), 2)]);
+	array_push($ticks, [$count, $workgroup->short]);
+	$count++;
+}
+$shifts_count = array();
+$beamtimes->shifts->users->groupBy('id')->each(function($user_shifts) use(&$shifts_count)
+	{
+		array_push($shifts_count, count($user_shifts));
+	});
+$shift_data = array_fill(0, max($shifts_count)+1, 0);
+foreach ($shifts_count as $count)
+	$shift_data[$count]++;
+$count = 0;
+foreach ($shift_data as $val)
+	$shift_data[$count] = [$count++, $val ? $val : null];
+$no_shifts = User::all()->count() - sizeof($shifts_count);
+if ($no_shifts)
+	$shift_data[0] = [0, $no_shifts];
+?>
+      <h3>General Overview:</h3>
+      <p><h4>&emsp;Shifts/Head Ratio for contributing workgroups</h4>
+      <script type="text/javascript">
+        $(document).ready(function(){
+        var body = document.body;
+        /*var ff = (body.currentStyle||
+                (window.getComputedStyle&&getComputedStyle(body,null))
+                ||body.style).fontFamily;*/
+        var data = {{ json_encode($data) }};
+        var ticks = {{ json_encode($ticks) }};
+        var dataset = [
+            { label: "shifts/head ratio", data: data, xaxis: 1, yaxis: 1, color: "#5482FF" }
+        ];
+
+        var options = {
+            series: {
+                bars: {
+                    show: true
+                }
+            },
+            bars: {
+                align: "center",
+                barWidth: 0.5
+            },
+            xaxis: {
+                axisLabel: "Workgroups",
+                axisLabelUseCanvas: false,
+                //axisLabelFontSizePixels: 14,
+                //axisLabelFontFamily: ff,
+                axisLabelPadding: 10,
+                ticks: ticks
+            },
+            yaxis: {
+                axisLabel: "Shifts/Head ratio",
+                axisLabelUseCanvas: false,
+                //axisLabelFontSizePixels: 14,
+                //axisLabelFontFamily: ff,
+                axisLabelPadding: 3,
+                /*tickFormatter: function (v, axis) {
+                    return v + "°C";
+                }*/
+            },
+            legend: {
+                noColumns: 0,
+                labelBoxBorderColor: "#000000",
+                position: "nw"
+            },
+            grid: {
+                hoverable: true,
+                borderWidth: 2
+            }
+        };
+
+        $.plot($("#flot-shift-head-ratio"), dataset, options);
+        });
+      </script>
+      <div id="flot-shift-head-ratio" style="width: 500px; height: 250px; margin: 20px 0 2em 1em;"></div></p>
+      <p><h4>&emsp;Shift Distribution for all users</h4>
+      <script type="text/javascript">
+        $(document).ready(function(){
+        var data = {{ json_encode($shift_data) }};
+        var dataset = [
+            { label: "taken shifts per user", data: data, xaxis: 1, yaxis: 1, color: "#5482FF" }
+        ];
+
+        var options = {
+            series: {
+                bars: {
+                    show: true
+                }
+            },
+            bars: {
+                align: "center",
+                barWidth: 0.5
+            },
+            xaxis: {
+                axisLabel: "#Shifts",
+                axisLabelUseCanvas: false,
+                axisLabelPadding: 10
+            },
+            yaxis: {
+                axisLabel: "#Users",
+                axisLabelUseCanvas: false,
+                axisLabelPadding: 3
+            },
+            legend: {
+                noColumns: 0,
+                labelBoxBorderColor: "#000000",
+                position: "nw"
+            },
+            grid: {
+                hoverable: true,
+                borderWidth: 2
+            }
+        };
+
+        $.plot($("#flot-shift-hist"), dataset, options);
+        });
+      </script>
+      <div id="flot-shift-hist" style="width: 500px; height: 250px; margin: 20px 0 2em 1em;"></div>
+      &emsp;{{{ $no_shifts }}} registered users haven't taken any shifts in the selected period.</p>
+      <h3>Contributing Workgroups:</h3>
 <?php
 foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
@@ -256,7 +397,6 @@ $(document).ready(function(){
 </script>';
 	echo '<div id="flotcontainer'.$group['id'].'" style="width: 400px; height: 250px; margin-bottom: 2em;"></div></p>';
 }
-
 ?>
       @endif  {{-- Workgroups --> shifts taken? --}}
     @endif  {{-- Beamtimes found? --}}
