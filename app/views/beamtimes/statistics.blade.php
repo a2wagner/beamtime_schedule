@@ -19,12 +19,14 @@ $(document).ready(function(){
     });
 });
 
+@if (Auth::user()->isAdmin())
 function button_change()
 {
     var elem = document.getElementById("toggle-ranking");
     if (elem.innerHTML == "Expand") elem.innerHTML = "Collapse";
     else elem.innerHTML = "Expand";
 }
+@endif
 
 /* flot bar chart tooltip */
 var previousPoint = null, previousLabel = null;
@@ -471,6 +473,7 @@ $(document).ready(function(){
 }
 ?>
 
+@if (Auth::user()->isAdmin())
       <div class="page-header" style="padding-top: 20px;">
         <h3>Shift Ranking</h3>
       </div>
@@ -493,6 +496,7 @@ foreach($users_no_shifts as $user) {
         </div>
         <button class="btn btn-primary" id="toggle-ranking" data-toggle="collapse" data-target="#ranking" onclick="button_change()">Expand</button>
       </div>
+@endif
       @endif  {{-- Workgroups --> shifts taken? --}}
     @endif  {{-- Beamtimes found? --}}
   </div>
