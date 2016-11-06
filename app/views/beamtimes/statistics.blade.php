@@ -19,6 +19,13 @@ $(document).ready(function(){
     });
 });
 
+function button_change()
+{
+    var elem = document.getElementById("toggle-ranking");
+    if (elem.innerHTML == "Expand") elem.innerHTML = "Collapse";
+    else elem.innerHTML = "Expand";
+}
+
 /* flot bar chart tooltip */
 var previousPoint = null, previousLabel = null;
 
@@ -465,10 +472,10 @@ $(document).ready(function(){
 ?>
 
       <div class="page-header" style="padding-top: 20px;">
-        <h3>Shift Ranking &emsp; <button class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#ranking">Expand</button></h3>
+        <h3>Shift Ranking</h3>
       </div>
-      <div id="ranking" class="collapse">
-        <div class="col-lg-5">
+      <div class="col-lg-5">
+        <div id="ranking" class="collapse">
           <div class="list-group">
 <?php
 foreach($shifts_user as $user) {
@@ -484,6 +491,7 @@ foreach($users_no_shifts as $user) {
 ?>
 		  </div>
         </div>
+        <button class="btn btn-primary" id="toggle-ranking" data-toggle="collapse" data-target="#ranking" onclick="button_change()">Expand</button>
       </div>
       @endif  {{-- Workgroups --> shifts taken? --}}
     @endif  {{-- Beamtimes found? --}}
