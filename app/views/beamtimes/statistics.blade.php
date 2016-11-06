@@ -263,10 +263,19 @@ foreach ($info as $group) {
 	$count++;
 }
 $shifts_count = array();
-$beamtimes->shifts->users->groupBy('id')->each(function($user_shifts) use(&$shifts_count)
+$shifts_user = array();
+$beamtimes->shifts->users->groupBy('id')->each(function($user_shifts) use(&$shifts_count, &$shifts_user)
 	{
-		array_push($shifts_count, count($user_shifts));
+		$n = count($user_shifts);
+		array_push($shifts_count, $n);
+		array_push($shifts_user, [$user_shifts[0]->username, $user_shifts[0]->get_full_name(), $n]);
 	});
+// sort array after the number of shifts (3rd entry) in descending order, maintain key association with uasort
+uasort($shifts_user, function($a, $b)
+	{
+		return $a[2] < $b[2];
+	});
+$users_no_shifts = User::all()->diff($beamtimes->shifts->users->unique());
 $shift_data = array_fill(0, max($shifts_count)+1, 0);
 foreach ($shifts_count as $count)
 	$shift_data[$count]++;
@@ -277,7 +286,7 @@ foreach ($shift_data as $val) {
 	array_push($shift_ticks, [$count, strval($count)]);
 	$count++;
 }
-$no_shifts = User::all()->count() - sizeof($shifts_count);
+$no_shifts = $users_no_shifts->count();
 if ($no_shifts)
 	$shift_data[0] = [0, $no_shifts];
 ?>
@@ -454,6 +463,28 @@ $(document).ready(function(){
 	echo '<div id="flotcontainer'.$group['id'].'" style="width: 400px; height: 250px; margin-bottom: 2em;"></div></p>';
 }
 ?>
+
+      <div class="page-header" style="padding-top: 20px;">
+        <h3>Shift Ranking &emsp; <button class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#ranking">Expand</button></h3>
+      </div>
+      <div id="ranking" class="collapse">
+        <div class="col-lg-5">
+          <div class="list-group">
+<?php
+foreach($shifts_user as $user) {
+	echo '<a href="users/' . $user[0] . "\" class=\"list-group-item\">\n"
+		. '<span class="badge">' . $user[2] . "</span>\n"
+		. $user[1] . "</a>\n";
+}
+foreach($users_no_shifts as $user) {
+	echo '<a href="users/' . $user->username . "\" class=\"list-group-item\">\n
+		<span class=\"badge\">0</span>"
+		. $user->get_full_name() . "</a>\n";
+}
+?>
+		  </div>
+        </div>
+      </div>
       @endif  {{-- Workgroups --> shifts taken? --}}
     @endif  {{-- Beamtimes found? --}}
   </div>
