@@ -174,6 +174,14 @@ function sub(e) {
         		$day = new DateTime($rc_shift->start);
         		return $day->format('Y-m-d') === $date->format('Y-m-d');
         	});
+        	// include the night shift end time as well to ensure that the night shift, which might cover a part of the next day, is considered as well
+        	// note and possible TODO: improve this check by some time overlap calculation of regular shifts and RC shifts to tighten the RC enforcement
+        	$rc_day_enforce_check = $rc_shifts->filter(function($rc_shift) use($date)
+        	{
+        		$day = new DateTime($rc_shift->start);
+        		$night = $rc_shift->end();
+        		return $day->format('Y-m-d') === $date->format('Y-m-d') || $night->format('Y-m-d') === $date->format('Y-m-d');
+        	});
         	$rc_info = array();
         	$rc_day->each(function($rc_shift) use(&$rc_info)
         	{
@@ -188,7 +196,7 @@ function sub(e) {
         	elseif ($rc_day->count())
         		$rc = "Run Coordinators: TBA";
         	// enforce RC shifts?
-        	$enforce = $beamtime->enforce_rc && $rc_day->user->isEmpty()
+        	$enforce = $beamtime->enforce_rc && $rc_day_enforce_check->user->isEmpty();
         ?>
         <thead>
           <tr class="active" style="padding-left:20px;">

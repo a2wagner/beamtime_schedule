@@ -85,7 +85,8 @@ class ShiftsController extends \BaseController {
 				$rc_day = $shift->beamtime->rcshifts->filter(function($rc_shift) use($date)
 				{
 					$day = new DateTime($rc_shift->start);
-					return $day->format('Y-m-d') === $date->format('Y-m-d');
+					$night = $rc_shift->end();
+					return $day->format('Y-m-d') === $date->format('Y-m-d') || $night->format('Y-m-d') === $date->format('Y-m-d');
 				});
 				if ($shift->beamtime->enforce_rc && $rc_day->user->isEmpty())
 					return ['danger', "You can't subscribe to this shift because the Run Coordinator is missing!"];
