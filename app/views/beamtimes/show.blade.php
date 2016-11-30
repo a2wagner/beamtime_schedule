@@ -200,7 +200,8 @@ function sub(e) {
         ?>
         <thead>
           <tr class="active" style="padding-left:20px;">
-            <th colspan=7>{{ $day }} &emsp;&emsp;&emsp; {{ $rc }}</th>
+            <th colspan=2>{{ $day }}</th>
+            <th colspan=5>{{ $rc }}</th>
           </tr>
         </thead>
         @endif
