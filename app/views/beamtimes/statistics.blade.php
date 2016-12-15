@@ -482,12 +482,12 @@ $(document).ready(function(){
           <div class="list-group">
 <?php
 foreach($shifts_user as $user) {
-	echo '<a href="users/' . $user[0] . "\" class=\"list-group-item\">\n"
+	echo '<a href="/users/' . $user[0] . "\" class=\"list-group-item\">\n"
 		. '<span class="badge">' . $user[2] . "</span>\n"
 		. $user[1] . "</a>\n";
 }
 foreach($users_no_shifts as $user) {
-	echo '<a href="users/' . $user->username . "\" class=\"list-group-item\">\n
+	echo '<a href="/users/' . $user->username . "\" class=\"list-group-item\">\n
 		<span class=\"badge\">0</span>"
 		. $user->get_full_name() . "</a>\n";
 }
