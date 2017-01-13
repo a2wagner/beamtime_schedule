@@ -228,11 +228,14 @@ function sub(e) {
           {
           	$rad = '';
           	$warn = '';
+          	$rad_string = 'missing';
           	if (!$user->hasRadiationInstruction($shift->start)) {
-          		$rad = '<span rel="tooltip" data-toggle="tooltip" data-placement="top" title="Radiation Protection Instruction missing!" class="text-danger">&#9762; </span>';
           		$warn = ' class="text-danger"';
-          		if ($user->radiation_instructions()->count())
+          		if ($user->radiation_instructions()->count()) {
           			$warn = ' class="text-warning"';
+          			$rad_string = 'expired';
+          		}
+          		$rad = '<span rel="tooltip" data-toggle="tooltip" data-placement="top" title="Radiation Protection Instruction ' . $rad_string . '!"' . $warn . '>&#9762; </span>';
           	}
           	echo $rad . '<span rel="tooltip" data-toggle="tooltip" data-placement="top" title="Rating: ' . $user->rating . '"' . $warn . '>' . link_to("/users/$user->username", $user->get_full_name(), ['style' => 'color: inherit; text-decoration: none;']) . '</span><span class="hidden-print"> (' . $user->workgroup->name . ')</span><br />';
           });
