@@ -79,6 +79,7 @@ $(document).ready(function() {
           	$radiation_string = 'missing';
           	$instruction = false;
           	$renewed_by = NULL;
+          	$warn = ' class = "text-danger"';
           	if ($user->radiation_instructions()->count()) {
           		$radiation = $user->radiation_instructions()->orderBy('begin', 'desc')->first();
           		$date = new DateTime($radiation->end());
@@ -90,13 +91,15 @@ $(document).ready(function() {
           		if ($user->hasRadiationInstruction()) {
           			$radiation_string = 'until ' . $date;
           			$instruction = true;
-          		} else
+          		} else {
           			$radiation_string = 'expired ' . $date;
+          			$warn = ' class = "text-warning"';
+          		}
           	}
           ?>
           <tr>
             <td>Instructions</td>
-            <td{{ !$instruction ? ' class="text-danger"' : ''}}>&#9762; Radiation Protection {{ $radiation_string }}
+            <td{{ !$instruction ? $warn : ''}}>&#9762; Radiation Protection {{ $radiation_string }}
             @if (Auth::user()->isAdmin() || Auth::user()->isRadiationExpert())
             <a href="/users/{{{$user->id}}}/radiation" data-method="patch" class="btn btn-success btn-xs hidden-print" style="float: right;"><span class="fa fa-check-circle"></span> Renew</a>
             @if (!is_null($renewed_by))

@@ -85,6 +85,7 @@ $(".change-date").on("click", function() {
         <?php
         	$radiation_string = 'missing';
         	$instruction = false;
+          	$warn = ' class = "text-danger"';
         	if ($user->radiation_instructions()->count()) {
         		$radiation = $user->radiation_instructions()->orderBy('begin', 'desc')->first();
         		$date = new DateTime($radiation->end());
@@ -92,15 +93,17 @@ $(".change-date").on("click", function() {
         		if ($user->hasRadiationInstruction()) {
         			$radiation_string = 'valid until ' . $date;
         			$instruction = true;
-        		} else
+        		} else {
         			$radiation_string = 'expired ' . $date;
+        			$warn = ' class = "text-warning"';
+        		}
         	}
         ?>
         <tr>
           {{ Form::open(['url' => '/users/'.$user->id.'/radiation', 'method' => 'PATCH', 'id' => $user->id,'class' => 'form-horizontal', 'role' => 'form']) }}
           <td>{{ link_to("/users/{$user->username}", $user->first_name." ".$user->last_name) }}</td>
           <td>{{ $user->workgroup->name }}</td>
-          <td{{ !$instruction ? ' class="text-danger"' : ''}}>{{ $radiation_string }}</td>
+          <td{{ !$instruction ? $warn : ''}}>{{ $radiation_string }}</td>
           <td>
             <a id="button-{{{$user->id}}}" class="change-date btn btn-default btn-xs"><span class="fa fa-calendar"></span> Change Date</a>
               {{ Form::text('date', date('Y-m-d'), array('class' => 'input-sm form-control input-date datepicker', 'size' => '10', 'id' => 'date-'.$user->id, 'data-date-format' => 'yyyy-mm-dd')) }}
