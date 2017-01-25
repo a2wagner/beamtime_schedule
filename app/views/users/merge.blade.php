@@ -52,6 +52,7 @@ $(document).ready(function() {
           <th>Email</th>
           <th>Registered</th>
           <th>Last Updated</th>
+          <th>Last Login</th>
           <th class="text-center">Merge</th>
         </tr>
       </thead>
@@ -60,14 +61,16 @@ $(document).ready(function() {
         <tr>
           {{-- show an extra icon in front of every other admin --}}
           <td>@if ($user->isAdmin()) <span class="fa fa-user hidden-print"></span> @endif {{ link_to("/users/{$user->username}", $user->get_full_name()) }}</td>
-          <td>{{ $user->workgroup->name }}</td>
+          <td>{{ $user->workgroup->short }}</td>
           <td>{{ $user->email }}</td>
           <?php
           	$registered = substr($user->created_at, 0, strrpos($user->created_at, ":"));
           	$updated = substr($user->updated_at, 0, strrpos($user->updated_at, ":"));
+          	$last_login = substr($user->last_login, 0, strrpos($user->last_login, ":"));
           ?>
           <td>{{ $registered }}</td>
           <td>{{ $updated }}</td>
+          <td>{{ $last_login }}</td>
           <td class="text-center">
             <div class="checkbox">
               <label>
