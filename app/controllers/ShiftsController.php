@@ -113,8 +113,8 @@ class ShiftsController extends \BaseController {
 			$start = new DateTime($shift->start);
 			$diff = $start->getTimeStamp() - time();
 			$diff /= 86400;
-			// if the shift will start in less than 7 days, send an email to the run coordinators of the corresponding day
-			if ($diff < 7) {
+			// if the shift will start in less than 14 days, send an email to the run coordinators of the corresponding day
+			if ($diff < 14) {
 				$date = strtok($shift->start, ' ');
 				$rc = RCShift::where('start', 'LIKE', $date.'%')->get()->user->unique();
 				$beamtime = $shift->beamtime;
@@ -130,7 +130,7 @@ class ShiftsController extends \BaseController {
 				{
 					$success &= $user->mail($subject, str_replace(array('[USER]'), array($user->first_name), $msg));
 				});
-				return ['warning', 'You unsubscribed from a shift which will start in less than a week!'];
+				return ['warning', 'You unsubscribed from a shift which will start in less than two weeks!'];
 			}
 		}
 
