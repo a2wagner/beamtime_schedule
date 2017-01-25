@@ -97,6 +97,7 @@ class SessionsController extends \BaseController {
 					$user->rating = 1;
 					$user->ldap_id = $data['uidnumber'][0];
 					$user->enable();
+					$user->last_login = new DateTime();
 					$user->save();
 
 					Auth::login($user);  // authenticate user
@@ -110,15 +111,19 @@ class SessionsController extends \BaseController {
 								->with('success', 'Account created successfully. Set as Admin by default as it\'s the first user account. Check the information below and update them if needed.');
 					}
 
-					Auth::login($user);  // authenticate user
 					return Redirect::to('/users/' . $userdata['username'] . '/edit')
 							->with('info', 'You\'ve logged in for the first time. Check the information below and update them if needed.');
 				}
-				// Authenticate and redirect the user to the intended page, otherwise as the default to home
+				// Authenticate and redirect the user to the intended page, otherwise as the default to home; save last login timestamp
 				Auth::login($user);
+				$user->last_login = new DateTime();
+				$user->save();
 				return Redirect::intended('')->with('success', 'You have logged in successfully');
 			} elseif (User::whereUsername($userdata['username'])->first()->password !== 'ldap') {  // if the user has a LDAP account, but a different password
 				if (Auth::attempt($userdata)) {
+					// save last login timestamp
+					Auth::user()->last_login = new DateTime();
+					Auth::user()->save();
 					// Redirect the user to the intended page, otherwise as the default to home
 					return Redirect::intended('')->with('success', 'You have logged in successfully');
 				} else {
@@ -131,6 +136,9 @@ class SessionsController extends \BaseController {
 			}
 		} else {
 			if (Auth::attempt($userdata)) {
+				// save last login timestamp
+				Auth::user()->last_login = new DateTime();
+				Auth::user()->save();
 				// Redirect the user to the intended page, otherwise as the default to home
 				return Redirect::intended('')->with('success', 'You have logged in successfully');
 			} else {
