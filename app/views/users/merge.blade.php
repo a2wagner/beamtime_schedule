@@ -51,7 +51,6 @@ $(document).ready(function() {
           <th>Workgroup</th>
           <th>Email</th>
           <th>Registered</th>
-          <th>Last Updated</th>
           <th>Last Login</th>
           <th class="text-center">Merge</th>
         </tr>
@@ -65,11 +64,9 @@ $(document).ready(function() {
           <td>{{ $user->email }}</td>
           <?php
           	$registered = substr($user->created_at, 0, strrpos($user->created_at, ":"));
-          	$updated = substr($user->updated_at, 0, strrpos($user->updated_at, ":"));
           	$last_login = substr($user->last_login, 0, strrpos($user->last_login, ":"));
           ?>
           <td>{{ $registered }}</td>
-          <td>{{ $updated }}</td>
           <td>{{ $last_login }}</td>
           <td class="text-center">
             <div class="checkbox">
