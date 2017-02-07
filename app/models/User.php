@@ -232,6 +232,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	/**
 	 * Returns if the user account is active or inactive
+	 * inactive means the last login took place more than INACTIVE_DAYS ago
 	 *
 	 * @return boolean
 	 */
@@ -242,6 +243,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	/**
 	 * Returns the amount of days since the user took the last shift
+	 * Value is negative in case of no shifts
 	 *
 	 * @return int $days
 	 */
@@ -249,6 +251,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		$now = new DateTime();
 		$last_shift = $this->shifts->orderBy('start', 'desc')->first();
+
+		if (!$last_shift)
+			return -1;
+
 		$last = new DateTime($last_shift->start);
 		$diff = $now->diff($last);
 
@@ -257,6 +263,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	/**
 	 * Returns the amount of months since the user took the last shift
+	 * Value is negative in case of no shifts
 	 *
 	 * @return int $months
 	 */
@@ -264,6 +271,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		$now = new DateTime();
 		$last_shift = $this->shifts->orderBy('start', 'desc')->first();
+
+		if (!$last_shift)
+			return -1;
+
 		$last = new DateTime($last_shift->start);
 		$diff = $now->diff($last);
 
