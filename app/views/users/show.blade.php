@@ -53,6 +53,11 @@ $(document).ready(function() {
               @if (Auth::user()->isAdmin() && !$user->ldap_id)
               &emsp;<span class="text-warning">(no KPH account)</span>
               @endif
+              @if (Auth::user()->isAdmin() && !$user->is_active())
+              &emsp;<span class="label label-warning" style="float: right;">
+                inactive{{{ $user->last_login !== "0000-00-00 00:00:00" ? " (" . $user->last_active_months() . " months)" : "" }}}
+              </span>
+              @endif
             </td>
           </tr>
           <tr>
