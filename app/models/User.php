@@ -51,6 +51,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	const PI = 64;
 	const ADMIN = 128;  // use the highest bit for admins
 
+	// the amount of days since the last login from where a user is considered inactive
+	const INACTIVE_DAYS = 180;
+
 	use UserTrait, RemindableTrait;
 
 	// create custom validation messages ------------------
@@ -197,6 +200,44 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			}
 		});
 		return $hasInstruction;
+	}
+
+	/**
+	 * Returns the amount of days since the last login of a user
+	 *
+	 * @return int $days
+	 */
+	public function last_active()
+	{
+		$now = new DateTime();
+		$last_login = new DateTime($this->last_login);
+		$diff = $now->diff($last_login);
+
+		return $diff->days;
+	}
+
+	/**
+	 * Returns the amount of months since the last login of a user
+	 *
+	 * @return int $months
+	 */
+	public function last_active_months()
+	{
+		$now = new DateTime();
+		$last_login = new DateTime($this->last_login);
+		$diff = $now->diff($last_login);
+
+		return $diff->m + $diff->y*12;
+	}
+
+	/**
+	 * Returns if the user account is active or inactive
+	 *
+	 * @return boolean
+	 */
+	public function is_active()
+	{
+		return $this->last_active() < self::INACTIVE_DAYS;
 	}
 
 	/**
