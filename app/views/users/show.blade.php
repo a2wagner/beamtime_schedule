@@ -13,6 +13,7 @@ Profile of {{ $user->username }}
 <script type="text/javascript">
 $(document).ready(function() {
     $("[rel='tooltip']").tooltip();
+    $("body").tooltip({ selector: '[data-toggle=tooltip]' });
 });
 </script>
 @stop
@@ -54,8 +55,9 @@ $(document).ready(function() {
               &emsp;<span class="text-warning">(no KPH account)</span>
               @endif
               @if (Auth::user()->isAdmin() && !$user->is_active())
-              &emsp;<span class="label label-warning" style="float: right;">
-                inactive{{{ $user->last_login !== "0000-00-00 00:00:00" ? " (" . $user->last_active_months() . " months)" : "" }}}
+              &emsp;<span class="label label-warning" style="float: right; line-height: normal;"
+              	{{ $user->last_login !== "0000-00-00 00:00:00" ? ' data-toggle="tooltip" data-placement="top" title="' . $user->last_active_months() . ' months"' : '' }}>
+                inactive
               </span>
               @endif
             </td>
