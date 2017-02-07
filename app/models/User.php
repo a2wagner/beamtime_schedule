@@ -241,6 +241,36 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
+	 * Returns the amount of days since the user took the last shift
+	 *
+	 * @return int $days
+	 */
+	public function last_shift()
+	{
+		$now = new DateTime();
+		$last_shift = $this->shifts->orderBy('start', 'desc')->first();
+		$last = new DateTime($last_shift->start);
+		$diff = $now->diff($last);
+
+		return $diff->days;
+	}
+
+	/**
+	 * Returns the amount of months since the user took the last shift
+	 *
+	 * @return int $months
+	 */
+	public function last_shift_months()
+	{
+		$now = new DateTime();
+		$last_shift = $this->shifts->orderBy('start', 'desc')->first();
+		$last = new DateTime($last_shift->start);
+		$diff = $now->diff($last);
+
+		return $diff->m + $diff->y*12;
+	}
+
+	/**
 	 * Get all different roles of a user
 	 *
 	 * @return array $roles
