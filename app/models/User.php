@@ -22,7 +22,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	//protected $fillable = ['first_name', 'last_name', 'user_name', 'email', 'password', 'rating'];
 	// fillable leads to problems with forms because not listed variables can't be filled via forms (mass assignment security); use black list instead white list
-	protected $guarded = ['id', 'role'];
+	protected $guarded = ['id', 'role', 'last_login'];
 
 	public static $rules = [
 		'first_name' => 'required',
@@ -33,7 +33,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'password' => 'required|min:6|confirmed',
 		'password_confirmation' => 'required|same:password',
 		'rating' => 'required',
-		'role' => 'integer|between:0,255'
+		'role' => 'integer|between:0,255',
+		'last_login' => 'date'
 	];
 
 	public static $rules_edit;
@@ -200,6 +201,18 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			}
 		});
 		return $hasInstruction;
+	}
+
+	/**
+	 * Store the last login timestamp
+	 *
+	 * @return void
+	 */
+	public function store_login()
+	{
+		$this->timestamps = false;
+		$this->last_login = new DateTime();
+		$this->save();
 	}
 
 	/**

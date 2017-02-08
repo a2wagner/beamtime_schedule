@@ -116,14 +116,12 @@ class SessionsController extends \BaseController {
 				}
 				// Authenticate and redirect the user to the intended page, otherwise as the default to home; save last login timestamp
 				Auth::login($user);
-				$user->last_login = new DateTime();
-				$user->save();
+				$user->store_login();
 				return Redirect::intended('')->with('success', 'You have logged in successfully');
 			} elseif (User::whereUsername($userdata['username'])->first()->password !== 'ldap') {  // if the user has a LDAP account, but a different password
 				if (Auth::attempt($userdata)) {
 					// save last login timestamp
-					Auth::user()->last_login = new DateTime();
-					Auth::user()->save();
+					Auth::user()->store_login();
 					// Redirect the user to the intended page, otherwise as the default to home
 					return Redirect::intended('')->with('success', 'You have logged in successfully');
 				} else {
@@ -137,8 +135,7 @@ class SessionsController extends \BaseController {
 		} else {
 			if (Auth::attempt($userdata)) {
 				// save last login timestamp
-				Auth::user()->last_login = new DateTime();
-				Auth::user()->save();
+				Auth::user()->store_login();
 				// Redirect the user to the intended page, otherwise as the default to home
 				return Redirect::intended('')->with('success', 'You have logged in successfully');
 			} else {
