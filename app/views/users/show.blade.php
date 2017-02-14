@@ -93,12 +93,12 @@ var _0xa215=["\x63\x20\x6D\x28\x65\x29\x7B\x62\x20\x74\x3D\x65\x2D\x35\x3B\x31\x
             <td>{{ implode(', ', array_map(function ($v, $k) { return $k . ': ' . $v; }, $phone, array_keys($phone))) }}</td>
           </tr>
           @endif
-          {{-- only show the following information to the belonging user or to the same workgrop PI's as well as admins --}}
-          @if (Auth::id() == $user->id || Auth::user()->isAdmin() || (Auth::user()->isPI() && Auth::user()->workgroup_id == $user->workgroup_id))
           <tr>
             <td>Rating</td>
             <td id="rating">{{ $user->rating }}</td>
           </tr>
+          {{-- only show the following information to the belonging user or to the same workgrop PI's as well as admins --}}
+          @if (Auth::id() == $user->id || Auth::user()->isAdmin() || (Auth::user()->isPI() && Auth::user()->workgroup_id == $user->workgroup_id))
           <?php
           	$radiation_string = 'missing';
           	$instruction = false;
