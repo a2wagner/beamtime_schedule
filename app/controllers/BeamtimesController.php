@@ -83,8 +83,8 @@ class BeamtimesController extends \BaseController {
 			return Redirect::back()->withInput()->withErrors($validation->messages());
 
 		// if all data is correct, continue with creating the beamtime
-		$start = date(Input::get('start')."T".Input::get('sTime').":00:00");
-		$end = date(Input::get('end')."T".Input::get('eTime').":00:00");
+		$start = date(Input::get('start')." ".Input::get('sTime').":00:00");
+		$end = date(Input::get('end')." ".Input::get('eTime').":00:00");
 		//return 'Create '.Input::get('name').' - start is '.$start.' and end is '.$end.' - shift length '.Input::get('duration');
 		$duration = Input::get('duration');
 		$start = new DateTime($start);
