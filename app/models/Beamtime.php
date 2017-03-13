@@ -3,7 +3,8 @@
 class Beamtime extends \Eloquent {
 	protected $fillable = ['name', 'description', 'enforce_rc'];
 
-	public static $rules = ['name' => 'required|max:100', 'description' => 'max:500', 'enforce_rc' => 'boolean'];
+	public static $rules = ['name' => 'required|max:100', 'description' => 'max:500',
+		'enforce_rc' => 'boolean', 'weekday_crew1' => 'boolean'];
 
 	public $errors;
 
@@ -70,7 +71,7 @@ class Beamtime extends \Eloquent {
 	* @param DateTime $start, DateTime $end, int $duration
 	* @return two-dimensional array of array of shifts and array of run coordinator shifts between start and end date
 	*/
-	public function createShifts($_start, $end, $duration) 
+	public function createShifts($_start, $end, $duration)
 	{
 		// check if the start date is smaller than the end date, otherwise switch positions
 		if ($_start > $end)

@@ -102,6 +102,10 @@ class BeamtimesController extends \BaseController {
 		foreach ($shifts['normal'] as $shift) {
 			$s = new Shift;
 			$s->fill(array_add($shift, 'beamtime_id', $this->beamtime->id));
+			$shift_start = strtotime($s->start);
+			$is_weekday = date('w', $shift_start) > 0 && date('w', $shift_start) < 6;
+			if (Input::has('weekday_crew1') && $s->is_day() && $is_weekday)
+				$s->n_crew = 1;
 			$s->save();
 		}
 		// create and save the run coordinator shifts
