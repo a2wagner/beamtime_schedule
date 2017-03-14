@@ -138,18 +138,18 @@ function init() {
 
             document.addEventListener('touchstart', function (e) {
                 // record starting X, Y of touch in the action object
-                e.preventDefault();
+                //e.preventDefault();
                 actionCoords.startX = e.touches[0].screenX;
                 actionCoords.startY = e.touches[0].screenY;
             }, false);
 
             document.addEventListener('touchend', function (e) {
-                e.preventDefault();
+                //e.preventDefault();
                 terminateTouch(e);
             }, false);
 
             document.addEventListener('touchcancel', function (e) {
-                e.preventDefault();
+                //e.preventDefault();
                 terminateTouch(e);
             }, false);
         },
@@ -205,9 +205,13 @@ function init() {
             canvas.addEventListener('click', function (e) {
                 hittest(this, e.clientX, e.clientY);  // 'this' is the canvas target of the event
             }, false);
+            /* do not use touchstart as with no e.preventDefault in touch listeners above both get triggered, touchstart and click
+             * firefox on android seems to interpret a touch on the screen as both a click and a touch event
+             * when preventDefault() is not used (which seems to break scrolling...)
+             * where chrome on android only listens to click events in this case and ignores touchstart completely... ARGH!
             canvas.addEventListener('touchstart', function (e) {
                 hittest(this, e.touches[0].screenX, e.touches[0].screenY);  // 'this' is the canvas target of the event
-            }, false);
+            }, false);*/
         },
 
         setup = function () {
