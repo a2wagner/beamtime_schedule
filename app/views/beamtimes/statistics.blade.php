@@ -405,6 +405,7 @@ if ($no_shifts)
       &emsp;{{{ $no_shifts }}} registered users haven't taken any shifts in the selected period.</p>
       <h3>Contributing Workgroups:</h3>
 <?php
+
 foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
 	echo '<p><h4>' . $workgroup->name . ' (' . $workgroup->country . ")</h4>\n";
@@ -470,6 +471,158 @@ $(document).ready(function(){
 });
 </script>';
 	echo '<div id="flotcontainer'.$group['id'].'" style="width: 400px; height: 250px; margin-bottom: 2em;"></div></p>';
+}
+?>
+
+      <div class="page-header" style="padding-top: 20px;">
+        <h3>Regional Statistics</h3>
+      </div>
+
+<?php
+// now create the same shift statistics for the different localities, grouped by region
+$region = array();
+// initialise array with every region with contributing workgroups and the total shift amount
+$beamtimes->shifts->users->workgroup
+	->groupBy('region')
+	->each(function($item) use(&$region)
+	{
+		$region[$item[0]->region] = array(
+			'region' => $item[0]->region,
+			'sum' => count($item),
+			'day' => 0,
+			'late' => 0,
+			'night' => 0,
+			'weekend' => 0,
+			'rc_sum' => 0,
+			'rc_day' => 0,
+			'rc_night' => 0
+		);
+	});
+// count the RC shifts as well
+$beamtimes->rcshifts->user->workgroup
+	->groupBy('region')
+	->each(function($item) use(&$region)
+	{
+		if (array_key_exists($item[0]->region, $region))
+			$region[$item[0]->region]['rc_sum'] = count($item);
+		else  // the case if only RC shifts have been taken, no normal shifts
+			$region[$item[0]->region] = array(
+				'region' => $item[0]->region,
+				'sum' => 0,
+				'day' => 0,
+				'late' => 0,
+				'night' => 0,
+				'weekend' => 0,
+				'rc_sum' => count($item),
+				'rc_day' => 0,
+				'rc_night' => 0
+			);
+	});
+// sort the regional workgroup contributions according to the sum of taken shifts; use uasort to maintain key association
+uasort($region, function($a, $b)
+	{
+		return $b['sum'] - $a['sum'];
+	});
+// add the specific shift type information to the array
+$beamtimes->shifts->each(function($shift) use(&$region)
+	{
+		if ($shift->is_day())
+			$shift->users->workgroup->each(function($workgroup) use(&$region)
+			{
+				$region[$workgroup->region]['day']++;
+			});
+		elseif ($shift->is_late())
+			$shift->users->workgroup->each(function($workgroup) use(&$region)
+			{
+				$region[$workgroup->region]['late']++;
+			});
+		else
+			$shift->users->workgroup->each(function($workgroup) use(&$region)
+			{
+				$region[$workgroup->region]['night']++;
+			});
+		if ($shift->is_weekend())
+			$shift->users->workgroup->each(function($workgroup) use(&$region)
+			{
+				$region[$workgroup->region]['weekend']++;
+			});
+	});
+// add the RC shift types, too
+$beamtimes->rcshifts->each(function($rcshift) use(&$region)
+	{
+		// skip RC shifts without a subscribed user
+		if (!$rcshift->user->count())
+			return;
+		if ($rcshift->is_day())
+			$region[$rcshift->user->first()->workgroup->region]['rc_day']++;
+		else
+			$region[$rcshift->user->first()->workgroup->region]['rc_night']++;
+	});
+
+foreach ($region as $group) {
+	echo '<p><h4>Workgroups ' . Workgroup::region_string($group['region']) . "</h4>\n";
+	if ($group['rc_sum'])
+		echo '&emsp;&emsp;contributed with ' . $group['rc_sum'] . ' RC shifts (day: '
+			. $group['rc_day'] . ', night: ' . $group['rc_night'] . ")<br />\n";
+	else
+		echo "&emsp;&emsp;didn't contribute with run coordinator shifts<br />\n";
+	if (!$group['sum']) {
+		echo "&emsp;&emsp;and hasn't taken any shifts<br />\n";
+		continue;
+	}
+	echo '&emsp;&emsp;and has taken a total of ' . $group['sum'] . " shifts<br />\n";
+	echo '&emsp;&emsp;of which ' . $group['weekend'] . " were during the weekend<br />\n";
+	$members = Workgroup::whereregion($group['region'])->get()->members->count();
+	echo '&emsp;&emsp;shifts/head ratio is ' . round($group['sum']/$members, 2) . "<br />\n";
+	$s = '';
+	if ($members > 1)
+		$s = 's';
+	echo '&emsp;&emsp;' . $members . ' registered member' . $s . "<br />\n";
+	//echo '&emsp;&emsp;taken shift types: day: ' . round($group['day']/$group['sum']*100, 2) . '%, late: ' . round($group['late']/$group['sum']*100, 2) . '%, night: ' . round($group['night']/$group['sum']*100, 2) . "%<p>\n";
+	echo "&emsp;&emsp;taken shift types:\n";
+	echo '<script type="text/javascript">
+$(document).ready(function(){
+    var data = [
+        {label: "day", data: ' . round($group['day']/$group['sum']*100, 2) . ', color: "#8BC34A"},
+        {label: "late", data: ' . round($group['late']/$group['sum']*100, 2) . ', color: "#FFA000"},
+        {label: "night", data: ' . round($group['night']/$group['sum']*100, 2) . ', color: "#455A64"}
+    ];
+
+    var options = {
+        series: {
+            pie: {
+                show: true,
+                radius: 1,
+                stroke: {
+                    width: 0
+                },
+                label: {
+                    show: true,
+                    radius: 2/3,
+                    // Added custom formatter here...
+                    //formatter: function(label, point){
+                    //    return(point.percent.toFixed(2) + \'%\');
+                    //},
+                    formatter: function(label, series) {
+                        return \'<div style="font-size: 14px; font-weight: bold; text-align: center; padding: 2px; color: white;">\'+label+\'<br/>\'+Math.round(series.percent)+\'%</div>\';
+                    },
+                    threshold: 0.1
+                }
+            }
+        },
+        legend: {
+            show: false
+        },
+        grid: {
+            hoverable: true,
+            clickable: true
+        }
+    };
+
+    $.plot($("#flotcontainer'.$group['region'].'"), data, options);
+});
+</script>';
+	echo '<div id="flotcontainer'.$group['region'].'" style="width: 400px; height: 250px; margin-bottom: 2em;"></div></p>';
 }
 ?>
 
