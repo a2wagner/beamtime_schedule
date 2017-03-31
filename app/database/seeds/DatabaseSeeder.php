@@ -1,5 +1,7 @@
 <?php
 
+include_once('WorkgroupRegionSeeder.php');
+
 class DatabaseSeeder extends Seeder {
 
 	/**
@@ -12,6 +14,7 @@ class DatabaseSeeder extends Seeder {
 		Eloquent::unguard();
 
 		$this->call('WorkgroupTableSeeder');
+		$this->call('WorkgroupRegionSeeder');
 		$this->command->info('Workgroups added to the database');
 	}
 
