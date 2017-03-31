@@ -560,6 +560,9 @@ $beamtimes->rcshifts->each(function($rcshift) use(&$region)
 	});
 
 foreach ($region as $group) {
+	// create region id for plots
+	$region_id = str_replace(' ', '_', strtolower(Workgroup::region_string($group['region'])));
+
 	echo '<p><h4>Workgroups ' . Workgroup::region_string($group['region']) . "</h4>\n";
 	if ($group['rc_sum'])
 		echo '&emsp;&emsp;contributed with ' . $group['rc_sum'] . ' RC shifts (day: '
@@ -619,10 +622,10 @@ $(document).ready(function(){
         }
     };
 
-    $.plot($("#flotcontainer'.$group['region'].'"), data, options);
+    $.plot($("#flotcontainer'.$region_id.'"), data, options);
 });
 </script>';
-	echo '<div id="flotcontainer'.$group['region'].'" style="width: 400px; height: 250px; margin-bottom: 2em;"></div></p>';
+	echo '<div id="flotcontainer'.$region_id.'" style="width: 400px; height: 250px; margin-bottom: 2em;"></div></p>';
 }
 ?>
 
