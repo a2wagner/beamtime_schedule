@@ -38,6 +38,16 @@ class Workgroup extends \Eloquent {
 	}
 
 	/**
+	 * Use the custom collection that allows tapping
+	 *
+	 * @return UtilityCollection
+	 */
+	public function newCollection(array $models = array())
+	{
+		return new UtilityCollection($models);
+	}
+
+	/**
 	* Checks if a workgroup is local
 	*
 	* @return bool
