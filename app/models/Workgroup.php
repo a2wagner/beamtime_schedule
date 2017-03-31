@@ -80,4 +80,18 @@ class Workgroup extends \Eloquent {
 			return 'Europe';
 		return 'Outside Europe';
 	}
+
+	/**
+	* Get region string
+	*
+	* @return string
+	*/
+	public static function region_string($region)
+	{
+		if ($region === self::LOCAL)
+			return 'Local';
+		if ($region === self::EUROPE)
+			return 'Europe';
+		return 'Outside Europe';
+	}
 }
