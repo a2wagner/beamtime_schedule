@@ -43,6 +43,7 @@ $(document).ready(function() {
             delay: 2500,
         });
     }
+    $('[data-tooltip="tooltip"]').tooltip();
 });
 
 function sub(e) {
@@ -272,7 +273,7 @@ function sub(e) {
           	}
           ?>
           {{ Form::open(['route' => array('shifts.request', $shift->id), 'class' => 'hidden-print', 'role' => 'form']) }}
-              <button type="button" class="btn btn-link btn-sm" data-toggle="tooltip" data-placement="top" title="Can I haz shift?" style="color: inherit;"><i class="fa fa-arrow-left fa-lg" style="padding: 0px 1.5px;" data-toggle="modal" data-target=".request-modal-{{{$shift->id}}}"></i></button>
+              <button type="button" class="btn btn-link btn-sm" data-toggle="modal" data-target=".request-modal-{{{$shift->id}}}" data-tooltip="tooltip" data-placement="top" title="Can I haz shift?" style="color: inherit;"><i class="fa fa-arrow-left fa-lg" style="padding: 0px 1.5px;"></i></button>
               <?php $request = new ShiftRequest(); $request->modal('request-modal-'.$shift->id, $text); ?>
           {{ Form::close() }}
           @endif
