@@ -43,6 +43,8 @@ $(document).ready(function() {
             delay: 2500,
         });
     }
+
+    // add a separate tooltip handler for the case of two data-toggle elements like modal + tooltip
     $('[data-tooltip="tooltip"]').tooltip();
 });
 
@@ -260,7 +262,7 @@ function sub(e) {
           {{ Form::close() }}
           @else
           <?php
-          	$text = '<p>Do you want to send request for this shift?</p>';
+          	$text = '<p>Do you want to send a request for this shift?</p>';
           	if ($shift->users->count() > 1) {
           		foreach ($shift->users as $user) {
           			$text .= "\n<div class='checkbox'>";
