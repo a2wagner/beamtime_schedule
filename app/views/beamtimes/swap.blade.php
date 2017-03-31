@@ -9,6 +9,9 @@
 $(document).ready(function() {
     //$("[rel='tooltip']").tooltip();
     $("body").tooltip({ selector: '[data-toggle=tooltip]' });
+
+    // add a separate tooltip handler for the case of two data-toggle elements like modal + tooltip
+    $('[data-tooltip="tooltip"]').tooltip();
 });
 </script>
 @stop
@@ -157,8 +160,27 @@ $(document).ready(function() {
           @endif</td>
           {{-- only show swap buttons if shift is not empty (which is true for maintenance) and not in the future as well as the $now and $current variable is set which should be true in case of swap selection ($org and $req not set); additionally check if another user is subscribed to the original shift that this user is not the only one subscribed to this shift as well --}}
           {{ $td }}@if (!$shift->users->find(Auth::id()) && !$shift->users->isEmpty() && !empty($now) && $now < new DateTime($shift->start) && !empty($current) && ( !$shift->users->find($other_user) || $shift->users->count() > 1 ))
+          <?php
+          	$text = '<p>Please choose the users who should receive your swap request:</p>';
+          	if ($shift->users->count() > 1) {
+          		foreach ($shift->users as $user) {
+          			$text .= "\n<div class='checkbox'>";
+          			$text .= "\n  <label>";
+          			$text .= "\n    <input type='checkbox' name='user[]' value='" . $user->id . "'>";
+          			$text .= "\n    " . $user->first_name;
+          			$text .= "\n  </label>";
+          			$text .= "\n</div>";
+          		}
+          	}
+          ?>
           {{ Form::open(['route' => array('swaps.store', $current, $shift->id), 'class' => 'hidden-print', 'style' => 'float: left;', 'role' => 'form']) }}
+              {{-- only show selection dialogue if both users are available for swapping (none of the users are subscribed to the original shift) --}}
+              @if ($shift->users->count() > 1 && !$shift->users->find($other_user))
+              <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target=".request-modal-{{{$shift->id}}}" data-tooltip="tooltip" data-placement="top" title="Swap with this shift"><i class="fa fa-exchange fa-lg"></i></button>
+              <?php $request = new ShiftRequest(); $request->modal('request-modal-'.$shift->id, $text); ?>
+              @else
               <button type="submit" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Swap with this shift"><i class="fa fa-exchange fa-lg"></i></button>
+              @endif
           {{ Form::close() }}
           @endif</td>
         </tr>

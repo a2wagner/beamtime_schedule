@@ -73,7 +73,10 @@ class SwapsController extends \BaseController {
 		// user who is on the original shift
 		$other_user_org = $shift_org->get_other_user(Auth::id());
 		// users who should receive an email
-		if ($other_user_org)
+		$users = [];
+		if (Input::has('user'))
+			$users = User::findMany(Input::get('user'));
+		elseif ($other_user_org)
 			$users = $shift_request->users->filter(function($user) use($other_user_org)
 			{
 				return $user->id != $other_user_org->id;
