@@ -258,9 +258,22 @@ function sub(e) {
               <button type="submit" class="btn btn-default btn-sm {{{ $enforce ? '' : 'nfrc' }}}" data-toggle="tooltip" data-placement="top" {{ $enforce ? 'title="Run Coordinator needed!" disabled' : 'title="Subscribe"' }}><i class="fa fa-check fa-lg"></i></button>
           {{ Form::close() }}
           @else
-          <?php $users = implode(' and ', $shift->users->first_name->all()); ?>
-          {{ Form::open(['route' => array('shifts.request', $shift->id), 'class' => 'hidden-print', 'role' => 'form', 'onsubmit' => "return confirm('Do you really want to send a shift request to $users?');"]) }}
-              <button type="submit" class="btn btn-link btn-sm" data-toggle="tooltip" data-placement="top" title="Can I haz shift?" style="color: inherit;"><i class="fa fa-arrow-left fa-lg" style="padding: 0px 1.5px;"></i></button>
+          <?php
+          	$text = '<p>Do you want to send request for this shift?</p>';
+          	if ($shift->users->count() > 1) {
+          		foreach ($shift->users as $user) {
+          			$text .= "\n<div class='checkbox'>";
+          			$text .= "\n  <label>";
+          			$text .= "\n    <input type='checkbox' name='user[]' value='" . $user->id . "'>";
+          			$text .= "\n    " . $user->first_name;
+          			$text .= "\n  </label>";
+          			$text .= "\n</div>";
+          		}
+          	}
+          ?>
+          {{ Form::open(['route' => array('shifts.request', $shift->id), 'class' => 'hidden-print', 'role' => 'form']) }}
+              <button type="button" class="btn btn-link btn-sm" data-toggle="tooltip" data-placement="top" title="Can I haz shift?" style="color: inherit;"><i class="fa fa-arrow-left fa-lg" style="padding: 0px 1.5px;" data-toggle="modal" data-target=".request-modal-{{{$shift->id}}}"></i></button>
+              <?php $request = new ShiftRequest(); $request->modal('request-modal-'.$shift->id, $text); ?>
           {{ Form::close() }}
           @endif
           @else

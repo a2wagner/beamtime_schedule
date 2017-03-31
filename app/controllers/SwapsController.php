@@ -280,8 +280,6 @@ class SwapsController extends \BaseController {
 		$swap->request_shift_id = $id;
 		$swap->save();
 
-		// mail the users the request
-		$users = $shift->users;
 		// mail content
 		$subject = 'Shift Request from ' . Auth::user()->get_full_name();
 		$msg = "Hello [USER],\r\n\r\n";
@@ -290,6 +288,13 @@ class SwapsController extends \BaseController {
 		$msg.= 'A2 Beamtime Scheduler';
 		// check if mailing worked
 		$success = true;
+
+		// get the users who should receive the request
+		$users = [];
+		if (Input::has('user'))
+			$users = User::findMany(Input::get('user'));
+		else
+			$users = $shift->users;
 
 		// send the mail to every user who should receive it and attach these users to the swap request
 		$users->each(function($user) use(&$success, $subject, $msg, $swap)
