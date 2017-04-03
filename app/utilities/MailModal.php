@@ -26,7 +26,7 @@ class MailModal
                   <div class="form-group">
                     <label for="content" class="control-label">Content</label>
                     <div class="col-lg">
-                      <textarea id="content" name="content" class="form-control" placeholder="Message content&#10;If you use the string [USER] it will be replaced by the user name" rows="5" required="required"></textarea>
+                      <textarea id="content" name="content" class="form-control" placeholder="Message content &ndash; If you use the string [USER] it will be replaced by the user name" rows="8" required="required" style="resize: none;"></textarea>
                     </div>
                   </div>
                 </fieldset></form>
