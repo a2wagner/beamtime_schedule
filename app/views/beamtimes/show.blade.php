@@ -77,7 +77,15 @@ function sub(e) {
           </td>
           <td class="text-right hidden-print">
             @if (Auth::user()->isAdmin())
-            <a class="btn btn-primary btn" href="/beamtimes/{{{$beamtime->id}}}/edit"><span class="fa fa-pencil"></span>&nbsp;&nbsp;&nbsp;Edit Beamtime</a>
+            <a class="btn btn-primary btn" href="/beamtimes/{{{$beamtime->id}}}/edit"><span class="fa fa-pencil"></span>&nbsp;&nbsp;Edit Beamtime</a>
+            @endif
+            @if (Auth::user()->isAdmin() || (Auth::user()->isRunCoordinator() && $beamtime->run_coordinators()->contains(Auth::user())))
+            <?php
+            	$mail_string = 'mailto:';
+            	$users = $beamtime->run_coordinators()->merge($beamtime->shifts->users->unique());
+            	$mail_string .= implode(',', $users->email->toArray());
+            ?>
+            <a class="btn btn-success btn" href="{{{$mail_string}}}"><span class="fa fa-envelope"></span>&nbsp;&nbsp;Mail Subscribers</a>
             @endif
             {{ link_to('/beamtimes', 'Back', ['class' => 'btn btn-default']) }}
           </td>
