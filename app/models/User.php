@@ -172,14 +172,15 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	 *
 	 * @param string $subject
 	 * @param string $message
-	 * @param array $cc
+	 * @param User   $from
+	 * @param array  $cc
 	 * @return boolean
 	 */
-	public function mail($subject, $msg, $cc = null)
+	public function mail($subject, $msg, $from = null, $cc = null)
 	{
 		$mail = new Sendmail();
 
-		return $mail->send_single($this->email, $subject, $msg, $cc);
+		return $mail->send_single($this->email, $subject, $msg, $from, $cc);
 	}
 
 	/**
