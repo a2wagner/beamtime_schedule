@@ -8,8 +8,8 @@ class ShiftRequest
 	 * @var string
 	 */
 	protected $modal = '
-	    <div class="modal fade request-modal-lg [LABEL]" tabindex="-1" role="dialog" aria-labelledby="[LABEL]">
-	      <div class="modal-dialog modal-lg">
+	    <div class="modal fade request-modal [LABEL]" tabindex="-1" role="dialog" aria-labelledby="[LABEL]">
+	      <div class="modal-dialog">
 	        <div class="modal-content">
 	          <div class="modal-header">
 	            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -26,14 +26,6 @@ class ShiftRequest
 	      </div>
 	    </div>
 	    ';
-
-	/**
-	 * Print the rating guide
-	 */
-	public function show()
-	{
-		echo $this->guide;
-	}
 
 	/**
 	 * Print the shift request within a modal
