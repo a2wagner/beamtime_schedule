@@ -63,6 +63,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::patch('users/kph', array('as' => 'users.activateKPHaccount', 'uses' => 'UsersController@activateKPHaccount'));
 	Route::get('users/merge', array('as' => 'users.merge', 'uses' => 'UsersController@merge'));
 	Route::put('users/merge', array('as' => 'users.merge', 'uses' => 'UsersController@mergeAccounts'));
+	Route::post('users/mail', array('as' => 'users.mail', 'uses' => 'UsersController@mail'));
 
 	Route::get('beamtimes/merge', array('as' => 'beamtimes.merge', 'uses' => 'BeamtimesController@merge'));
 	Route::put('beamtimes/merge', array('as' => 'beamtimes.merge', 'uses' => 'BeamtimesController@mergeBeamtimes'));

@@ -875,6 +875,46 @@ class UsersController extends \BaseController {
 
 
 	/**
+	 * Send mail to users stored/flashed in the Session
+	 * Method expects to get subject and content values to fill the mail
+	 *
+	 * @return Response
+	 */
+	public function mail()
+	{
+		// get the users who should receive the mail
+		$users = Session::get('users');
+		if (!$users->count())
+			return Redirect::back()->with('error', 'No users found in the session. Nothing sent.');
+
+		// check if subject and content are present
+		if (!Input::has('subject'))
+			return Redirect::back()->with('error', 'No subject given. Mailing cancelled.');
+		if (!Input::has('content'))
+			return Redirect::back()->with('error', 'No content given. Mailing cancelled.');
+
+		// mail content
+		$subject = Input::get('subject');
+		// use json_encode to get properly replaced line breaks (CR and LF) from textarea input
+		$msg = json_encode(Input::get('content'));
+		// check if mailing worked
+		$success = true;
+
+		// send the mail to every user who should receive it and attach these users to the swap request
+		$users->each(function($user) use(&$success, $subject, $msg)
+		{
+			$success &= $user->mail($subject, str_replace(array('[USER]'), array($user->first_name), $msg), Auth::user());
+		});
+
+		if ($success)
+			return Redirect::back()->with('success', 'Email sent successfully to shift subscribers of the current beamtime.');
+		else {
+			return Redirect::back()->with('error', 'Email couldn\'t be sent, mailing error...');
+		}
+	}
+
+
+	/**
 	 * Sort a collection in a given order
 	 *
 	 * @param Collection $collection
