@@ -48,16 +48,17 @@ class Sendmail
 	 * @param string $to
 	 * @param string $subject
 	 * @param string $message
-	 * @param array $cc
+	 * @param User   $from
+	 * @param array  $cc
 	 * @return boolean
 	 */
-	public function send_single($to, $subject, $msg, $cc = null)
+	public function send_single($to, $subject, $msg, $from = null, $cc = null)
 	{
 		// check if the email address is valid
 		if (!@$this->is_valid($to))
 			return false;
 
-		return $this->send($to, $subject, $msg, $cc);
+		return $this->send($to, $subject, $msg, $from, $cc);
 	}
 
 	/**
@@ -66,10 +67,11 @@ class Sendmail
 	 * @param array $recipients
 	 * @param string $subject
 	 * @param string $message
-	 * @param array $cc
+	 * @param User   $from
+	 * @param array  $cc
 	 * @return boolean
 	 */
-	public function send_multiple($recipients, $subject, $msg, $cc = null)
+	public function send_multiple($recipients, $subject, $msg, $from = null, $cc = null)
 	{
 		if (!is_array($recipients))
 			return false;
@@ -82,7 +84,7 @@ class Sendmail
 
 		$to = implode(", ", $recipients);
 
-		return $this->send($to, $subject, $msg, $cc);
+		return $this->send($to, $subject, $msg, $from, $cc);
 	}
 
 	/**
@@ -91,10 +93,11 @@ class Sendmail
 	 * @param string $to
 	 * @param string $subject
 	 * @param string $message
-	 * @param array $cc
+	 * @param User   $from
+	 * @param array  $cc
 	 * @return boolean
 	 */
-	public function send($to, $subject, $msg, $cc)
+	public function send($to, $subject, $msg, $from, $cc)
 	{
 		$header[] = "MIME-Version: 1.0";
 		$pos = strpos($msg, "<");  // check if the message body contains HTML tags
@@ -103,8 +106,15 @@ class Sendmail
 		else
 			$header[] = "Content-type: text/html; charset=utf-8";
 		$header[] = "X-Mailer: PHP " . phpversion();
-		$header[] = "From: \"A2 Beamtime Scheduler\"<admin@" . Request::getHost() . ">";
-		$header[] = "Reply-To: noreply@" . Request::getHost();
+		// check if a User object if given and use the information from it
+		// if not use generic beamtime scheduler meta data
+		if ($from instanceof User) {
+			$header[] = "From: \"" . $from->get_full_name() ."\"<" . $from->email . ">";
+			$header[] = "Reply-To: \"" . $from->get_full_name() ."\"<" . $from->email . ">";
+		} else {
+			$header[] = "From: \"A2 Beamtime Scheduler\"<admin@" . Request::getHost() . ">";
+			$header[] = "Reply-To: noreply@" . Request::getHost();
+		}
 		if (is_array($cc))
 			$header[] = "Cc: " . implode(", ", $cc);
 		$headers = implode(self::CRLF, $header);
