@@ -903,7 +903,7 @@ class UsersController extends \BaseController {
 		// send the mail to every user who should receive it and attach these users to the swap request
 		$users->each(function($user) use(&$success, $subject, $msg)
 		{
-			$success &= $user->mail($subject, str_replace(array('[USER]'), array($user->first_name), $msg), Auth::user());
+			$success &= $user->mail($subject, str_replace(array('[USER]'), array($user->first_name), $msg), Auth::user(), array(Auth::user()->email));
 		});
 
 		if ($success)
