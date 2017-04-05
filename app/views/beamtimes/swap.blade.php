@@ -42,7 +42,7 @@ $(document).ready(function() {
     @if (isset($beamtime))
     {{-- show a button to accept the swap request here if it is currently shown --}}
     @if (!empty($org) && !empty($req))
-    <table width="100%">
+    <table style="background-color: initial;" width="100%">
       <tr>
         <td>
           <?php
