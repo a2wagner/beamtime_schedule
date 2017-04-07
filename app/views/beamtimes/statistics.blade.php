@@ -172,6 +172,7 @@ $beamtimes->shifts->users->workgroup
 			'day' => 0,
 			'late' => 0,
 			'night' => 0,
+			'weekday_day' => 0,
 			'weekend' => 0,
 			'rc_sum' => 0,
 			'rc_day' => 0,
@@ -192,6 +193,7 @@ $beamtimes->rcshifts->user->workgroup
 				'day' => 0,
 				'late' => 0,
 				'night' => 0,
+				'weekday_day' => 0,
 				'weekend' => 0,
 				'rc_sum' => count($item),
 				'rc_day' => 0,
@@ -225,6 +227,11 @@ $beamtimes->shifts->each(function($shift) use(&$info)
 			$shift->users->workgroup->each(function($workgroup) use(&$info)
 			{
 				$info[$workgroup->id]['weekend']++;
+			});
+		elseif ($shift->is_day())
+			$shift->users->workgroup->each(function($workgroup) use(&$info)
+			{
+				$info[$workgroup->id]['weekday_day']++;
 			});
 	});
 // add the RC shift types, too
@@ -420,6 +427,7 @@ foreach ($info as $group) {
 	}
 	echo '&emsp;&emsp;and has taken a total of ' . $group['sum'] . " shifts<br />\n";
 	echo '&emsp;&emsp;of which ' . $group['weekend'] . " were during the weekend<br />\n";
+	echo '&emsp;&emsp;and ' . $group['weekday_day'] . " were during daytime on a weekday<br />\n";
 	$members = $workgroup->members->count();
 	echo '&emsp;&emsp;shifts/head ratio is ' . round($group['sum']/$members, 2) . "<br />\n";
 	$s = '';
@@ -492,6 +500,7 @@ $beamtimes->shifts->users->workgroup
 			'day' => 0,
 			'late' => 0,
 			'night' => 0,
+			'weekday_day' => 0,
 			'weekend' => 0,
 			'rc_sum' => 0,
 			'rc_day' => 0,
@@ -512,6 +521,7 @@ $beamtimes->rcshifts->user->workgroup
 				'day' => 0,
 				'late' => 0,
 				'night' => 0,
+				'weekday_day' => 0,
 				'weekend' => 0,
 				'rc_sum' => count($item),
 				'rc_day' => 0,
@@ -546,6 +556,11 @@ $beamtimes->shifts->each(function($shift) use(&$region)
 			{
 				$region[$workgroup->region]['weekend']++;
 			});
+		elseif ($shift->is_day())
+			$shift->users->workgroup->each(function($workgroup) use(&$region)
+			{
+				$region[$workgroup->region]['weekday_day']++;
+			});
 	});
 // add the RC shift types, too
 $beamtimes->rcshifts->each(function($rcshift) use(&$region)
@@ -575,6 +590,7 @@ foreach ($region as $group) {
 	}
 	echo '&emsp;&emsp;and have taken a total of ' . $group['sum'] . " shifts<br />\n";
 	echo '&emsp;&emsp;of which ' . $group['weekend'] . " were during the weekend<br />\n";
+	echo '&emsp;&emsp;and ' . $group['weekday_day'] . " were during daytime on a weekday<br />\n";
 	$members = Workgroup::whereregion($group['region'])->get()->members->count();
 	echo '&emsp;&emsp;shifts/head ratio is ' . round($group['sum']/$members, 2) . "<br />\n";
 	$s = '';
