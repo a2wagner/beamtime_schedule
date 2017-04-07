@@ -417,7 +417,7 @@ foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
 	echo '<p><h4>' . $workgroup->name . ' (' . $workgroup->country . ")</h4>\n";
 	if ($group['rc_sum'])
-		echo '&emsp;&emsp;contributed with ' . $group['rc_sum'] . ' RC shifts (day: '
+		echo '&emsp;&emsp;RC shifts: ' . $group['rc_sum'] . ' (day: '
 			. $group['rc_day'] . ', night: ' . $group['rc_night'] . ")<br />\n";
 	else
 		echo "&emsp;&emsp;didn't contribute with run coordinator shifts<br />\n";
@@ -425,9 +425,10 @@ foreach ($info as $group) {
 		echo "&emsp;&emsp;and hasn't taken any shifts<br />\n";
 		continue;
 	}
-	echo '&emsp;&emsp;and has taken a total of ' . $group['sum'] . " shifts<br />\n";
+	echo '&emsp;&emsp;regular shifts taken: ' . $group['sum'] . "<br />\n";
 	echo '&emsp;&emsp;of which ' . $group['weekend'] . " were during the weekend<br />\n";
-	echo '&emsp;&emsp;and ' . $group['weekday_day'] . " were during daytime on a weekday<br />\n";
+	echo '&emsp;&emsp;daytime shifts: ' . $group['weekday_day'] . ' weekdays, '
+		. ($group['day'] - $group['weekday_day']) . " on weekends<br />\n";
 	$members = $workgroup->members->count();
 	echo '&emsp;&emsp;shifts/head ratio is ' . round($group['sum']/$members, 2) . "<br />\n";
 	$s = '';
@@ -580,7 +581,7 @@ foreach ($region as $group) {
 
 	echo '<p><h4>Workgroups ' . Workgroup::region_string($group['region']) . "</h4>\n";
 	if ($group['rc_sum'])
-		echo '&emsp;&emsp;contributed with ' . $group['rc_sum'] . ' RC shifts (day: '
+		echo '&emsp;&emsp;RC shifts: ' . $group['rc_sum'] . ' (day: '
 			. $group['rc_day'] . ', night: ' . $group['rc_night'] . ")<br />\n";
 	else
 		echo "&emsp;&emsp;haven't contributed with run coordinator shifts<br />\n";
@@ -588,9 +589,10 @@ foreach ($region as $group) {
 		echo "&emsp;&emsp;and haven't taken any shifts<br />\n";
 		continue;
 	}
-	echo '&emsp;&emsp;and have taken a total of ' . $group['sum'] . " shifts<br />\n";
+	echo '&emsp;&emsp;regular shifts taken: ' . $group['sum'] . "<br />\n";
 	echo '&emsp;&emsp;of which ' . $group['weekend'] . " were during the weekend<br />\n";
-	echo '&emsp;&emsp;and ' . $group['weekday_day'] . " were during daytime on a weekday<br />\n";
+	echo '&emsp;&emsp;daytime shifts: ' . $group['weekday_day'] . ' weekdays, '
+		. ($group['day'] - $group['weekday_day']) . " on weekends<br />\n";
 	$members = Workgroup::whereregion($group['region'])->get()->members->count();
 	echo '&emsp;&emsp;shifts/head ratio is ' . round($group['sum']/$members, 2) . "<br />\n";
 	$s = '';
