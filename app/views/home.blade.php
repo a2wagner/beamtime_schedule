@@ -141,7 +141,7 @@
     <div class="page-header" style="padding-top:10%;">
         <h3>KPH Beamtime Schedule</h3>
     </div>
-    You can find the current beamtime schedule for MAMI <a href="http://www.kph.uni-mainz.de/793.php">here</a>.
+    You can find the current beamtime schedule for MAMI <a href="https://admin.kph.uni-mainz.de/strahlzeitplan?changeLang(en)">here</a>.
 @endif
 </div>
 @stop
