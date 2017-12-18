@@ -172,7 +172,7 @@ function sub(e) {
           <th>Duration</th>
           <th>Shift Workers</th>
           <th>Remarks</th>
-          <th>Status</th>
+          <th colspan=2 style="padding-left: 30px;">Status</th>
           <th class="hidden-print">Actions</th>
         </tr>
       </thead>
@@ -215,7 +215,7 @@ function sub(e) {
         <thead>
           <tr class="active" style="padding-left:20px;">
             <th colspan=2>{{ $day }}</th>
-            <th colspan=5>{{ $rc }}</th>
+            <th colspan=6>{{ $rc }}</th>
           </tr>
         </thead>
         @endif
@@ -256,6 +256,7 @@ function sub(e) {
           ?></td>
           @endif
           {{ $td }}{{ $shift->remark }}</td>
+          {{ $td }}@if (!$shift->maintenance) {{ $shift->users->count() }}/{{ $shift->n_crew }} @endif</td>
           {{ $td }}@if ($shift->maintenance) <a href="#" class="btn btn-info btn-sm disabled">Maintenance</a>
           @elseif ($shift->rating() == 0) <a href="#" class="btn btn-danger btn-sm disabled">Empty</a>
           @elseif ($shift->rating() < Shift::RATING_GOOD) <a href="#" class="btn btn-warning btn-sm disabled">Bad</a>
