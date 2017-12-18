@@ -74,6 +74,7 @@ class ShiftsController extends \BaseController {
 	 */
 	public function update($id)
 	{
+		$type = 'success';
 		$msg = '';
 		$shift = Shift::find($id);
 		if (Input::get('event') === 'subscribe') {
@@ -100,8 +101,19 @@ class ShiftsController extends \BaseController {
 				foreach (Auth::user()->shifts as $s) {
 					$diffStart = abs($start->getTimestamp() - $s->end()->getTimestamp())/3600;
 					$diffEnd = abs($end->getTimestamp() - strtotime($s->start))/3600;
-					if (($diffStart < $diffEnd && $diffStart < 24-$shift->duration) || ($diffEnd < $diffStart && $diffEnd < 24-$shift->duration))
-						return ['warning', 'You subscribed to another shift within 24 hours!'];
+					if (($diffStart < $diffEnd && $diffStart < 24-$shift->duration) || ($diffEnd < $diffStart && $diffEnd < 24-$shift->duration)) {
+						$type = 'warning';
+						$msg = 'You subscribed to another shift within 24 hours!';
+					}
+				}
+				// warn unexperienced users if they subscribe to solo shifts
+				if ($shift->n_crew === 1 && Auth::user()->rating < 3) {
+					if ($type === 'warning')
+						$msg = 'You subscribed to a <b>solo</b> shift while having another shift <b>within 24 hours</b>!';
+					else {
+						$type = 'warning';
+						$msg = 'You subscribed to a <b>solo</b> shift';
+					}
 				}
 			} else {
 				return ['danger', "The shift you wanted to subscribe to is already full!"];
@@ -134,7 +146,7 @@ class ShiftsController extends \BaseController {
 			}
 		}
 
-		return ['success', $msg];
+		return [$type, $msg];
 	}
 
 
