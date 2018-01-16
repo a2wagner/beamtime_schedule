@@ -138,27 +138,34 @@ function sub(e) {
       <h3>Shift Status</h3>
       <?php  // calculate shift status
       	$shifts_total = $shifts->filter(function($shift){ return !$shift->maintenance; })->count();
-      	$shifts_open = $shifts->filter(function($shift){ return $shift->users->count() < $shift->n_crew; })->count();
-      	$individual = $shifts->sum('n_crew');
-      	$individual_open = $shifts->sum(function($shift){
-      		if ($shift->users->count() > $shift->n_crew)
-      			return 0;
-      		else
-      			return $shift->n_crew - $shift->users->count();
-      	});
-      	$empty_shifts = $shifts->sum(function($shift){ return $shift->users->isEmpty() && !$shift->maintenance; });
-      	$full = round(($shifts_total - $shifts_open)/$shifts_total * 100, 2);
-      	$empty = round($empty_shifts/$shifts_total * 100, 2);
-      ?>
+	$individual_open = 0;
+	if ($shifts_total === 0) {
+		echo "All shifts are maintenance shifts. Maybe the beamtime has been cancelled.";
+	} else {
+      		$shifts_open = $shifts->filter(function($shift){ return $shift->users->count() < $shift->n_crew; })->count();
+      		$individual = $shifts->sum('n_crew');
+      		$individual_open = $shifts->sum(function($shift){
+      			if ($shift->users->count() > $shift->n_crew)
+      				return 0;
+      			else
+      				return $shift->n_crew - $shift->users->count();
+      		});
+      		$empty_shifts = $shifts->sum(function($shift){ return $shift->users->isEmpty() && !$shift->maintenance; });
+      		$full = round(($shifts_total - $shifts_open)/$shifts_total * 100, 2);
+      		$empty = round($empty_shifts/$shifts_total * 100, 2);
+      	?>
       <div class="progress">
         <div class="progress-bar progress-bar-success" style="width: {{{ $full }}}%"></div>
         <div class="progress-bar progress-bar-warning" style="width: {{{ 100 - $full - $empty }}}%"></div>
         <div class="progress-bar progress-bar-danger" style="width: {{{ $empty }}}%"></div>
       </div>
+      <?php
+      }
+      ?>
       <p>
         @if ($individual_open > 0)
         {{{ $shifts_open }}} of {{{ $shifts_total }}} total shifts open, {{{ $individual_open }}} of {{{ $individual }}} individual shifts open. (<span class="text-success">full</span>, <span class="text-warning">partly filled</span>, <span class="text-danger">empty</span>)
-        @else
+        @elseif ($shifts_total !== 0)
         All shifts filled ({{{ $shifts_total }}} total, {{{ $individual }}} individual).
         @endif
       </p>
@@ -310,6 +317,8 @@ function sub(e) {
     <div>
       @if ($individual_open > 0)
       <p>Total shifts: {{{ $shifts_total }}} ({{{ $shifts_open }}} open), {{{ $shifts->count() - $shifts_total }}} maintenance shifts, individual shifts: {{{ $individual }}} ({{{ $individual_open }}} open)</p>
+      @elseif ($shifts_total === 0)
+      No open shifts, all shifts are maintenance.
       @else
       <p>Total shifts: {{{ $shifts_total }}}, {{{ $shifts->count() - $shifts_total }}} maintenance shifts, individual shifts: {{{ $individual }}}, all shifts filled</p>
       @endif
