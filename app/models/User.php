@@ -45,7 +45,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	// different roles a user can have, stored in an unsigned 8bit integer (max value 255_10 = 11111111_2)
 	const ENABLED = 1;
-	//const SOMETHING = 2 || 4;
+	const RETIRED = 4;	
+//	const SOMETHING = 4;
 	const RUN_COORDINATOR = 8;
 	const AUTHOR = 16;
 	const RADIATION_EXPERT = 32;
