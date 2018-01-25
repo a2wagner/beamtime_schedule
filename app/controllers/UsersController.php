@@ -1,6 +1,6 @@
 <?php
 
-use \Exception;
+//use \Exception;
 
 class UsersController extends \BaseController {
 
@@ -511,6 +511,25 @@ class UsersController extends \BaseController {
 
 
 	/**
+	 * Show a page of all users where the retirement status can be toggled if logged-in user has admin privileges
+	 *
+	 * @return Response
+	 */
+	public function viewRetirementStatus()
+	{
+		if (Auth::user()->isAdmin()) {
+			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
+			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
+
+			if (Input::has('sort'))
+				$this->sort_collection($users, Input::get('sort'));
+
+			return View::make('users.retirement_status', ['users' => $users]);
+		} else
+			return Redirect::to('/users');
+	}
+
+	/**
 	 * Show a page of all users where the principle investigator flag can be toggled if logged-in user has admin or PI privileges
 	 *
 	 * @return Response
@@ -668,7 +687,63 @@ class UsersController extends \BaseController {
 
 
 	/**
-	 * Toggle principle investigator flag for user with the id $id
+	 * Toggle retirement status flag for user with the id $id
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function toggleRetirementStatus($id)
+	{
+		if (Auth::user()->isAdmin()) {
+			$user = $this->user->find($id);
+			$user->toggleRetirementStatus();
+			$user->save();
+
+			$msg = 'User ' . $user->get_full_name();
+			if ($user->isRetired())
+				$msg .= ' is now retired';
+			else
+				$msg .= ' is no longer retired';
+
+			return Redirect::route('users.retirement_status', ['users' => $this->user->all()])->with('success', $msg);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * set Retirement Date of user.
+	 *
+	 * @param  int  $id
+	 * @param  date $date
+	 * @return Response
+	 */
+	public function setRetirementDate($id)
+	{
+		$user = $this->user->find($id);
+
+		if (Auth::guest())
+			return Redirect::guest('login');
+
+		$date = '';
+		if (Input::has('date'))
+			$date = Input::get('date');
+		else return;
+
+		if (Auth::user()->isAdmin()) {
+			$user->timestamps = false;
+			$user->retire_date = new DateTime($date);
+			$user->save();
+
+			return Redirect::back()->with('success', 'Successfully set Retirement date for ' . User::find($id)->get_full_name());
+		} else
+			return Redirect::back()->with('error', 'You are not allowed to set Retirement dates');
+	}
+
+
+
+	/**
+	 * Toggle retirement flag for user with the id $id
 	 *
 	 * @param  int  $id
 	 * @return Response

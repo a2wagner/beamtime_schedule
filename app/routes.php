@@ -45,9 +45,11 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('users/{users}/shifts', array('as' => 'users.shifts', 'uses' => 'UsersController@shifts'));
 	Route::get('users/{users}/ics', array('as' => 'users.ics', 'uses' => 'UsersController@ics'));
 	Route::patch('users/{users}/radiation', array('as' => 'users.radiation', 'uses' => 'UsersController@renewRadiationInstruction'));
+	Route::patch('users/{users}/retirement', array('as' => 'users.retirement', 'uses' => 'UsersController@setRetirementDate'));
 	Route::get('users/manage', array('as' => 'users.manage', 'uses' => 'UsersController@manageUsers'));
 	Route::get('users/admins', array('as' => 'users.admins', 'uses' => 'UsersController@viewAdmins'));
 	Route::get('users/radiation_experts', array('as' => 'users.radiation_experts', 'uses' => 'UsersController@viewRadiationExperts'));
+        Route::get('users/retirement_status', array('as' => 'users.retirement_status', 'uses' => 'UsersController@viewRetirementStatus'));
 	Route::get('users/run_coordinators', array('as' => 'users.run_coordinators', 'uses' => 'UsersController@viewRunCoordinators'));
 	Route::get('users/principle_investigators', array('as' => 'users.principle_investigators', 'uses' => 'UsersController@viewPrincipleInvestigators'));
 	Route::get('users/radiation', array('as' => 'users.radiation', 'uses' => 'UsersController@viewRadiationInstruction'));
@@ -57,6 +59,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('users/settings', array('as' => 'users.settings', 'uses' => 'UsersController@settings'));
 	Route::patch('users/settings/{styles}', array('as' => 'users.updateSettings', 'uses' => 'UsersController@updateSettings'));
 	Route::patch('users/{users}/admin', array('as' => 'users.toggleAdmin', 'uses' => 'UsersController@toggleAdmin'));
+	Route::patch('users/{users}/rs', array('as' => 'users.toggleRetirementStatus', 'uses' => 'UsersController@toggleRetirementStatus'));
 	Route::patch('users/{users}/re', array('as' => 'users.toggleRadiationExpert', 'uses' => 'UsersController@toggleRadiationExpert'));
 	Route::patch('users/{users}/rc', array('as' => 'users.toggleRunCoordinator', 'uses' => 'UsersController@toggleRunCoordinator'));
 	Route::patch('users/{users}/pi', array('as' => 'users.togglePrincipleInvestigators', 'uses' => 'UsersController@togglePrincipleInvestigator'));

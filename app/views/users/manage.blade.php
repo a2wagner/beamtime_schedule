@@ -25,6 +25,7 @@ User Management
       @if (Auth::user()->isAdmin())
       <li>{{ link_to("/users/admins", "Manage admins") }}</li>
       <li>{{ link_to("/users/radiation_experts", "Manage radiation experts") }}</li>
+      <li>{{ link_to("/users/retirement_status", "Manage retirement status") }}</li>
       @endif
       <li>{{ link_to("/users/run_coordinators", "Manage run coordinators") }}</li>
       <li>{{ link_to("/users/principle_investigators", "Manage principle investigators") }}</li>
