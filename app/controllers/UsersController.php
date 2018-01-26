@@ -530,6 +530,26 @@ class UsersController extends \BaseController {
 	}
 
 	/**
+	 * Show a page of all users where the start date can be managed if logged-in user has admin privileges
+	 *
+	 * @return Response
+	 */
+	public function viewStartDate()
+	{
+		if (Auth::user()->isAdmin()) {
+			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
+			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
+
+			if (Input::has('sort'))
+				$this->sort_collection($users, Input::get('sort'));
+
+			return View::make('users.start_date', ['users' => $users]);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
 	 * Show a page of all users where the principle investigator flag can be toggled if logged-in user has admin or PI privileges
 	 *
 	 * @return Response
@@ -709,6 +729,37 @@ class UsersController extends \BaseController {
 		} else
 			return Redirect::to('/users');
 	}
+
+
+        /**
+         * set start Date of user.
+         *
+         * @param  int  $id
+         * @param  date $date
+         * @return Response
+         */
+        public function setStartDate($id)
+        {
+                $user = $this->user->find($id);
+
+                if (Auth::guest())
+                        return Redirect::guest('login');
+
+                $date = '';
+                if (Input::has('date'))
+                        $date = Input::get('date');
+                else return;
+
+                if (Auth::user()->isAdmin()) {
+                        $user->timestamps = false;
+                        $user->start_date = new DateTime($date);
+                        $user->save();
+
+                        return Redirect::back()->with('success', 'Successfully set Start Date for ' . User::find($id)->get_full_name());
+                } else
+                        return Redirect::back()->with('error', 'You are not allowed to set user Start Date');
+        }
+            
 
 
 	/**

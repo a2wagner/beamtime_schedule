@@ -46,10 +46,12 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('users/{users}/ics', array('as' => 'users.ics', 'uses' => 'UsersController@ics'));
 	Route::patch('users/{users}/radiation', array('as' => 'users.radiation', 'uses' => 'UsersController@renewRadiationInstruction'));
 	Route::patch('users/{users}/retirement', array('as' => 'users.retirement', 'uses' => 'UsersController@setRetirementDate'));
+	Route::patch('users/{users}/start_date', array('as' => 'users.start_date', 'uses' => 'UsersController@setStartDate'));
 	Route::get('users/manage', array('as' => 'users.manage', 'uses' => 'UsersController@manageUsers'));
 	Route::get('users/admins', array('as' => 'users.admins', 'uses' => 'UsersController@viewAdmins'));
 	Route::get('users/radiation_experts', array('as' => 'users.radiation_experts', 'uses' => 'UsersController@viewRadiationExperts'));
-        Route::get('users/retirement_status', array('as' => 'users.retirement_status', 'uses' => 'UsersController@viewRetirementStatus'));
+	Route::get('users/retirement_status', array('as' => 'users.retirement_status', 'uses' => 'UsersController@viewRetirementStatus'));
+	Route::get('users/start_date', array('as' => 'users.start_date', 'uses' => 'UsersController@viewStartDate'));
 	Route::get('users/run_coordinators', array('as' => 'users.run_coordinators', 'uses' => 'UsersController@viewRunCoordinators'));
 	Route::get('users/principle_investigators', array('as' => 'users.principle_investigators', 'uses' => 'UsersController@viewPrincipleInvestigators'));
 	Route::get('users/radiation', array('as' => 'users.radiation', 'uses' => 'UsersController@viewRadiationInstruction'));
