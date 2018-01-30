@@ -296,13 +296,13 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
-	 * Checks if a user is experienced based on the amount of shifts taken before a certain shift
+	 * Counts the amount of shifts taken before a certain shift
 	 * The reference time point is taken from the given Shift parameter
 	 *
 	 * @param Shift $shift
-	 * @return boolean
+	 * @return int
 	 */
-	public function experienced($shift)
+	public function experience($shift)
 	{
 		// check if reasonable parameter has been passed
 		if (is_int($shift) || $shift instanceof Shift) {
@@ -324,7 +324,32 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 			return strtotime($shift->start) < $time;
 		})->count();
 
-		return $amount >= Shift::EXPERIENCE_BLOCK;
+		return $amount;
+	}
+
+	/**
+	 * Checks if a user is experienced based on the amount of shifts taken before a certain shift
+	 * The reference time point is taken from the given Shift parameter
+	 *
+	 * @param Shift $shift
+	 * @return boolean
+	 */
+	public function experienced($shift)
+	{
+		// check if reasonable parameter has been passed
+		if (is_int($shift) || $shift instanceof Shift) {
+			if (is_int($shift))
+				$shift = Shift::find($shift);
+			if (!$shift->start) {
+				echo "Error: Could not retrieve start time from given Shift object";
+				dd($shift);
+			}
+		} else {
+			echo "Error: Wrong object passed to method";
+			dd($shift);
+		}
+
+		return $this->experience($shift) >= Shift::EXPERIENCE_BLOCK;
 	}
 
 	/**
