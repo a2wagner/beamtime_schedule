@@ -328,6 +328,16 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
+	 * Checks if a user is experienced based on the amount of total shifts taken
+	 *
+	 * @return boolean
+	 */
+	public function is_experienced()
+	{
+		return $this->shifts->count() >= Shift::EXPERIENCE_BLOCK;
+	}
+
+	/**
 	 * Get all different roles of a user
 	 *
 	 * @return array $roles
