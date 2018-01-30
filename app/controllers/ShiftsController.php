@@ -92,7 +92,7 @@ class ShiftsController extends \BaseController {
 				if ($shift->beamtime->enforce_rc && $rc_day->user->isEmpty())
 					return ['danger', "You can't subscribe to this shift because the Run Coordinator is missing!"];
 				$experienced = Auth::user()->experienced($shift);
-				if ($shift->users->count() === 1 && $shift->beamtime->experience_block && !$experienced)
+				if ($shift->users->count() === 1 && (!$shift->users->first()->experienced($shift) && $shift->beamtime->experience_block && !$experienced))
 					return ['danger', "You can't subscribe to this shift because you haven't taken enough shifts yet!"];
 				// declare return message
 				$msg = 'Subscribed to shift';
