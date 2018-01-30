@@ -57,6 +57,13 @@ class Shift extends \Eloquent {
 	 */
 	const RATING_PERFECT = 6;
 
+	/**
+	 * Threshold for the amount of taken shifts required to subscribe to "experience blocked" shifts
+	 *
+	 * @var int
+	 */
+	const EXPERIENCE_BLOCK = 5;
+
 	protected $fillable = ['beamtime_id', 'start', 'duration', 'n_crew', 'maintenance', 'remark'];
 
 	// Do not use timestamps for this model

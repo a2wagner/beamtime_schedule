@@ -33,7 +33,7 @@ $(document).ready(function() {
 
 $("[type='checkbox']").on("click", function() {
   var radios = $("[type='radio']");
-  var checks = $("[type='checkbox'][value!='rc']");
+  var checks = $("[type='checkbox'][value!='opt']");
 
   var idx = checks.index($(this));  // index of the clicked checkbox element
 
@@ -52,7 +52,7 @@ $("[type='checkbox']").on("click", function() {
 
 $(document).ready(function() {
   var radios = $("[type='radio']");
-  var checks = $("[type='checkbox'][value!='rc']");
+  var checks = $("[type='checkbox'][value!='opt']");
 
   for (var i = 0; i < checks.length; ++i) {
     if (checks[i].checked) {
@@ -109,8 +109,14 @@ function toggleRadio(id)
           <td align="right" width="20%">
             <div class="checkbox">
               <label>
-                {{ Form::checkbox('enforce_rc', 'rc', $beamtime->enforce_rc) }}
+                {{ Form::checkbox('enforce_rc', 'opt', $beamtime->enforce_rc) }}
                 Enforce RC subscription
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
+                {{ Form::checkbox('experience_block', 'opt', $beamtime->experience_block) }}
+                Activate experience block
               </label>
             </div>
           </td>

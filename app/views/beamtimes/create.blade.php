@@ -243,6 +243,18 @@ $(".input-number").keydown(function (e) {
             </div>
 
             <div class="form-group">
+                {{ Form::label('experience_block', 'Experience Block: ', array('class' => 'col-lg-2 control-label')) }}
+                <div class="col-lg-8">
+                    <div class="checkbox">
+                        <label>
+                        {{ Form::checkbox('experience_block', 1, Input::old('experience_block') ? Input::old('experience_block') : true) }}
+                        Block subscription to auto-extended shifts for users with less than {{{ Shift::EXPERIENCE_BLOCK }}} taken shifts
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
                 {{ Form::label('weekday_crew1', 'Weekday shifts: ', array('class' => 'col-lg-2 control-label')) }}
                 <div class="col-lg-8">
                     <div class="checkbox">

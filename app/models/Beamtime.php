@@ -1,10 +1,11 @@
 <?php
 
 class Beamtime extends \Eloquent {
-	protected $fillable = ['name', 'description', 'enforce_rc'];
+	protected $fillable = ['name', 'description', 'enforce_rc', 'experience_block'];
 
 	public static $rules = ['name' => 'required|max:100', 'description' => 'max:500',
-		'enforce_rc' => 'boolean', 'weekday_crew1' => 'boolean', 'day_late_crew1' => 'boolean'];
+		'enforce_rc' => 'boolean', 'experience_block' => 'boolean',
+		'weekday_crew1' => 'boolean', 'day_late_crew1' => 'boolean'];
 
 	public $errors;
 
