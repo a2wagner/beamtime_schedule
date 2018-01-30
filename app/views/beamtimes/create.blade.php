@@ -247,8 +247,20 @@ $(".input-number").keydown(function (e) {
                 <div class="col-lg-8">
                     <div class="checkbox">
                         <label>
-                        {{ Form::checkbox('weekday_crew1', 1, Input::old('weekday_crew1') ? Input::old('weekday_crew1') : true) }}
+                        {{ Form::checkbox('weekday_crew1', 1, Input::old('weekday_crew1') ? Input::old('weekday_crew1') : false) }}
                         Set shift workers to 1 for weekday shifts
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ Form::label('day_late_crew1', 'Day & late shifts: ', array('class' => 'col-lg-2 control-label')) }}
+                <div class="col-lg-8">
+                    <div class="checkbox">
+                        <label>
+                        {{ Form::checkbox('day_late_crew1', 1, Input::old('day_late_crew1') ? Input::old('day_late_crew1') : true) }}
+                        Set shift workers to 1 for all day and late shifts
                         </label>
                     </div>
                 </div>
