@@ -90,7 +90,7 @@ var _0xa215=["\x63\x20\x6D\x28\x65\x29\x7B\x62\x20\x74\x3D\x65\x2D\x35\x3B\x31\x
               @endif
               @if ((Auth::user()->isAdmin() || Auth::id() == $user->id) && !$user->is_experienced())
               &emsp;<span class="label label-warning" style="float: right; margin-right: 10px; line-height: normal;" data-toggle="tooltip" data-placement="top" title="Less than {{{ Shift::EXPERIENCE_BLOCK }}} shifts taken">
-                unexperienced
+                inexperienced
               </span>
               @endif
             </td>
