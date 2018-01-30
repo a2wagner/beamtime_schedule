@@ -296,6 +296,38 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
+	 * Checks if a user is experienced based on the amount of shifts taken before a certain shift
+	 * The reference time point is taken from the given Shift parameter
+	 *
+	 * @param Shift $shift
+	 * @return boolean
+	 */
+	public function experienced($shift)
+	{
+		// check if reasonable parameter has been passed
+		if (is_int($shift) || $shift instanceof Shift) {
+			if (is_int($shift))
+				$shift = Shift::find($shift);
+			if (!$shift->start) {
+				echo "Error: Could not retrieve start time from given Shift object";
+				dd($shift);
+			}
+		} else {
+			echo "Error: Wrong object passed to method";
+			dd($shift);
+		}
+
+		$time = strtotime($shift->start);
+		// determine amount of shifts taken before the given shift starts
+		$amount = $this->shifts->filter(function($shift) use($time)
+		{
+			return strtotime($shift->start) < $time;
+		})->count();
+
+		return $amount >= Shift::EXPERIENCE_BLOCK;
+	}
+
+	/**
 	 * Get all different roles of a user
 	 *
 	 * @return array $roles
