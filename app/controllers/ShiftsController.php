@@ -91,10 +91,22 @@ class ShiftsController extends \BaseController {
 				});
 				if ($shift->beamtime->enforce_rc && $rc_day->user->isEmpty())
 					return ['danger', "You can't subscribe to this shift because the Run Coordinator is missing!"];
+				$experienced = Auth::user()->shifts->count() >= Shift::EXPERIENCE_BLOCK;
+				if ($shift->users->count() === 1 && $shift->beamtime->experience_block && !$experienced)
+					return ['danger', "You can't subscribe to this shift because you haven't taken enough shifts yet!"];
+				// declare return message
+				$msg = 'Subscribed to shift';
+				// in case an unexperienced user subscribed, automatically extend the shift to a two person shift
+				$extended = false;
+				if (!$shift->users->count() && !$experienced) {
+					$shift->n_crew = 2;
+					$shift->save();
+					$extended = true;
+					$msg = 'Subscribed; shift modified for two persons due to low shift experience';
+				}
 				$shift->users()->attach(Auth::user()->id);
 				// shorter
 				//Shift::find($shift_id)->users()->attach($user_id);
-				$msg = 'Subscribed to shift';
 				// check if the user subscribed to another shift within 24 hours
 				$start = new DateTime($shift->start);
 				$end = $shift->end();
@@ -104,6 +116,8 @@ class ShiftsController extends \BaseController {
 					if (($diffStart < $diffEnd && $diffStart < 24-$shift->duration) || ($diffEnd < $diffStart && $diffEnd < 24-$shift->duration)) {
 						$type = 'warning';
 						$msg = 'You subscribed to another shift within 24 hours!';
+						if ($extended)
+							$msg = 'You subscribed to another shift within 24 hours!<br />Shift modified for two persons due to low shift experience.';
 					}
 				}
 				// warn unexperienced users if they subscribe to solo shifts
