@@ -21,6 +21,7 @@ class UsersController extends \BaseController {
 		if (Auth::guest())
 			return Redirect::guest('login');
 
+		$perPage = 50;
 		// this will only work when the search string will be send as GET from the form because users.index is adressed as GET in the routes
 		if (Input::has('search')) {
 			$s = Input::get('search');
@@ -32,18 +33,20 @@ class UsersController extends \BaseController {
 				->orWhere('last_name', 'LIKE', '%'.$s.'%')
 				->orWhereIn('workgroup_id', $workgroups);
 			if (count($workgroups))
-				$users = $users->orderBy('workgroup_id', 'asc')->paginate(50);
+				$users = $users->orderBy('workgroup_id', 'asc')->paginate($perPage);
 			else
-				$users = $users->orderBy('last_name', 'asc')->paginate(20);
+				$users = $users->orderBy('last_name', 'asc')->paginate($perPage);
+			$users->setBaseUrl('users');
 			return View::make('users.index', ['users' => $users]);
 		}
 
 		//$users = $this->user->all();
 		// use pagination instead
 		if (Input::has('sort'))
-			$users = $this->user->orderBy('last_name', Input::get('sort'))->paginate(20);
+			$users = $this->user->orderBy('last_name', Input::get('sort'))->paginate($perPage);
 		else
-			$users = $this->user->paginate(20);
+			$users = $this->user->paginate($perPage);
+		$users->setBaseUrl('users');
 
 		return View::make('users.index', ['users' => $users])->withInput(Input::all());
 	}
