@@ -30,12 +30,13 @@ class BeamtimesController extends \BaseController {
 		$beamtimes->sortByDesc('start');
 
 		// prepare pagination manually because it works on queries, not on collections
-		$perPage = 20;
+		$perPage = 15;
 		$page = 1;
 		if (Input::has('page'))
 			$page = Input::get('page');
 		$offset = ($page - 1) * $perPage;
 		$beamtimes = Paginator::make($beamtimes->slice($offset, $perPage, true)->all(), $beamtimes->count(), $perPage);
+		$beamtimes->setBaseUrl('beamtimes');
 
 		return View::make('beamtimes.index', ['beamtimes' => $beamtimes]);
 	}
