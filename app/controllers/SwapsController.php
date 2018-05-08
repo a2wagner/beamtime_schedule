@@ -231,14 +231,32 @@ class SwapsController extends \BaseController {
 			// delete the swap request
 			$swap->delete();
 
+			$extend_notice = "";
+			// check if the requested shift is a one person shift and extend it if needed due to not being experienced enough
+			$experienced = User::find($user_id)->experienced($shift_req);
+			if ($shift_req->users()->count() === 1 && $shift_req->n_crew === 1 && !$experienced) {
+				$shift_req->n_crew = 2;
+				$shift_req->save();
+				$extend_notice = " The shift has been modified for two persons due to your low shift experience.";
+			}
+
 			// inform the original user about the update
 			$subject = 'Update on Swap Request ' . $id;
 			$msg = 'Hello ' . User::find($user_id)->first_name . ",\r\n\r\n";
-			$msg.= Auth::user()->first_name . " accepted your swap request. The swap has been performed successfully.\r\n\r\n";
+			$msg.= Auth::user()->first_name . " accepted your swap request. The swap has been performed successfully." . $extend_notice . "\r\n\r\n";
 			$msg.= 'A2 Beamtime Scheduler';
 			User::find($user_id)->mail($subject, $msg);
 
-			return Redirect::to('beamtimes/' . $shift_org->beamtime->id)->with('success', 'Shift workers swapped successfully.');
+			$ret_note = '';
+			// check if the original shift is a one person shift and extend it if needed due to not being experienced enough
+			$experienced = Auth::user()->experienced($shift_org);
+			if ($shift_org->users()->count() === 1 && $shift_org->n_crew === 1 && !$experienced) {
+				$shift_org->n_crew = 2;
+				$shift_org->save();
+				$ret_note = ' Shift modified for two persons due to low shift experience';
+			}
+
+			return Redirect::to('beamtimes/' . $shift_org->beamtime->id)->with('success', 'Shift workers swapped successfully.' . $ret_note);
 		}
 	}
 
@@ -382,10 +400,19 @@ class SwapsController extends \BaseController {
 			// delete the swap request
 			$swap->delete();
 
+			$extend_notice = "";
+			// check if the requested shift is a one person shift and extend it if needed due to not being experienced enough
+			$experienced = $user->experienced($shift);
+			if ($shift->users()->count() === 1 && $shift->n_crew === 1 && !$experienced) {
+				$shift->n_crew = 2;
+				$shift->save();
+				$extend_notice = " The shift has been modified for two persons due to your low shift experience.";
+			}
+
 			// inform the requesting user about the update
 			$subject = 'Update on Shift Request ' . $hash;
 			$msg = 'Hello ' . $user->first_name . ",\r\n\r\n";
-			$msg.= Auth::user()->first_name . ' accepted your shift request. You have been successfully subscribed to the shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift->start)) . ".\r\n\r\n";
+			$msg.= Auth::user()->first_name . ' accepted your shift request. You have been successfully subscribed to the shift on ' . date("l, jS F Y, \s\\t\a\\r\\t\i\\n\g \a\\t H:i", strtotime($shift->start)) . "." . $extend_notice . "\r\n\r\n";
 			$msg.= 'A2 Beamtime Scheduler';
 			$user->mail($subject, $msg);
 
