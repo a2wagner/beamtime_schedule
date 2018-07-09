@@ -82,11 +82,17 @@ var _0xa215=["\x63\x20\x6D\x28\x65\x29\x7B\x62\x20\x74\x3D\x65\x2D\x35\x3B\x31\x
               @if (Auth::user()->isAdmin() && !$user->ldap_id)
               &emsp;<span class="text-warning">(no KPH account)</span>
               @endif
-              @if (Auth::user()->isAdmin() && !$user->is_active())
+              @if (Auth::user()->isAdmin())
+              @if ($user->isRetired())
+              &emsp;<span class="label label-warning" style="float: right; line-height: normal;" data-toggle="tooltip" data-placement="top" title="Retired {{{ substr($user->retire_date,0,7) }}}">
+                retired
+              </span>
+              @elseif (!$user->is_active())
               &emsp;<span class="label label-warning" style="float: right; line-height: normal;"
               	{{ $user->last_login !== "0000-00-00 00:00:00" ? ' data-toggle="tooltip" data-placement="top" title="' . $user->last_active_months() . ' months"' : '' }}>
                 inactive
               </span>
+              @endif
               @endif
               @if ((Auth::user()->isAdmin() || Auth::id() == $user->id) && !$user->is_experienced())
               &emsp;<span class="label label-warning" style="float: right; margin-right: 10px; line-height: normal;" data-toggle="tooltip" data-placement="top" title="Less than {{{ Shift::EXPERIENCE_BLOCK }}} shifts taken">
