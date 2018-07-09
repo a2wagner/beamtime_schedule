@@ -84,7 +84,13 @@
                             <li class="divider"></li>
                             @if (Auth::user()->isAdmin())
                             <li><a href="/users/enable"><i class="fa fa-check-square-o fa-fw"></i> Enable Users</a></li>
-                            @endif
+			    @endif
+                            @if (Auth::user()->isAdmin())
+                            <li><a href="/users/retirement_status"><i class="fa fa-check-square-o fa-fw"></i> Manage Retirement</a></li>
+			    @endif
+                            @if (Auth::user()->isAdmin())
+                            <li><a href="/users/start_date"><i class="fa fa-check-square-o fa-fw"></i> Manage User Start Dates</a></li>
+                            @endif				    
                             @if ((Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction()) || Auth::user()->isRadiationExpert())
                             <li><a href="/users/radiation"><i class="fa">&thinsp;&#9762;&nbsp;</i> Radiation Instruction</a></li>
                             @endif

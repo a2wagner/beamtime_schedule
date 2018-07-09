@@ -22,7 +22,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	//protected $fillable = ['first_name', 'last_name', 'user_name', 'email', 'password', 'rating'];
 	// fillable leads to problems with forms because not listed variables can't be filled via forms (mass assignment security); use black list instead white list
-	protected $guarded = ['id', 'role', 'last_login'];
+	protected $guarded = ['id', 'role', 'last_login','retire_date'];
 
 	public static $rules = [
 		'first_name' => 'required',
@@ -34,7 +34,9 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'password_confirmation' => 'required|same:password',
 		'rating' => 'required',
 		'role' => 'integer|between:0,255',
-		'last_login' => 'date'
+		'last_login' => 'date',
+		'start_date' => 'date',
+		'retire_date' => 'date'
 	];
 
 	public static $rules_edit;
@@ -45,7 +47,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	// different roles a user can have, stored in an unsigned 8bit integer (max value 255_10 = 11111111_2)
 	const ENABLED = 1;
-	//const SOMETHING = 2 || 4;
+	const RETIRED = 2;	
+//	const SOMETHING = 4;
 	const RUN_COORDINATOR = 8;
 	const AUTHOR = 16;
 	const RADIATION_EXPERT = 32;
@@ -255,6 +258,31 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->last_active() < self::INACTIVE_DAYS;
 	}
 
+	
+	
+	/**
+	 * Returns if the user account was active or inactive
+	 * during a specific year
+	 * @param Year $year
+	 * @return boolean
+	 */
+	public function was_active($year)
+	{
+		//echo $year;
+		echo "retire : $this->retire_date \n\n";
+
+		$date = new DateTime($this->retire_date);
+		echo "date   : $this->retire_date \n";
+	
+		dd($date->format("Y"));
+
+
+
+		return true;
+	//	return $year < $this->retire_date->format("Y");
+		
+	}
+
 	/**
 	 * Returns the amount of days since the user took the last shift
 	 * Value is negative in case of no shifts
@@ -373,6 +401,8 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 		if (!$this->isEnabled())
 			array_push($roles, 'Not enabled');
+		if (!$this->isRetired())
+			array_push($roles, 'Retired');
 		if ($this->isAdmin())
 			array_push($roles, 'Admin');
 		if ($this->isPI())
@@ -506,6 +536,32 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	{
 		$this->role ^= self::PI;
 	}
+
+	/**
+	 * Check if the current user is an retired
+	 *
+	 * @return boolean
+	 */
+	public function isRetired()
+	{
+		return $this->isFlagSet(self::RETIRED);
+	}
+
+	/**
+	 * Toggle the admin flag of a user role
+	 *
+	 * @return void
+	 */
+	public function toggleRetirementStatus()
+	{
+		$this->role ^= self::RETIRED;
+		if($this->isRetired()) {	
+			$this->timestamps = false;
+			$this->retire_date = new DateTime();
+			$this->save();
+		}
+	}
+
 
 	/**
 	 * Check if the current user is an admin
