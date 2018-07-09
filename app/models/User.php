@@ -22,7 +22,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	//protected $fillable = ['first_name', 'last_name', 'user_name', 'email', 'password', 'rating'];
 	// fillable leads to problems with forms because not listed variables can't be filled via forms (mass assignment security); use black list instead white list
-	protected $guarded = ['id', 'role', 'last_login','start_date','retire_date'];
+	protected $guarded = ['id', 'role', 'last_login','retire_date'];
 
 	public static $rules = [
 		'first_name' => 'required',
@@ -256,6 +256,31 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	public function is_active()
 	{
 		return $this->last_active() < self::INACTIVE_DAYS;
+	}
+
+	
+	
+	/**
+	 * Returns if the user account was active or inactive
+	 * during a specific year
+	 * @param Year $year
+	 * @return boolean
+	 */
+	public function was_active($year)
+	{
+		//echo $year;
+		echo "retire : $this->retire_date \n\n";
+
+		$date = new DateTime($this->retire_date);
+		echo "date   : $this->retire_date \n";
+	
+		dd($date->format("Y"));
+
+
+
+		return true;
+	//	return $year < $this->retire_date->format("Y");
+		
 	}
 
 	/**

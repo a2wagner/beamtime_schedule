@@ -519,7 +519,7 @@ class UsersController extends \BaseController {
 	{
 		if (Auth::user()->isAdmin()) {
 			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
-			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
+			$users = $this->user->orderBy('retirement_status', 'desc')->orderBy('last_name', 'asc')->get();
 
 			if (Input::has('sort'))
 				$this->sort_collection($users, Input::get('sort'));
@@ -538,7 +538,7 @@ class UsersController extends \BaseController {
 	{
 		if (Auth::user()->isAdmin()) {
 			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
-			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
+			$users = $this->user->orderBy('start_date', 'desc')->orderBy('last_name', 'asc')->get();
 
 			if (Input::has('sort'))
 				$this->sort_collection($users, Input::get('sort'));
@@ -739,25 +739,22 @@ class UsersController extends \BaseController {
          * @return Response
          */
         public function setStartDate($id)
-        {
-                $user = $this->user->find($id);
+	{
+		if(!(Auth::user()->isAdmin())) 
+			return Redirect::to('/users')->with('error', 'You are not allowed to set user Start Date');
 
-                if (Auth::guest())
-                        return Redirect::guest('login');
+                $user = $this->user->find($id);
 
                 $date = '';
                 if (Input::has('date'))
                         $date = Input::get('date');
-                else return;
+                else return Redirect::back()->with('error', 'Start date empty, please set a date'); 
 
-                if (Auth::user()->isAdmin()) {
-                        $user->timestamps = false;
-                        $user->start_date = new DateTime($date);
-                        $user->save();
+               $user->timestamps = false;
+               $user->start_date = new DateTime($date);
+               $user->save();
 
-                        return Redirect::back()->with('success', 'Successfully set Start Date for ' . User::find($id)->get_full_name());
-                } else
-                        return Redirect::back()->with('error', 'You are not allowed to set user Start Date');
+               return Redirect::back()->with('success', 'Successfully set Start Date for ' . User::find($id)->get_full_name());
         }
             
 
@@ -771,24 +768,23 @@ class UsersController extends \BaseController {
 	 */
 	public function setRetirementDate($id)
 	{
-		$user = $this->user->find($id);
 
-		if (Auth::guest())
-			return Redirect::guest('login');
+		if(!(Auth::user()->isAdmin())) 
+			return Redirect::to('/users')->with('error', 'You are not allowed to set user Retirement Date');
 
-		$date = '';
-		if (Input::has('date'))
-			$date = Input::get('date');
-		else return;
+                $user = $this->user->find($id);
 
-		if (Auth::user()->isAdmin()) {
-			$user->timestamps = false;
-			$user->retire_date = new DateTime($date);
-			$user->save();
+                $date = '';
+                if (Input::has('date'))
+                        $date = Input::get('date');
+                else return Redirect::back()->with('error', 'Retirement date empty, please set a date'); 
 
-			return Redirect::back()->with('success', 'Successfully set Retirement date for ' . User::find($id)->get_full_name());
-		} else
-			return Redirect::back()->with('error', 'You are not allowed to set Retirement dates');
+               $user->timestamps = false;
+               $user->retire_date = new DateTime($date);
+               $user->save();
+
+               return Redirect::back()->with('success', 'Successfully set Retirement Date for ' . User::find($id)->get_full_name());
+
 	}
 
 
