@@ -519,7 +519,7 @@ class UsersController extends \BaseController {
 	{
 		if (Auth::user()->isAdmin()) {
 			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
-			$users = $this->user->orderBy('retirement_status', 'desc')->orderBy('last_name', 'asc')->get();
+			$users = $this->user->orderBy('retire_date', 'desc')->orderBy('last_name', 'asc')->get();
 
 			if (Input::has('sort'))
 				$this->sort_collection($users, Input::get('sort'));
