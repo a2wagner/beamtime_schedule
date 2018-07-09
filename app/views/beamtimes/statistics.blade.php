@@ -176,8 +176,7 @@ $beamtimes->shifts->users->workgroup
 			'weekend' => 0,
 			'rc_sum' => 0,
 			'rc_day' => 0,
-			'rc_night' => 0,
-			'active_users'=> 0
+			'rc_night' => 0
 		);
 	});
 // count the RC shifts as well
@@ -198,8 +197,7 @@ $beamtimes->rcshifts->user->workgroup
 				'weekend' => 0,
 				'rc_sum' => count($item),
 				'rc_day' => 0,
-				'rc_night' => 0,
-				'active_users'=> 0
+				'rc_night' => 0
 			);
 	});
 // sort the workgroup order according to the sum of taken shifts; use uasort to maintain key association
@@ -271,27 +269,12 @@ $beamtimes->rcshifts->each(function($rcshift) use(&$info)
       {{-- jQuery needs to be loaded before the other Javascript parts need it --}}
       {{ HTML::script('js/jquery-2.1.1.min.js') }}
 <?php
-
-$only_the_actives = User::all()->reject(function($user) use(&$info)
-{
-	$isRetired = $user->isRetired();
-	if ($isRetired) return $isRetired;
-
-	$info[$user->workgroup_id]['active_users']++;
-	return !$user->isRetired();
-});
-
 $data = array();
 $ticks = array();
 $count = 0;
 foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
-
-	$nactive_members = $group['active_users'];
-	if($nactive_members == 0) $nactive_members = 1;
-	
-	echo '<p><h4>' . $workgroup->name . $workgroup->members->count() .  $group['active_users'] . "</h4>";	
-	array_push($data, [$count, round($group['sum']/$nactive_members, 2)]);
+	array_push($data, [$count, round($group['sum']/$workgroup->members->count(), 2)]);
 	array_push($ticks, [$count, $workgroup->short]);
 	$count++;
 }
