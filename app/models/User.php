@@ -47,7 +47,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	// different roles a user can have, stored in an unsigned 8bit integer (max value 255_10 = 11111111_2)
 	const ENABLED = 1;
-	const RETIRED = 2;	
+	const RETIRED = 2;
 //	const SOMETHING = 4;
 	const RUN_COORDINATOR = 8;
 	const AUTHOR = 16;
@@ -538,7 +538,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
-	 * Check if the current user is an retired
+	 * Check if the current user is retired
 	 *
 	 * @return boolean
 	 */
@@ -548,20 +548,24 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	/**
-	 * Toggle the admin flag of a user role
+	 * Mark the current user as retired
 	 *
 	 * @return void
 	 */
-	public function toggleRetirementStatus()
+	public function setRetired()
 	{
-		$this->role ^= self::RETIRED;
-		if($this->isRetired()) {	
-			$this->timestamps = false;
-			$this->retire_date = new DateTime();
-			$this->save();
-		}
+		$this->role |= self::RETIRED;
 	}
 
+	/**
+	 * Toggle the retired flag of a user role
+	 *
+	 * @return void
+	 */
+	public function toggleRetired()
+	{
+		$this->role ^= self::RETIRED;
+	}
 
 	/**
 	 * Check if the current user is an admin
