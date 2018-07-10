@@ -54,6 +54,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('users/start_date', array('as' => 'users.start_date', 'uses' => 'UsersController@viewStartDate'));
 	Route::get('users/run_coordinators', array('as' => 'users.run_coordinators', 'uses' => 'UsersController@viewRunCoordinators'));
 	Route::get('users/principle_investigators', array('as' => 'users.principle_investigators', 'uses' => 'UsersController@viewPrincipleInvestigators'));
+	Route::get('users/authors', array('as' => 'users.authors', 'uses' => 'UsersController@viewAuthors'));
 	Route::get('users/radiation', array('as' => 'users.radiation', 'uses' => 'UsersController@viewRadiationInstruction'));
 	Route::get('users/non-kph', array('as' => 'users.nonKPH', 'uses' => 'UsersController@viewNonKPH'));
 	Route::get('users/kph', array('as' => 'users.makeKPH', 'uses' => 'UsersController@viewMakeKPH'));
@@ -65,6 +66,7 @@ Route::group(array('before' => 'auth'), function()
 	Route::patch('users/{users}/re', array('as' => 'users.toggleRadiationExpert', 'uses' => 'UsersController@toggleRadiationExpert'));
 	Route::patch('users/{users}/rc', array('as' => 'users.toggleRunCoordinator', 'uses' => 'UsersController@toggleRunCoordinator'));
 	Route::patch('users/{users}/pi', array('as' => 'users.togglePrincipleInvestigators', 'uses' => 'UsersController@togglePrincipleInvestigator'));
+	Route::patch('users/{users}/au', array('as' => 'users.toggleAuthors', 'uses' => 'UsersController@toggleAuthor'));
 	Route::patch('users/kph', array('as' => 'users.activateKPHaccount', 'uses' => 'UsersController@activateKPHaccount'));
 	Route::get('users/merge', array('as' => 'users.merge', 'uses' => 'UsersController@merge'));
 	Route::put('users/merge', array('as' => 'users.merge', 'uses' => 'UsersController@mergeAccounts'));

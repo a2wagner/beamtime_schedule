@@ -90,12 +90,15 @@
                             @endif
                             @if (Auth::user()->isAdmin())
                             <li><a href="/users/start_date"><i class="fa fa-calendar-check-o fa-fw"></i> Manage User Start Dates</a></li>
-                            @endif				    
+                            @endif
                             @if ((Auth::user()->isRunCoordinator() && Auth::user()->hasRadiationInstruction()) || Auth::user()->isRadiationExpert())
                             <li><a href="/users/radiation"><i class="fa">&thinsp;&#9762;&nbsp;</i> Radiation Instruction</a></li>
                             @endif
                             @if (Auth::user()->isAdmin())
                             <li><a href="/users/kph"><i class="fa fa-user-plus fa-fw"></i> Add KPH Account</a></li>
+                            @endif
+                            @if (Auth::user()->isAdmin() || Auth::user()->isPI())
+                            <li><a href="/users/authors"><i class="fa fa-edit fa-fw"></i> Manage Authors</a></li>
                             @endif
                             <li><a href="/users/manage"><i class="fa fa-sliders fa-fw"></i> Manage Users</a></li>
                           </ul>

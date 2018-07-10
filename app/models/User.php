@@ -597,6 +597,26 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->isFlagSet(self::AUTHOR);
 	}
 
+	/**
+	 * Set the current user as an author
+	 *
+	 * @return void
+	 */
+	public function setAuthor()
+	{
+		$this->role |= self::AUTHOR;
+	}
+
+	/**
+	 * Toggle the author flag of a user role
+	 *
+	 * @return void
+	 */
+	public function toggleAuthor()
+	{
+		$this->toggleFlag(self::AUTHOR);
+	}
+
 
 	/* General methods to get and manipulate bits of $this->role */
 

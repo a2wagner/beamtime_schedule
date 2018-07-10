@@ -570,6 +570,26 @@ class UsersController extends \BaseController {
 
 
 	/**
+	 * Show a page of all users where the author flag can be toggled if logged-in user has admin or PI privileges
+	 *
+	 * @return Response
+	 */
+	public function viewAuthors()
+	{
+		if (Auth::user()->isAdmin() || Auth::user()->isPI()) {
+			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
+			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
+
+			if (Input::has('sort'))
+				$this->sort_collection($users, Input::get('sort'));
+
+			return View::make('users.authors', ['users' => $users]);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
 	 * Show a page with all users for which the currently logged in user is legitimated to renew the radiation protection instruction
 	 *
 	 * @return Response
@@ -808,6 +828,31 @@ class UsersController extends \BaseController {
 				$msg .= ' is no longer a principle investigator';
 
 			return Redirect::route('users.principle_investigators', ['users' => $this->user->all()])->with('success', $msg);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Toggle author for user with the id $id
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function toggleAuthor($id)
+	{
+		if (Auth::user()->isAdmin() || Auth::user()->isPI()) {
+			$user = $this->user->find($id);
+			$user->toggleAuthor();
+			$user->save();
+
+			$msg = 'User ' . $user->first_name . ' ' . $user->last_name;
+			if ($user->isAuthor())
+				$msg .= ' is now an author';
+			else
+				$msg .= ' is no longer aan author';
+
+			return Redirect::route('users.authors', ['users' => $this->user->all()])->with('success', $msg);
 		} else
 			return Redirect::to('/users');
 	}
