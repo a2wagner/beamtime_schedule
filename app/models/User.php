@@ -401,7 +401,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 
 		if (!$this->isEnabled())
 			array_push($roles, 'Not enabled');
-		if (!$this->isRetired())
+		if ($this->isRetired())
 			array_push($roles, 'Retired');
 		if ($this->isAdmin())
 			array_push($roles, 'Admin');
