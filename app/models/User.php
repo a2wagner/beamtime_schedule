@@ -258,29 +258,34 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->last_active() < self::INACTIVE_DAYS;
 	}
 
-	
-	
 	/**
-	 * Returns if the user account was active or inactive
-	 * during a specific year
-	 * @param Year $year
+	 * Checks if a user was retired during a given year
+	 * If a DateTime object is provided, only the year will be used
+	 *
+	 * @param int $year
 	 * @return boolean
 	 */
-	public function was_active($year)
+	public function is_retired($year)
 	{
-		//echo $year;
-		echo "retire : $this->retire_date \n\n";
+		// first check if the user is retired at all
+		if (!$this->isRetired())
+			return false;
 
-		$date = new DateTime($this->retire_date);
-		echo "date   : $this->retire_date \n";
-	
-		dd($date->format("Y"));
+		// check if the given input is a year (integer) or a DateTime object
+		if (is_int($year) || $year instanceof DateTime) {
+			// in case of a DateTime object, just get the year
+			if ($year instanceof DateTime)
+				$year = $year->format("Y");
 
+			$retired = new DateTime($this->retire_date);
+			$retired = $retired->format("Y");
 
+			return $retired < $year;
+		} else {
+			echo "No suitable object provided to retrieve a year (int or DateTime)";
+			dd($year);
+		}
 
-		return true;
-	//	return $year < $this->retire_date->format("Y");
-		
 	}
 
 	/**
