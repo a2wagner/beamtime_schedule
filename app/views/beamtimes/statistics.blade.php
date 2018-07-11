@@ -253,6 +253,15 @@ $beamtimes->rcshifts->each(function($rcshift) use(&$info)
 			$info[$rcshift->user->first()->workgroup_id]['rc_night']++;
 	});
 
+	$authors = Workgroup::all()->members->filter(function($member)
+	{
+		return $member->isAuthor();
+	})->count();
+	$first_year_range = intval(substr($first_beamtime->shifts->first()->start,0,4));
+	$retired = Workgroup::all()->members->filter(function($member) use($first_year_range)
+	{
+		return $member->is_retired($first_year_range);
+	})->count();
 ?>
 
       <div class="page-header">
@@ -261,6 +270,12 @@ $beamtimes->rcshifts->each(function($rcshift) use(&$info)
 
       <h3>General Overview:</h3>
       <p>Total number of registered users: {{{ User::all()->count() }}}<br />
+      @if ($retired)
+      Number of users not marked as retired: {{{ $retired }}}<br />
+      @endif
+      @if ($authors)
+      Registered users set as author: {{{ $authors }}}<br />
+      @endif
       Contributing users during the selected period: {{{ $beamtimes->shifts->users->unique()->count() }}}</p>
 
       <p>{{{ $beamtimes->count() }}} beamtimes with {{{ $shifts->count() }}} shifts (plus {{{ $beamtimes->shifts->count() - $shifts->count() }}} maintenance shifts, {{{ $beamtimes->shifts->count() }}} total)<br />
