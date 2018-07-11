@@ -319,7 +319,7 @@ $no_shifts = $users_no_shifts->count();
 if ($no_shifts)
 	$shift_data[0] = [0, $no_shifts];
 ?>
-      <p><h4>&emsp;Shifts/Head Ratio for contributing workgroups</h4>
+      <p><h4>&emsp;Shifts/Head and Shifts/Author Ratio for contributing workgroups</h4>
       <script type="text/javascript">
         $(document).ready(function(){
         var body = document.body;
@@ -616,12 +616,27 @@ foreach ($region as $group) {
 	echo '&emsp;&emsp;of which ' . $group['weekend'] . " were during the weekend<br />\n";
 	echo '&emsp;&emsp;daytime shifts: ' . $group['weekday_day'] . ' weekdays, '
 		. ($group['day'] - $group['weekday_day']) . " on weekends<br />\n";
-	$members = Workgroup::whereregion($group['region'])->get()->members->count();
+	$workgroups = Workgroup::whereregion($group['region'])->get();
+	$members = $workgroups->members->count();
+	// Cannot use $workgroups->authors() here since $workgroups is a collection of Workgroup models
+	// and authors() only returns the correct collection if it's not used on another collection
+	$authors = $workgroups->members->filter(function($member)
+	{
+		return $member->isAuthor();
+	})->count();
+	$year = intval(substr($first_beamtime->shifts->first()->start,0,4));
+	$retired = $workgroups->members->filter(function($member) use($year)
+	{
+		return $member->is_retired($year);
+	})->count();
 	echo '&emsp;&emsp;shifts/head ratio is ' . round($group['sum']/$members, 2) . "<br />\n";
 	$s = '';
 	if ($members > 1)
 		$s = 's';
-	echo '&emsp;&emsp;' . $members . ' registered member' . $s . "<br />\n";
+	echo '&emsp;&emsp;' . $members . ' registered member' . $s;
+	if ($authors || $retired)
+		echo ' (authors: ' . $authors . '; retired: ' . $retired . ')';
+	echo "<br />\n";
 	//echo '&emsp;&emsp;taken shift types: day: ' . round($group['day']/$group['sum']*100, 2) . '%, late: ' . round($group['late']/$group['sum']*100, 2) . '%, night: ' . round($group['night']/$group['sum']*100, 2) . "%<p>\n";
 	echo "&emsp;&emsp;taken shift types:\n";
 	echo '<script type="text/javascript">
