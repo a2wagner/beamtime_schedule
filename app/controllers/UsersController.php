@@ -580,6 +580,13 @@ class UsersController extends \BaseController {
 			// sort users first by the isAdmin attribute and afterwards alphabetically by their last name
 			$users = $this->user->orderBy('role', 'desc')->orderBy('last_name', 'asc')->get();
 
+			// PIs should only see the registered users of their own workgroup to modify the author status
+			if (Auth::user()->isPI())
+				$users = $users->filter(function($user)
+				{
+					return Auth::user()->workgroup_id === $user->workgroup_id;
+				});
+
 			if (Input::has('sort'))
 				$this->sort_collection($users, Input::get('sort'));
 
@@ -843,6 +850,11 @@ class UsersController extends \BaseController {
 	{
 		if (Auth::user()->isAdmin() || Auth::user()->isPI()) {
 			$user = $this->user->find($id);
+
+			// only allow PIs to change authors of their own workgroup
+			if (Auth::user()->isPI() && Auth::user()->workgroup_id !== $user->workgroup_id)
+				return Redirect::back()->with('error', 'You are not allowed to change authors of external workgroups');
+
 			$user->toggleAuthor();
 			$user->save();
 
@@ -850,7 +862,7 @@ class UsersController extends \BaseController {
 			if ($user->isAuthor())
 				$msg .= ' is now an author';
 			else
-				$msg .= ' is no longer aan author';
+				$msg .= ' is no longer an author';
 
 			return Redirect::route('users.authors', ['users' => $this->user->all()])->with('success', $msg);
 		} else
