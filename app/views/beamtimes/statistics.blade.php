@@ -283,10 +283,7 @@ $count = 0;
 foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
 	array_push($head_ratios, [$count, round($group['sum']/$workgroup->members->count(), 2)]);
-	$authors = $workgroup->members->filter(function($member)
-	{
-		return $member->isAuthor();
-	})->count();
+	$authors = $workgroup->authors()->count();
 	$author_ratio = 0;
 	if ($authors !== 0)
 		$author_ratio = round($group['sum']/$authors, 2);
@@ -447,10 +444,7 @@ foreach ($info as $group) {
 	echo '&emsp;&emsp;daytime shifts: ' . $group['weekday_day'] . ' weekdays, '
 		. ($group['day'] - $group['weekday_day']) . " on weekends<br />\n";
 	$members = $workgroup->members->count();
-	$authors = $workgroup->members->filter(function($member)
-	{
-		return $member->isAuthor();
-	})->count();
+	$authors = $workgroup->authors()->count();
 	$year = intval(substr($first_beamtime->shifts->first()->start,0,4));
 	$retired = $workgroup->members->filter(function($member) use($year)
 	{

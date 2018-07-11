@@ -48,6 +48,19 @@ class Workgroup extends \Eloquent {
 	}
 
 	/**
+	 * Obtain a filtered collection of workgroup members consisting of only authors
+	 *
+	 * @return Array of User models
+	 */
+	public function authors()
+	{
+		return $this->members->filter(function($member)
+		{
+			return $member->isAuthor();
+		});
+	}
+
+	/**
 	* Checks if a workgroup is local
 	*
 	* @return bool
