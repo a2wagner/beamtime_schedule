@@ -158,6 +158,12 @@ $shifts = $beamtimes->shifts->reject(function($shift)
 		return $shift->maintenance;
 	});
 
+// determine chronologically first beamtime in given $beamtimes, used later to determine retirement status
+$first_beamtime = $beamtimes->sortBy(function($beamtime)
+{
+	return strtotime($beamtime->shifts->first()->start);
+})->first();
+
 $info = array();
 // initialise array with every contributing workgroup and the total shift amount
 $beamtimes->shifts->users->workgroup
@@ -430,11 +436,23 @@ foreach ($info as $group) {
 	echo '&emsp;&emsp;daytime shifts: ' . $group['weekday_day'] . ' weekdays, '
 		. ($group['day'] - $group['weekday_day']) . " on weekends<br />\n";
 	$members = $workgroup->members->count();
+	$authors = $workgroup->members->filter(function($member)
+	{
+		return $member->isAuthor();
+	})->count();
+	$year = intval(substr($first_beamtime->shifts->first()->start,0,4));
+	$retired = $workgroup->members->filter(function($member) use($year)
+	{
+		return $member->is_retired($year);
+	})->count();
 	echo '&emsp;&emsp;shifts/head ratio is ' . round($group['sum']/$members, 2) . "<br />\n";
 	$s = '';
 	if ($members > 1)
 		$s = 's';
-	echo '&emsp;&emsp;' . $members . ' registered member' . $s . "<br />\n";
+	echo '&emsp;&emsp;' . $members . ' registered member' . $s;
+	if ($authors || $retired)
+		echo ' (authors: ' . $authors . '; retired: ' . $retired . ')';
+	echo "<br />\n";
 	//echo '&emsp;&emsp;taken shift types: day: ' . round($group['day']/$group['sum']*100, 2) . '%, late: ' . round($group['late']/$group['sum']*100, 2) . '%, night: ' . round($group['night']/$group['sum']*100, 2) . "%<p>\n";
 	echo "&emsp;&emsp;taken shift types:\n";
 	echo '<script type="text/javascript">
