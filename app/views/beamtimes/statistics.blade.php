@@ -9,6 +9,7 @@
 {{ HTML::script('js/jquery.flot.min.js') }}
 {{ HTML::script('js/jquery.flot.pie.min.js') }}
 {{ HTML::script('js/jquery.flot.axislabels.min.js') }}
+{{ HTML::script('js/jquery.flot.orderBars.js') }}
 
 <script type='text/javascript'>
 $(document).ready(function(){
@@ -275,12 +276,21 @@ $beamtimes->rcshifts->each(function($rcshift) use(&$info)
       {{-- jQuery needs to be loaded before the other Javascript parts need it --}}
       {{ HTML::script('js/jquery-2.1.1.min.js') }}
 <?php
-$data = array();
+$head_ratios = array();
+$author_ratios = array();
 $ticks = array();
 $count = 0;
 foreach ($info as $group) {
 	$workgroup = Workgroup::find($group['id']);
-	array_push($data, [$count, round($group['sum']/$workgroup->members->count(), 2)]);
+	array_push($head_ratios, [$count, round($group['sum']/$workgroup->members->count(), 2)]);
+	$authors = $workgroup->members->filter(function($member)
+	{
+		return $member->isAuthor();
+	})->count();
+	$author_ratio = 0;
+	if ($authors !== 0)
+		$author_ratio = round($group['sum']/$authors, 2);
+	array_push($author_ratios, [$count, $author_ratio]);
 	array_push($ticks, [$count, $workgroup->short]);
 	$count++;
 }
@@ -319,10 +329,12 @@ if ($no_shifts)
         /*var ff = (body.currentStyle||
                 (window.getComputedStyle&&getComputedStyle(body,null))
                 ||body.style).fontFamily;*/
-        var data = {{ json_encode($data) }};
+        var head = {{ json_encode($head_ratios) }};
+        var author = {{ json_encode($author_ratios) }};
         var ticks = {{ json_encode($ticks) }};
         var dataset = [
-            { label: "shifts/head ratio", data: data, xaxis: 1, yaxis: 1, color: "#5482FF" }
+            { label: "shifts/head ratio", data: head, bars: { order: 1 }, color: "#5482FF" },
+            { label: "shifts/author ratio", data: author, bars: { order: 2 }, color: "#DA513F" }
         ];
 
         var options = {
@@ -332,8 +344,7 @@ if ($no_shifts)
                 }
             },
             bars: {
-                align: "center",
-                barWidth: 0.5
+                barWidth: 0.25
             },
             xaxis: {
                 axisLabel: "Workgroups",
@@ -344,7 +355,7 @@ if ($no_shifts)
                 ticks: ticks
             },
             yaxis: {
-                axisLabel: "Shifts/Head ratio",
+                axisLabel: "Shift Ratios",
                 axisLabelUseCanvas: false,
                 //axisLabelFontSizePixels: 14,
                 //axisLabelFontFamily: ff,
