@@ -77,7 +77,7 @@ $(".change-date").on("click", function() {
         <tr>
           <th>Name {{ link_to('users/start_date?sort=asc', '', ['class' => 'nounderline fa fa-sort-alpha-asc hidden-print']) }} {{ link_to('users/start_date?sort=desc', '', ['class' => 'nounderline fa fa-sort-alpha-desc hidden-print']) }}</th>
           <th>Workgroup</th>
-	  <th class="text-center">Start Date</th>
+          <th class="text-center">Start Date</th>
         </tr>
       </thead>
       <tbody>
@@ -86,22 +86,20 @@ $(".change-date").on("click", function() {
           {{-- show an extra icon in front of every other admin --}}
           <td>@if ($user->isAdmin()) <span class="fa fa-user"></span> @endif {{ link_to("/users/{$user->username}", $user->first_name." ".$user->last_name) }}</td>
           <td>{{ $user->workgroup->name }}</td>
-	  <td class="text-center">
-		{{ substr($user->start_date,0,7)}}
-	  </td>	
-          {{ Form::open(['url' => '/users/'.$user->id.'/start_date', 'method' => 'PATCH', 'id' => $user->id,'class' => 'form-horizontal', 'role' => 'form']) }}
-	  <td>
-	    <a id="button-{{{$user->id}}}" class="change-date btn btn-default btn-xs"><span class="fa fa-calendar"></span> Change Start Date</a>
-	    {{ Form::text('date', date('Y-m'), array('class' => 'input-sm form-control input-date datepicker', 'size' => '5', 'id' => 'date-'.$user->id, 'data-date-format' => 'yyyy-mm-dd')) }}
+          <td class="text-center">
+            {{ substr($user->start_date,0,7)}}
           </td>
-	  <td>
-              {{--<a href="/users/{{{$user->id}}}/start_date" data-method="patch" class="btn btn-success btn-xs"><span class="fa fa-check-circle"></span> Update</a>--}}
-              <button type="submit" class="btn btn-success btn-xs">
-                <i class="fa fa-check-circle"></i> Update
+          {{ Form::open(['url' => '/users/'.$user->id.'/start_date', 'method' => 'PATCH', 'id' => $user->id, 'class' => 'form-horizontal', 'role' => 'form']) }}
+          <td>
+            <a id="button-{{{$user->id}}}" class="change-date btn btn-default btn-xs"><span class="fa fa-calendar"></span> Change Start Date</a>
+            {{ Form::text('date', date('Y-m'), array('class' => 'input-sm form-control input-date datepicker', 'size' => '5', 'id' => 'date-'.$user->id, 'data-date-format' => 'yyyy-mm-dd')) }}
+          </td>
+          <td>
+            <button type="submit" class="btn btn-success btn-xs">
+            <i class="fa fa-check-circle"></i> Update
 	      </button>
           </td>
-	  {{ Form::close() }}
-
+          {{ Form::close() }}
         </tr>
         @endforeach
       </tbody>

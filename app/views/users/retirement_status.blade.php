@@ -78,8 +78,8 @@ $(".change-date").on("click", function() {
           <th>Name {{ link_to('users/retirement_status?sort=asc', '', ['class' => 'nounderline fa fa-sort-alpha-asc hidden-print']) }} {{ link_to('users/retirement_status?sort=desc', '', ['class' => 'nounderline fa fa-sort-alpha-desc hidden-print']) }}</th>
           <th>Workgroup</th>
           <th>Email</th>
-	  <th class="text-center">Action</th>
-	  <th class="text-center">Retirement Date</th>	
+          <th class="text-center">Action</th>
+          <th class="text-center">Retirement Date</th>
         </tr>
       </thead>
       <tbody>
@@ -91,32 +91,30 @@ $(".change-date").on("click", function() {
           <td>{{ $user->email }}</td>
           <td class="text-center">
             @if ($user->isRetired())
-             <a href="/users/{{{$user->id}}}/rs" data-method="patch" class="btn btn-warning btn-xs"><span class="fa fa-times-circle"></span> RETIRED</a>
+            <a href="/users/{{{$user->id}}}/rs" data-method="patch" class="btn btn-warning btn-xs"><span class="fa fa-times-circle"></span> RETIRED</a>
             @else
             <a href="/users/{{{$user->id}}}/rs" data-method="patch" class="btn btn-success btn-xs"><span class="fa fa-check-circle"></span> Active</a>
             @endif
-	  <td class="text-center">@if ($user->isRetired())
-		{{ substr($user->retire_date,0,7)}}
-	      @endif
-	  </td>	
-          {{ Form::open(['url' => '/users/'.$user->id.'/retirement', 'method' => 'PATCH', 'id' => $user->id,'class' => 'form-horizontal', 'role' => 'form']) }}
-	  <td>
-	  @if ($user->isRetired())
-	    <a id="button-{{{$user->id}}}" class="change-date btn btn-default btn-xs"><span class="fa fa-calendar"></span> Change Retire Date</a>
-	    {{ Form::text('date', date('Y-m'), array('class' => 'input-sm form-control input-date datepicker', 'size' => '5', 'id' => 'date-'.$user->id, 'data-date-format' => 'yyyy-mm-dd')) }}
-  	  @endif
+          <td class="text-center">
+            @if ($user->isRetired())
+            {{ substr($user->retire_date,0,7)}}
+            @endif
           </td>
-	  <td class="text-center">
-		@if ($user->isRetired())
-
-              {{--<a href="/users/{{{$user->id}}}/radiation" data-method="patch" class="btn btn-success btn-xs"><span class="fa fa-check-circle"></span> Update</a>--}}
+          {{ Form::open(['url' => '/users/'.$user->id.'/retirement', 'method' => 'PATCH', 'id' => $user->id, 'class' => 'form-horizontal', 'role' => 'form']) }}
+          <td>
+            @if ($user->isRetired())
+            <a id="button-{{{$user->id}}}" class="change-date btn btn-default btn-xs"><span class="fa fa-calendar"></span> Change Retire Date</a>
+            {{ Form::text('date', date('Y-m'), array('class' => 'input-sm form-control input-date datepicker', 'size' => '5', 'id' => 'date-'.$user->id, 'data-date-format' => 'yyyy-mm-dd')) }}
+            @endif
+          </td>
+          <td class="text-center">
+            @if ($user->isRetired()
               <button type="submit" class="btn btn-success btn-xs">
                 <i class="fa fa-check-circle"></i> Update
-	      </button>
-		@endif
+              </button>
+            @endif
           </td>
-	  {{ Form::close() }}
-
+          {{ Form::close() }}
         </tr>
         @endforeach
       </tbody>
