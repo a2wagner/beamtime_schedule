@@ -85,11 +85,6 @@ $('.sub_check').change(function() {
 
 // disable buttons if min/max value is start value
 $(document).ready(function () {
-    // first hide subscription start if unchecked after loading the page
-    if (!$('.sub_check').checked)
-        $('.sub_start_form').hide();
-
-    // now manage the buttons
     var input = $('.input-number');
     minValue = parseInt(input.attr('min'));
     maxValue = parseInt(input.attr('max'));
