@@ -744,7 +744,10 @@ class UsersController extends \BaseController {
 		if (Auth::user()->isAdmin()) {
 			$user = $this->user->find($id);
 			$user->toggleRetired();
-			$user->retire_date = "0000-00-00 00:00:00";
+			if ($user->isRetired())
+				$user->retire_date = new DateTime();
+			else
+				$user->retire_date = "0000-00-00 00:00:00";
 			$user->save();
 
 			$msg = 'User ' . $user->get_full_name();
