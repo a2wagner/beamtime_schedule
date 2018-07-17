@@ -45,6 +45,10 @@ Create New Beamtime
         var newDate = new Date(ev.date)
         newDate.setDate(newDate.getDate() + 13);
         end.setValue(newDate);
+        // set subscription start value
+        var subDate = new Date(ev.date)
+        subDate.setDate(subDate.getDate() - 30);
+        sub_start.setValue(subDate);
       }
       begin.hide();
       $('#dpd2')[0].focus();
@@ -58,11 +62,34 @@ Create New Beamtime
       end.hide();
     }).data('datepicker');
 
+    // subscription start
+    var sub_start = $('#dpd3').datepicker({
+      onRender: function(date) {
+        var sub = new Date(now)
+        sub.setDate(sub.getDate() - 60);
+        return date.valueOf() < sub.valueOf() ? 'disabled' : '';
+      },
+      weekStart: 1  //0 sunday, 1 monday ...
+    }).on('changeDate', function(ev) {
+      sub_start.hide();
+    }).data('datepicker');
+
+
+/* Manage hiding or showing subscription start date based on the (non-)ticked checkbox */
+
+$('.sub_check').change(function() {
+    $(".sub_start_form").toggle();
+});
 
 /* plus / minus buttons for shift duration field */
 
 // disable buttons if min/max value is start value
 $(document).ready(function () {
+    // first hide subscription start if unchecked after loading the page
+    if (!$('.sub_check').checked)
+        $('.sub_start_form').hide();
+
+    // now manage the buttons
     var input = $('.input-number');
     minValue = parseInt(input.attr('min'));
     maxValue = parseInt(input.attr('max'));
@@ -227,6 +254,34 @@ $(".input-number").keydown(function (e) {
                           hours
                         </span>
                     </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ Form::label('set_sub', 'Shift Registration: ', array('class' => 'col-lg-2 control-label')) }}
+                <div class="col-lg-8">
+                    <div class="checkbox sub_check">
+                        <label for="set_sub">
+                        {{ Form::checkbox('set_sub', 1, Input::old('set_sub') ? Input::old('set_sub') : false) }}
+                        Set subscription start for this beamtime and enforce subscription rules
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group {{{ $errors->has('sub_start') ? 'has-error has-feedback' : '' }}} sub_start_form" style="display: none;">
+                {{ Form::label('sub_start', 'Subscription Start: ', array('class' => 'col-lg-2 control-label')) }}
+                <div class="col-lg-5">
+                    {{ Form::text('sub_start', Input::old('sub_start'), array('class' => 'form-control datepicker', 'id' => 'dpd3', 'data-date-format' => 'yyyy-mm-dd')) }}
+                    {{ $errors->has('sub_start') ? '<span class="glyphicon glyphicon-remove form-control-feedback"></span>' : '' }}
+                    <p class="help-block">{{ $errors->first('sub_start') }}</p>
+                </div>
+                <div class="col-lg-3">
+                    @if (Input::old('subTime'))
+                    {{ Form::select('subTime', $hours, Input::old('subTime'), array('class' => 'form-control', 'id' => 'inputError2')) }}
+                    @else
+                    {{ Form::select('subTime', $hours, '9', array('class' => 'form-control')) }}
+                    @endif
                 </div>
             </div>
 
