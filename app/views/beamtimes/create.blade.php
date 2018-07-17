@@ -78,7 +78,10 @@ Create New Beamtime
 /* Manage hiding or showing subscription start date based on the (non-)ticked checkbox */
 
 $('.sub_check').change(function() {
-    $(".sub_start_form").toggle();
+    if ($("input[type='checkbox'][name='set_sub']").is(':checked'))
+        $('.sub_start_form').show();
+    else
+        $('.sub_start_form').hide();
 });
 
 /* plus / minus buttons for shift duration field */
