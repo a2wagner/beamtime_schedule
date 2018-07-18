@@ -78,6 +78,11 @@ class ShiftsController extends \BaseController {
 		$msg = '';
 		$shift = Shift::find($id);
 		if (Input::get('event') === 'subscribe') {
+			// check if a subscription start enforcement is in place and handle it
+			if ($shift->beamtime->enforce_subscription
+				&& !$shift->beamtime->subscription_allowed(Auth::user()))
+					return ['danger', "You're not allowed to subscribe to this beamtime yet!"];
+			// now the usual checks while subscribing to a shift
 			if ($shift->users->count() < $shift->n_crew) {
 				if ($shift->users->contains(Auth::user()->id))
 					return ['danger', "You're subscribed to this shift already!"];
