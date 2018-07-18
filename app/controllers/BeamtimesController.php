@@ -78,7 +78,17 @@ class BeamtimesController extends \BaseController {
 			'duration' => 'required|integer|max:10'
 		];
 
-		$validation = Validator::make(Input::all(), $rules);
+		$messages = array();
+		// if a subscription start date is set, check this as well
+		if (Input::has('set_sub')) {
+			$rules['sub_start'] = 'required|date|before:start';
+			// add some custom messages to make the shown error messages in the form more clear
+			$messages['sub_start.required'] = 'The subscription start field is required if selected';
+			$messages['sub_start.date'] = 'The subscription start has to be a valid date (YYYY-MM-DD)';
+			$messages['sub_start.before'] = 'The subscription start has to be before the beamtime start';
+		}
+
+		$validation = Validator::make(Input::all(), $rules, $messages);
 
 		if ($validation->fails())
 			return Redirect::back()->withInput()->withErrors($validation->messages());
@@ -97,6 +107,13 @@ class BeamtimesController extends \BaseController {
 		$this->beamtime->fill(Input::only('name', 'description'));
 		$this->beamtime->enforce_rc = Input::has('enforce_rc');
 		$this->beamtime->experience_block = Input::has('experience_block');
+		$this->beamtime->enforce_subscription = Input::has('set_sub');
+		$sub_start = '';
+		if (Input::has('set_sub')) {
+			$sub_start = date(Input::get('sub_start')." ".Input::get('subTime').":00:00");
+			$sub_start = new DateTime($sub_start);
+			$this->beamtime->subscription_start = $sub_start;
+		}
 		$this->beamtime->save();
 		/* create the shifts */
 		$shifts = $this->beamtime->createShifts($start, $end, $duration);
