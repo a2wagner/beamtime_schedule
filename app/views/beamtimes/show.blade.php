@@ -106,6 +106,14 @@ function sub(e) {
     @else
     @if (isset($beamtime))
     <div class="hidden-print">
+      @if (Auth::user()->isAdmin() || (Auth::user()->isRunCoordinator() && $beamtime->run_coordinators()->contains(Auth::user())))
+      <h3>Beamtime Settings</h3>
+      <p><ul>
+        <li>Enforcing Run Coordinators on shift before shift workers can subscribe to shifts on a day is {{{ $beamtime->enforce_rc ? '' : 'not' }}} activated</li>
+        <li>Experience blocking for shift subscriptions to prevent two inexperienced users on a shift is {{{ $beamtime->experience_block ? '' : 'not' }}} enabled (current limit: {{{ Shift::EXPERIENCE_BLOCK }}} shifts)</li>
+        <li>{{ $beamtime->subscription_start_string() }}</li>
+      </ul></p>
+      @endif
       <h3>Progress</h3>
       <?php
       	$now = new DateTime();
