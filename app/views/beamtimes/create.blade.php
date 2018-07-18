@@ -267,7 +267,7 @@ $(".input-number").keydown(function (e) {
                 </div>
             </div>
 
-            <div class="form-group {{{ $errors->has('sub_start') ? 'has-error has-feedback' : '' }}} sub_start_form" style="display: none;">
+            <div class="form-group {{{ $errors->has('sub_start') ? 'has-error has-feedback' : '' }}} sub_start_form" {{ Input::old('set_sub') ? '' : 'style="display: none;"' }}>
                 {{ Form::label('sub_start', 'Subscription Start: ', array('class' => 'col-lg-2 control-label')) }}
                 <div class="col-lg-5">
                     {{ Form::text('sub_start', Input::old('sub_start'), array('class' => 'form-control datepicker', 'id' => 'dpd3', 'data-date-format' => 'yyyy-mm-dd')) }}
