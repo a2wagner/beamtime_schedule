@@ -122,6 +122,9 @@ function sub(e) {
       	$now = new DateTime();
       	$start = $beamtime->start();
       	$end = $beamtime->end();
+      	$sub = '';
+      	if ($beamtime->enforce_subscription)
+      		$sub = new DateTime($beamtime->subscription_start);
       ?>
       @if ($now < $start)
       <?php $diff = $now->diff($start); ?>
@@ -133,6 +136,9 @@ function sub(e) {
       	else
       		echo $diff->format('%i minutes.');
       ?></p>
+      @if ($beamtime->enforce_subscription)
+      <h4 class="text-info">Beamtime shift subscription start is set to {{ $sub->format('l jS F Y \a\t g:i A') }}</h4>
+      @endif
       @elseif ($now > $end)
       <?php $diff = $now->diff($end); ?>
       <p class="text-success">Beamtime ended {{{ $diff->format('%a days ago') }}}.</p>
