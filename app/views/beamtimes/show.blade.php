@@ -138,6 +138,15 @@ function sub(e) {
       ?></p>
       @if ($beamtime->enforce_subscription)
       <h4 class="text-info">Beamtime shift subscription start is set to {{ $sub->format('l jS F Y \a\t g:i A') }}</h4>
+      <p>You're allowed to subscribe to shifts <?php
+      	$region = Auth::user()->workgroup->region;
+      	if ($region === Workgroup::WORLD)
+      		echo 'immediately after the subscription start';
+      	if ($region === Workgroup::EUROPE)
+      		echo BEAMTIME::SUBSCRIPTION_WAITING_DAYS_EUROPE . ' day after the subscription start';
+      	if ($region === Workgroup::LOCAL)
+      		echo BEAMTIME::SUBSCRIPTION_WAITING_DAYS_LOCAL . ' days after the subscription start';
+      ?></p>
       @endif
       @elseif ($now > $end)
       <?php $diff = $now->diff($end); ?>
