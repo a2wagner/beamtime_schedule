@@ -137,16 +137,26 @@ function sub(e) {
       		echo $diff->format('%i minutes.');
       ?></p>
       @if ($beamtime->enforce_subscription)
-      <h4 class="text-info">Beamtime shift subscription start is set to {{ $sub->format('l jS F Y \a\t g:i A') }}</h4>
-      <p>You're allowed to subscribe to shifts <?php
+      <h4>Based on your affiliation you're allowed to subscribe to shifts <?php
       	$region = Auth::user()->workgroup->region;
-      	if ($region === Workgroup::WORLD)
-      		echo 'immediately after the subscription start';
       	if ($region === Workgroup::EUROPE)
-      		echo BEAMTIME::SUBSCRIPTION_WAITING_DAYS_EUROPE . ' day after the subscription start';
+      		$sub->modify('+' . Beamtime::SUBSCRIPTION_WAITING_DAYS_EUROPE . ' day');
       	if ($region === Workgroup::LOCAL)
-      		echo BEAMTIME::SUBSCRIPTION_WAITING_DAYS_LOCAL . ' days after the subscription start';
-      ?></p>
+      		$sub->modify('+' . Beamtime::SUBSCRIPTION_WAITING_DAYS_LOCAL . ' days');
+      	if ($sub < $now)
+      		echo 'right now';
+      	else {
+      		$diff = $now->diff($sub);
+      		if ($diff->days > 0)
+      			echo $diff->format('in %a days and %h hours');
+      		elseif ($diff->days === 0 && $diff->h > 0)
+      			echo $diff->format('in %h hours and %i minutes');
+      		else
+      			echo $diff->format('in %i minutes');
+      	}
+      	$sub = new DateTime($beamtime->subscription_start);
+      ?></h4>
+      <p class="text-primary">Beamtime shift subscription overall start{{ ($sub < $now) ? 'ed' : 's' }} on {{ $sub->format('l jS F Y \a\t g:i A') }}</p>
       @endif
       @elseif ($now > $end)
       <?php $diff = $now->diff($end); ?>
