@@ -111,7 +111,10 @@ function sub(e) {
       <p><ul>
         <li>Enforcing Run Coordinators on shift before shift workers can subscribe to shifts on a day is {{{ $beamtime->enforce_rc ? '' : 'not' }}} activated</li>
         <li>Experience blocking for shift subscriptions to prevent two inexperienced users on a shift is {{{ $beamtime->experience_block ? '' : 'not' }}} enabled (current limit: {{{ Shift::EXPERIENCE_BLOCK }}} shifts)</li>
-        <li>{{ $beamtime->subscription_start_string() }}</li>
+        <li>
+          {{ $beamtime->subscription_start_string() }}@if($beamtime->enforce_subscription)<br />
+          (workgroups from Europe are allowed to subscribe after {{{ BEAMTIME::SUBSCRIPTION_WAITING_DAYS_EUROPE }}} day, the local group is allowed to subscribe after {{{ BEAMTIME::SUBSCRIPTION_WAITING_DAYS_LOCAL }}} days)@endif
+        </li>
       </ul></p>
       @endif
       <h3>Progress</h3>
