@@ -1,6 +1,20 @@
 <?php
 
 class Beamtime extends \Eloquent {
+	/**
+	 * Number of days working groups from Europe have to wait after subscription started before they're allowed to subscribe to shifts
+	 *
+	 * @var int
+	 */
+	const SUBSCRIPTION_WAITING_DAYS_EUROPE = 1;
+
+	/**
+	 * Number of days the local working group has to wait after subscription started before they're allowed to subscribe to shifts
+	 *
+	 * @var int
+	 */
+	const SUBSCRIPTION_WAITING_DAYS_LOCAL = 2;
+
 	protected $fillable = ['name', 'description', 'enforce_subscription', 'subscription_start', 'enforce_rc', 'experience_block'];
 
 	public static $rules = ['name' => 'required|max:100', 'description' => 'max:500',
@@ -242,5 +256,34 @@ class Beamtime extends \Eloquent {
 			return 'Subscription date enforcement is not activated';
 
 		return 'Subscription date enforcement is activated, shift subscriptions are allowed starting at ' . $this->subscription_start;
+	}
+
+	/**
+	 * Check if a user is allowed to subscribe to shifts of the current beamtime
+	 *
+	 * @param User $user
+	 * @return boolean
+	 */
+	public function subscription_allowed($user)
+	{
+		if (!$this->enforce_subscription)
+			return true;
+
+		// run coordinators are allowed to subscribe anytime
+		if ($user->isRunCoordinator() && $this->run_coordinators()->contains($user))
+			return true;
+
+		$now = new DateTime();
+		$start = new DateTime($this->subscription_start);
+		// apply subscription rules (TODO: define rulesets?)
+		if ($user->workgroup->region === Workgroup::EUROPE)
+			$start->modify('+' . self::SUBSCRIPTION_WAITING_DAYS_EUROPE . ' day');
+		if ($user->workgroup->region === Workgroup::LOCAL)
+			$start->modify('+' . self::SUBSCRIPTION_WAITING_DAYS_LOCAL . ' days');
+
+		if ($now < $start)
+			return false;
+
+		return true;
 	}
 }
