@@ -230,4 +230,17 @@ class Beamtime extends \Eloquent {
 	{
 		return $this->shifts->last()->end()->format('Y-m-d H:i:s');
 	}
+
+	/**
+	 * Return a string about the shift subscription enforcement (incl. date if activated)
+	 *
+	 * @return string
+	 */
+	public function subscription_start_string()
+	{
+		if (!$this->enforce_subscription)
+			return 'Subscription date enforcement is not activated';
+
+		return 'Subscription date enforcement is activated, shift subscriptions are allowed starting at ' . $this->subscription_start;
+	}
 }
