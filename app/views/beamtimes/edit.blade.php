@@ -4,6 +4,11 @@
 Edit {{ $beamtime->name }}
 @stop
 
+@section('css')
+{{ HTML::style('css/bootstrap-datetimepicker.min.css') }}
+@parent
+@stop
+
 @section('styles')
 @parent
 .form-control-feedback-large-h2 {
@@ -24,11 +29,21 @@ Edit {{ $beamtime->name }}
 @stop
 
 @section('scripts')
+{{ HTML::script('js/jquery-3.3.1.min.js') }}
+{{ HTML::script('js/moment-with-locales.min.js') }}
+{{ HTML::script('js/bootstrap-datetimepicker.min.js') }}
 <script type="text/javascript">
 $(document).ready(function() {
     //$("[rel='tooltip']").tooltip();
     $("body").tooltip({ selector: '[data-toggle=tooltip]' });
 
+});
+
+$('.sub_check').change(function() {
+    if ($("input[type='checkbox'][name='set_sub']").is(':checked'))
+        $('.sub_start_form').show();
+    else
+        $('.sub_start_form').hide();
 });
 
 $("[type='checkbox']").on("click", function() {
@@ -62,6 +77,20 @@ $(document).ready(function() {
       $(".disabled:eq("+i+")").hide();
     }
   }
+
+  /* datetimepicker for subscription start */
+  var d = new Date();
+  d.setDate(d.getDate()-90);
+  $(function () {
+    $('#dtp').datetimepicker({
+      @if ($beamtime->enforce_subscription)
+      defaultDate: new Date("{{{ $beamtime->subscription_start }}}"),
+      @endif
+      minDate: d,
+      maxDate: new Date("{{{ $beamtime->start_string() }}}"),
+      showTodayButton: true
+    });
+  });
 });
 
 function toggleRadio(id)
@@ -98,10 +127,10 @@ function toggleRadio(id)
     </div>
     <table style="background-color: initial;" width="100%">
         <tr>
-          <td>
-            <div class="col-lg-10 form-group {{{ $errors->has('description') ? 'has-error has-feedback' : '' }}}">
+          <td rowspan="2" width="50%">
+            <div class="col-lg-12 form-group {{{ $errors->has('description') ? 'has-error has-feedback' : '' }}}">
               {{ Form::label('description', 'Short beamtime description: ', array('class' => 'col-lg-8 control-label')) }}
-              {{ Form::textarea('description', $beamtime->description, array('class' => 'form-control', 'rows' => '3', 'placeholder' => 'optional', 'id' => 'inputError2', 'autofocus' => 'autofocus')) }}
+              {{ Form::textarea('description', $beamtime->description, array('class' => 'form-control', 'rows' => '4', 'placeholder' => 'optional', 'id' => 'inputError2', 'autofocus' => 'autofocus')) }}
               {{ $errors->has('description') ? '<span class="glyphicon glyphicon-remove form-control-feedback from-control-feedback-textarea"></span>' : '' }}
               <p class="help-block">{{ $errors->first('description') }}</p>
             </div>
@@ -118,6 +147,23 @@ function toggleRadio(id)
                 {{ Form::checkbox('experience_block', 'opt', $beamtime->experience_block) }}
                 Activate experience block
               </label>
+            </div>
+            <div class="checkbox sub_check">
+              <label>
+                {{ Form::checkbox('set_sub', 'opt', Input::old('set_sub') ? Input::old('set_sub') : $beamtime->enforce_subscription) }}
+                Enforce subscription rules
+              </label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td height="60px">
+            <div class="form-group col-lg-12 {{{ $errors->has('sub_start') ? 'has-error has-feedback' : '' }}} sub_start_form" {{ Input::old('set_sub') || $beamtime->enforce_subscription ? '' : 'style="display: none;"' }}>
+                <div class="col-lg-11 col-lg-offset-2">
+                    {{ Form::text('sub_start', Input::old('sub_start'), array('class' => 'form-control datepicker', 'id' => 'dtp')) }}
+                    {{ $errors->has('sub_start') ? '<span class="glyphicon glyphicon-remove form-control-feedback"></span>' : '' }}
+                    <p class="help-block">{{ $errors->first('sub_start') }}</p>
+                </div>
             </div>
           </td>
         </tr>
