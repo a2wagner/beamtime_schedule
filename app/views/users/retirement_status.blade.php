@@ -108,7 +108,7 @@ $(".change-date").on("click", function() {
             @endif
           </td>
           <td class="text-center">
-            @if ($user->isRetired()
+            @if ($user->isRetired())
               <button type="submit" class="btn btn-success btn-xs">
                 <i class="fa fa-check-circle"></i> Update
               </button>
