@@ -205,6 +205,11 @@ class BeamtimesController extends \BaseController {
 		// save the (new) name and description for this beamtime
 		$beamtime->enforce_rc = Input::has('enforce_rc');
 		$beamtime->experience_block = Input::has('experience_block');
+		$beamtime->enforce_subscription = Input::has('set_sub');
+		if (Input::has('set_sub'))
+			$beamtime->subscription_start = new DateTime(Input::get('sub_start'));
+		else
+			$beamtime->subscription_start = NULL;
 		$beamtime->save();
 
 		$n = Input::get('n_crew');
