@@ -195,7 +195,7 @@
         </div>
 
         <!-- Scripts are placed here -->
-        {{ HTML::script('js/jquery-2.1.1.min.js') }}
+        {{ HTML::script('js/jquery-3.3.1.min.js') }}
         {{ HTML::script('js/bootstrap.min.js') }}
         @yield('scripts')
 

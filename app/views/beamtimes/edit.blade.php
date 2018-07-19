@@ -29,7 +29,6 @@ Edit {{ $beamtime->name }}
 @stop
 
 @section('scripts')
-{{ HTML::script('js/jquery-3.3.1.min.js') }}
 {{ HTML::script('js/moment-with-locales.min.js') }}
 {{ HTML::script('js/bootstrap-datetimepicker.min.js') }}
 <script type="text/javascript">
