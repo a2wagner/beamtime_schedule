@@ -28,6 +28,9 @@ User Management
       <li>{{ link_to("/users/retirement_status", "Manage retirement status") }}</li>
       <li>{{ link_to("/users/start_date", "Manage start dates of users") }}</li>
       @endif
+      @if (Auth::user()->isAdmin() || Auth::user()->isPI())
+      <li>{{ link_to("/users/authors", "Manage authors") }}</li>
+      @endif
       <li>{{ link_to("/users/run_coordinators", "Manage run coordinators") }}</li>
       <li>{{ link_to("/users/principle_investigators", "Manage principle investigators") }}</li>
       @if (Auth::user()->isRadiationExpert())
