@@ -39,6 +39,7 @@ function hide()
 @stop
 
 @section('content')
+@if (Auth::user()->isAdmin() || Auth::user()->id == $user->id)
 <div class="col-lg-6 col-lg-offset-2">
 
     @if ($user->count())
@@ -147,7 +148,7 @@ function hide()
       (You have to be in the KPH network to do this):<br />
       <a href="http://master.kph.uni-mainz.de/passwort/" target="_blank">Change KPH account password</a>
     </p>
-    @else
+    @elseif ($user->id === Auth::user()->id)
     {{ Form::open(['route' => array('users.update', $user->id), 'method' => 'PUT', 'class' => 'form-horizontal']) }}
         <fieldset>
             <div class="form-group {{{ $errors->has('password_old') ? 'has-error' : '' }}}">
@@ -179,6 +180,18 @@ function hide()
             </div>
         </fieldset>
     {{ Form::close() }}
+    @else  {{-- at this point the user does not have a LDAP id (account registered manually) and the only remaining user category after the previous checks is an admin --}}
+    <div class="col-lg-offset-2">
+      <a class="btn btn-primary" href="/users/password/{{{$user->id}}}">Change Password</a>
+    </div>
+    @endif
+    @if (Auth::user()->isAdmin() && $user->ldap_id)  {{-- Cover the case that the user has a LDAP id separate --}}
+    <div class="col-lg-offset-2">
+      <p>
+        Note: Changing the password here will only change it locally, the LDAP password will not be changed.
+      </p>
+      <a class="btn btn-primary" href="/users/password/{{{$user->id}}}">Change Password</a>
+    </div>
     @endif
 
     <div class="page-header">
@@ -212,5 +225,14 @@ function hide()
     </div>
     @endif
 </div>
+@else
+<div class="col-lg-10 col-lg-offset-1">
+    <div class="page-header">
+        <h2>User Management</h2>
+    </div>
+
+    <h3 class="text-warning">It seems you're not on the page you've been looking for. You may want to go to an {{ link_to("/users", "overview of all registered shift workers") }} instead.</h3>
+</div>
+@endif
 @stop
 
