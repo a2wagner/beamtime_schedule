@@ -1059,6 +1059,79 @@ class UsersController extends \BaseController {
 
 
 	/**
+	 * Show all registered users with a link to change their password
+	 *
+	 * @return Response
+	 */
+	public function password()
+	{
+		// only admins are allowed to change passwords
+		if (!Auth::user()->isAdmin())
+			return Redirect::to('users');
+
+		if (Input::has('sort'))
+			$users = $this->user->orderBy('last_name', Input::get('sort'))->get();
+		else
+			$users = $this->user->all();
+
+		return View::make('users.password', ['users' => $users])->withInput(Input::all());
+	}
+
+
+	/**
+	 * Show a form with all users to change the password
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function viewPasswordChange($id = NULL)
+	{
+		if (Auth::user()->isAdmin()) {
+			$users = $this->user->all();
+			foreach ($users as $user)
+				$user->name = $user->get_full_name() . ' (' . $user->username . ')';
+			$users = $users->lists('name', 'id');
+
+			if ($id) {
+				$user = $this->user->find($id);
+				return View::make('users.pw_change', ['users' => $users])->with('selected', $user);
+			}
+
+			return View::make('users.pw_change', ['users' => $users]);
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
+	 * Changes the password of a user
+	 *
+	 * @return Response
+	 */
+	public function passwordChange()
+	{
+		if (Auth::user()->isAdmin()) {
+			$user = $this->user->whereId(Input::get('user_id'))->first();
+
+			if (!$user)
+				return Redirect::back()->with('error', 'No user with id ' . $id . ' found');
+
+			$data = array_only(Input::all(), array('password', 'password_confirmation'));
+			$rules = array_only(User::$rules_pwChange, array('password', 'password_confirmation'));
+			$validator = Validator::make($data, $rules);
+			if ($validator->fails())
+				return Redirect::back()->withErrors($validator);
+			// if everything is fine, hash the new password and save it
+			$user->password = Hash::make($data['password']);
+			$user->save();
+
+			return Redirect::back()->with('success', 'Password of ' . $user->get_full_name() . ' changed successfully');
+		} else
+			return Redirect::to('/users');
+	}
+
+
+	/**
 	 * Send mail to users stored/flashed in the Session
 	 * Method expects to get subject and content values to fill the mail
 	 *

@@ -70,6 +70,9 @@ Route::group(array('before' => 'auth'), function()
 	Route::patch('users/kph', array('as' => 'users.activateKPHaccount', 'uses' => 'UsersController@activateKPHaccount'));
 	Route::get('users/merge', array('as' => 'users.merge', 'uses' => 'UsersController@merge'));
 	Route::put('users/merge', array('as' => 'users.merge', 'uses' => 'UsersController@mergeAccounts'));
+	Route::get('users/password', array('as' => 'users.password', 'uses' => 'UsersController@password'));
+	Route::get('users/password/{users}', array('as' => 'users.password', 'uses' => 'UsersController@viewPasswordChange'));
+	Route::patch('users/password', array('as' => 'users.password', 'uses' => 'UsersController@passwordChange'));
 	Route::post('users/mail', array('as' => 'users.mail', 'uses' => 'UsersController@mail'));
 
 	Route::get('beamtimes/merge', array('as' => 'beamtimes.merge', 'uses' => 'BeamtimesController@merge'));

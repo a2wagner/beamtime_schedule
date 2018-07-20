@@ -39,6 +39,7 @@ User Management
       @if (Auth::user()->isAdmin())
       <li>{{ link_to("/users/enable", "Enable new users") }}</li>
       <li>{{ link_to("/users/merge", "Merge user accounts") }}</li>
+      <li>{{ link_to("/users/password", "Reset user password") }}</li>
       @endif
       <li>{{ link_to("/users", "Go to users overview") }}</li>
     </ul>
