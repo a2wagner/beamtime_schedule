@@ -1023,7 +1023,7 @@ class UsersController extends \BaseController {
 		$second->delete();
 
 		// redirect to the account of the merged user
-		return Redirect::to('users/' . $first->username)->with('success', 'Users accounts successfully merged!');
+		return Redirect::to('users/' . $first->username)->with('success', 'User accounts successfully merged!');
 	}
 
 
