@@ -5,6 +5,7 @@ Edit User {{ $user->username }}
 @stop
 
 @section('scripts')
+{{ HTML::script('js/laravel.js') }}
 <script type="text/javascript">
 $(document).ready(function () {
     // Run this code only when the DOM (all elements) are ready
@@ -185,14 +186,17 @@ function hide()
       <a class="btn btn-primary" href="/users/password/{{{$user->id}}}">Change Password</a>
     </div>
     @endif
-    @if (Auth::user()->isAdmin() && $user->ldap_id)  {{-- Cover the case that the user has a LDAP id separate --}}
     <div class="col-lg-offset-2">
+    @if (Auth::user()->isAdmin() && $user->ldap_id)  {{-- Cover the case that the user has a LDAP id separate --}}
       <p>
         Note: Changing the password here will only change it locally, the LDAP password will not be changed.
       </p>
       <a class="btn btn-primary" href="/users/password/{{{$user->id}}}">Change Password</a>
-    </div>
+    @if ($user->password !== 'ldap')  {{-- User has a ldap_id, which means he has a KPH account, but a different password locally --}}
+      <a class="btn btn-success" href="/users/password/{{{$user->id}}}" data-method="patch">Link Password to KPH account</a>
     @endif
+    @endif
+    </div>
 
     <div class="page-header">
         <h2>Delete your account</h2>

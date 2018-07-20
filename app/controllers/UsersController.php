@@ -1105,17 +1105,42 @@ class UsersController extends \BaseController {
 
 	/**
 	 * Changes the password of a user
+	 * If $id is given, the password of the corresponding user will be set to 'ldap'
+	 * to indicate the usage of the connected LDAP account password
 	 *
+	 * @param  int $id
 	 * @return Response
 	 */
-	public function passwordChange()
+	public function passwordChange($id = NULL)
 	{
 		if (Auth::user()->isAdmin()) {
-			$user = $this->user->whereId(Input::get('user_id'))->first();
+			$ldap = false;  // variable to determine if ldap link should be used or not
+			// first check if we came from the user edit view to link the account back
+			// to the KPH account, using the LDAP password
+			// in this case the $id is '{users}' like it's defined in the routes
+			if ($id !== '{users}')
+				$ldap = true;
+			// if $id is NULL, we came from the pw_change view to change the password
+			// the form includes the 'user_id' as an input field
+			else if (Input::has('user_id'))
+				$id = Input::get('user_id');
+			// else: something went wrong and we do not have the user id, return back with an error
+			else
+				return Redirect::back()->with('error', 'Could not determine the user, something went wrong.');
 
+			// now we should know if the LDAP password should be used, and the user id is stored in $id
+			$user = $this->user->whereId($id)->first();
 			if (!$user)
 				return Redirect::back()->with('error', 'No user with id ' . $id . ' found');
 
+			// the LDAP case is handled quick, let's do it
+			if ($ldap) {
+				$user->password = 'ldap';
+				$user->save();
+				return Redirect::back()->with('success', 'User account of ' . $user->get_full_name() . ' linked to the KPH account');
+			}
+
+			// otherwise check the provided data and change the password
 			$data = array_only(Input::all(), array('password', 'password_confirmation'));
 			$rules = array_only(User::$rules_pwChange, array('password', 'password_confirmation'));
 			$validator = Validator::make($data, $rules);
