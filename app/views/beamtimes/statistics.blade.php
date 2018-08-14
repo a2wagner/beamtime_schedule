@@ -10,6 +10,7 @@
 {{ HTML::script('js/jquery.flot.pie.min.js') }}
 {{ HTML::script('js/jquery.flot.axislabels.min.js') }}
 {{ HTML::script('js/jquery.flot.orderBars.js') }}
+{{ HTML::script('js/bootstrap-datepicker.js') }}
 
 <script type='text/javascript'>
 $(document).ready(function(){
@@ -27,6 +28,35 @@ function button_change()
     if (elem.innerHTML == "Expand") elem.innerHTML = "Collapse";
     else elem.innerHTML = "Expand";
 }
+@endif
+
+@if (Auth::user()->isAdmin() || Auth::user()->isPI())
+    $('.datepicker').datepicker();
+
+    var begin = $('#dpd1').datepicker({
+      weekStart: 1  //0 sunday, 1 monday ...
+    }).on('changeDate', function(ev) {
+      if (ev.date.valueOf() > end.date.valueOf()) {
+        var newDate = new Date(ev.date)
+        newDate.setDate(newDate.getDate() + 120);
+        end.setValue(newDate);
+      }
+      begin.hide();
+      $('#dpd2')[0].focus();
+    }).data('datepicker');
+    var end = $('#dpd2').datepicker({
+      onRender: function(date) {
+        // make sure end picker renders all dates after loading the page, not just from now
+        var now = new Date();
+        now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+        if (now.valueOf() == begin.date.valueOf())
+          return '';
+        return date.valueOf() <= begin.date.valueOf() ? 'disabled' : '';
+      },
+      weekStart: 1
+    }).on('changeDate', function(ev) {
+      end.hide();
+    }).data('datepicker');
 @endif
 
 /* flot bar chart tooltip */
@@ -75,6 +105,11 @@ function showTooltip(x, y, color, contents) {
 </script>
 @stop
 
+@section('css')
+{{ HTML::style('css/datepicker.css') }}
+@parent
+@stop
+
 @section('styles')
 @parent
   .axisLabels {
@@ -85,6 +120,13 @@ function showTooltip(x, y, color, contents) {
   }
   .yaxisLabel {
     color: #545454;
+  }
+
+  .datepicker.dropdown-menu {
+    top: 0;
+    left: 0;
+    padding: 4px;
+    margin-top: 1px;
   }
 @stop
 
@@ -122,6 +164,7 @@ if (empty($year))
         {{ Form::close() }}
       </div>
     </div>
+
     <div class="panel panel-primary">
       <div class="panel-heading">
         <h3 class="panel-title">Select a year range</h3>
@@ -142,6 +185,33 @@ if (empty($year))
           </div>
           <div class="form-group">
             <div class="col-lg-2">
+              {{ Form::submit('Submit', array('class' => 'btn btn-primary btn-sm')) }}
+            </div>
+          </div>
+        {{ Form::close() }}
+      </div>
+    </div>
+
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Select a range of dates</h3>
+      </div>
+      <div class="panel-body">
+        {{ Form::open(['route' => array('statistics', 'period'), 'class' => 'form-horizontal', 'role' => 'form']) }}
+          <div class="form-group">
+            {{ Form::label('date1', 'Start: ', array('class' => 'col-lg-2 control-label')) }}
+            <div class="col-lg-10">
+              {{ Form::text('date1', Input::old('date1'), array('class' => 'form-control datepicker', 'id' => 'dpd1', 'data-date-format' => 'yyyy-mm-dd')) }}
+            </div>
+          </div>
+          <div class="form-group">
+            {{ Form::label('date2', 'End:&nbsp;&nbsp; ', array('class' => 'col-lg-2 control-label')) }}
+            <div class="col-lg-10">
+              {{ Form::text('date2', Input::old('date2'), array('class' => 'form-control datepicker', 'id' => 'dpd2', 'data-date-format' => 'yyyy-mm-dd')) }}
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-lg-10 col-lg-offset-2">
               {{ Form::submit('Submit', array('class' => 'btn btn-primary btn-sm')) }}
             </div>
           </div>
