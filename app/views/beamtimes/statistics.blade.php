@@ -31,12 +31,13 @@ function button_change()
 @endif
 
 @if (Auth::user()->isAdmin() || Auth::user()->isPI())
-    $('.datepicker').datepicker();
-
     var begin = $('#dpd1').datepicker({
       weekStart: 1  //0 sunday, 1 monday ...
     }).on('changeDate', function(ev) {
-      if (ev.date.valueOf() > end.date.valueOf()) {
+      var now = new Date();
+      now = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+      if (now.valueOf() == end.date.valueOf()
+          || ev.date.valueOf() > end.date.valueOf()) {
         var newDate = new Date(ev.date)
         newDate.setDate(newDate.getDate() + 120);
         end.setValue(newDate);
