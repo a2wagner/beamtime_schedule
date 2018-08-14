@@ -89,6 +89,14 @@ function sub(e) {
               </div>
             {{ Form::close() }}
             </div>
+            <div style="display: inline-block">
+            {{ Form::open(['route' => array('statistics', 'period'), 'class' => 'hidden-print', 'role' => 'form']) }}
+              {{ Form::hidden('date1', $beamtime->start()->format('Y-m-d')) }}
+              {{ Form::hidden('date2', $beamtime->start()->format('Y-m-d') . ' 23:59:59') }}
+              {{ Form::hidden('date-end', $beamtime->end()->format('Y-m-d')) }}
+              {{ Form::button('<i class="fa fa-bar-chart fa-fw" aria-hidden="true"></i> Statistics', ['class' => 'btn btn-info', 'type' => 'submit']) }}
+            {{ Form::close() }}
+            </div>
             @endif
             {{ link_to('/beamtimes', 'Back', ['class' => 'btn btn-default']) }}
           </td>

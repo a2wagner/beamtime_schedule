@@ -364,7 +364,7 @@ class BeamtimesController extends \BaseController {
 	public function statistics($year = NULL)
 	{
 		// only admins and PIs can see statistics
-		if (!Auth::user()->isAdmin() && !Auth::user()->isPI())
+		if (!Auth::user()->isAdmin() && !Auth::user()->isPI() && !Auth::user()->isRunCoordinator())
 			return Redirect::to('beamtimes');
 
 		$beamtimes = Beamtime::all();
@@ -382,6 +382,26 @@ class BeamtimesController extends \BaseController {
 		Session::flash('first', $first);
 		Session::flash('last', $last);
 
+		// date1 and date2 are used if statistics for a specific period of time is needed, like only part of a year or one beamtime
+		if (Input::has('date1') && Input::has('date2')) {
+			$date1 = new DateTime(Input::get('date1'));
+			$date2 = new DateTime(Input::get('date2'));
+			$end = new DateTime(Input::get('date2'));
+			// this is used on the beamtime view to cover the case that two beamtimes overlap
+			if (Input::has('date-end'))
+				$end = new DateTime(Input::get('date-end'));
+			$beamtimes = Beamtime::all()->filter(function($beamtime) use($date1, $date2)
+				{
+					return $beamtime->start() > $date1 && $beamtime->start() < $date2;
+				});
+			// make sure run coordinators can only see their own beamtime (one beamtime within the period given)
+			if ($beamtimes->count() > 1 && !Auth::user()->isAdmin() && !Auth::user()->isPI() && Auth::user()->isRunCoordinator())
+				return Redirect::to('beamtimes');
+			return View::make('beamtimes.statistics')->with('beamtimes', $beamtimes)->with('range', $date1->format('Y-m-d') . ' &ndash; ' . $end->format('Y-m-d'));
+		}
+		// starting here only admins or PIs should see the statistics
+		if (!Auth::user()->isAdmin() && !Auth::user()->isPI())
+			return Redirect::to('beamtimes');
 		if ($year === 'all')
 			return View::make('beamtimes.statistics')->with('beamtimes', $beamtimes)->with('range', 'all Beamtimes');
 		if (Input::has('year1') && Input::has('year2')) {

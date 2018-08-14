@@ -20,7 +20,7 @@ $(document).ready(function(){
     });
 });
 
-@if (Auth::user()->isAdmin())
+@if (Auth::user()->isAdmin() || ($beamtimes->count() === 1 && Auth::user()->isRunCoordinator()))
 function button_change()
 {
     var elem = document.getElementById("toggle-ranking");
@@ -90,10 +90,19 @@ function showTooltip(x, y, color, contents) {
 
 @section('content')
 <?php
+// make sure only the entitled users can see the statistics
+// run coordinators are only allowed to see their own beamtime, one at a time
+if (($beamtimes->count() > 1 && !Auth::user()->isAdmin() && !Auth::user()->isPI() && Auth::user()->isRunCoordinator())
+	|| (!Auth::user()->isAdmin() && !Auth::user()->isPI() && !Auth::user()->isRunCoordinator())) {
+	header('Location: ' . '/beamtimes', true, 302);
+	die();
+}
+
 $current_year = date('Y');
 if (empty($year))
 	$year = $current_year;
 ?>
+@if (Auth::user()->isAdmin() || Auth::user()->isPI())
 <div class="row">
   <div class="col-lg-5 col-lg-offset-1">
     <div class="panel panel-default">
@@ -141,6 +150,7 @@ if (empty($year))
     </div>
   </div>
 </div>
+@endif
 <div class="row">
   <div class="col-lg-10 col-lg-offset-1">
     @if (!$beamtimes->count())
@@ -268,6 +278,7 @@ $beamtimes->rcshifts->each(function($rcshift) use(&$info)
         <h2>Statistics for {{{ empty($range) ? $year : $range }}}</h2>
       </div>
 
+      @if (Auth::user()->isAdmin() || Auth::user()->isPI())
       <h3>General Overview:</h3>
       <p>Total number of registered users: {{{ User::all()->count() }}}<br />
       @if ($retired)
@@ -275,6 +286,7 @@ $beamtimes->rcshifts->each(function($rcshift) use(&$info)
       @endif
       @if ($authors)
       Registered users set as author: {{{ $authors }}}<br />
+      @endif
       @endif
       Contributing users during the selected period: {{{ $beamtimes->shifts->users->unique()->count() }}}</p>
 
@@ -700,7 +712,7 @@ $(document).ready(function(){
 }
 ?>
 
-@if (Auth::user()->isAdmin())
+@if (Auth::user()->isAdmin() || ($beamtimes->count() === 1 && Auth::user()->isRunCoordinator()))
       <div class="page-header" style="padding-top: 20px;">
         <h3>Shift Ranking</h3>
       </div>
