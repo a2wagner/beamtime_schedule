@@ -128,6 +128,57 @@
       </tbody>
     </table>
     </div>
+    <div class="page-header" style="padding-top:10%;">
+        <h2>Top Users in the Current 12 Months</h2>
+	</div>
+    <div class="list-group" style="width:30%;">
+      <a href="#" class="list-group-item disabled">
+        <span class="badge">#Shifts</span> User
+      </a>
+      <?php
+		$future = new DateTime("+2 months");
+		$past = new DateTime("-10 months");
+		$beamtimes = Beamtime::all()->filter(function($beamtime) use($future, $past)
+			{
+				return $beamtime->start() > $past && $beamtime->start() < $future;
+			});
+		if (!$beamtimes->count())
+			echo "No beamtimes within the current 12 months.";
+		else {
+			$shifts_user = array();
+			$count = 0;
+			$beamtimes->shifts->users->groupBy('id')->each(function($user_shifts) use(&$shifts_user, &$count)
+				{
+					if (Auth::user()->username === $user_shifts[0]->username)
+						$count = count($user_shifts);
+					array_push($shifts_user, [$user_shifts[0]->username, $user_shifts[0]->get_full_name(), count($user_shifts)]);
+				});
+			uasort($shifts_user, function($a, $b)
+				{
+					return $a[2] < $b[2];
+				});
+			$shifts_user = array_slice($shifts_user, 0, 3, true);
+			$found = false;
+			foreach($shifts_user as $user) {
+				$list_class = "list-group-item";
+				if (Auth::user()->username === $user[0]) {
+					$found = true;
+					$user[1] = "<b>You</b>";
+					$list_class .= " list-group-item-success";
+				}
+				echo '<a href="/users/' . $user[0] . "\" class=\" . $list_class . \">\n"
+					. '<span class="badge">' . $user[2] . "</span>\n"
+					. $user[1] . "</a>\n";
+			};
+			if (!$found) {
+				echo "<a href=\"#\" class=\"list-group-item disabled\">&hellip;</a>\n";
+				echo '<a href="/users/' . Auth::user()->username . "\" class=\"list-group-item\">\n"
+					. '<span class="badge">' . $count . "</span>\n"
+					. "<b>You</b></a>\n";
+			}
+		}
+	  ?>
+    </div>
     @else
     <h4 class="text-danger">No beamtimes found</h4>
     @endif
