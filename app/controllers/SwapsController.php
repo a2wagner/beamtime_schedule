@@ -206,7 +206,7 @@ class SwapsController extends \BaseController {
 				// inform the original user about the deletion
 				$subject = 'Update on Swap Request ' . $id;
 				$msg = 'Hello ' . User::find($user_id)->first_name . ",\r\n\r\n";
-				$msg.= Auth::user()->first_name . " declined your swap request. Since he was the last attached user to this request, it was deleted automatically.\r\n";
+				$msg.= Auth::user()->first_name . ' declined your swap request. Since ' . Auth::user()->first_name . " was the last attached user to this request, it was deleted automatically.\r\n";
 				$msg.= 'A2 Beamtime Scheduler';
 				User::find($user_id)->mail($subject, $msg);
 
@@ -377,7 +377,7 @@ class SwapsController extends \BaseController {
 				// inform the original user about the deletion
 				$subject = 'Update on Shift Request ' . $hash;
 				$msg = 'Hello ' . $user->first_name . ",\r\n\r\n";
-				$msg.= Auth::user()->first_name . " declined your shift request. Since he was the last attached user to this request, it was deleted automatically.\r\n";
+				$msg.= Auth::user()->first_name . ' declined your shift request. Since ' . Auth::user()->first_name . " was the last attached user to this request, it was deleted automatically.\r\n";
 				$msg.= 'A2 Beamtime Scheduler';
 				$user->mail($subject, $msg);
 
