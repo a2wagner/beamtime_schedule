@@ -197,7 +197,7 @@ var _0xa215=["\x63\x20\x6D\x28\x65\x29\x7B\x62\x20\x74\x3D\x65\x2D\x35\x3B\x31\x
               	}) }})<br />
               {{ round($user->shifts->count()/$user->shifts->groupBy('beamtime_id')->count(), 2) }} shifts/beamtime&emsp;({{ round($user->shifts->count()/Beamtime::All()->count(), 2) }} all beamtimes)
               {{-- jQuery needs to be loaded before the other Javascript parts need it --}}
-              {{ HTML::script('js/jquery-2.1.1.min.js') }}
+              {{ HTML::script('js/jquery-3.3.1.min.js') }}
               <script type="text/javascript">
               $(document).ready(function(){
                 var data = [

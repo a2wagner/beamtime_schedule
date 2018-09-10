@@ -372,7 +372,7 @@ $beamtimes->rcshifts->each(function($rcshift) use(&$info)
       <h3 class="text-info">No shifts taken!</h3>
       @else
       {{-- jQuery needs to be loaded before the other Javascript parts need it --}}
-      {{ HTML::script('js/jquery-2.1.1.min.js') }}
+      {{ HTML::script('js/jquery-3.3.1.min.js') }}
 <?php
 $head_ratios = array();
 $author_ratios = array();
