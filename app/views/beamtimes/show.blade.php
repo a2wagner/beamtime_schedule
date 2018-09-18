@@ -113,6 +113,7 @@ function sub(e) {
     <h3 class="text-danger">Beamtime contains no shifts!</h3>
     @else
     @if (isset($beamtime))
+    <?php $rules_shown = false; ?>
     <div class="hidden-print">
       @if (Auth::user()->isAdmin() || (Auth::user()->isRunCoordinator() && $beamtime->run_coordinators()->contains(Auth::user())))
       <h3>Beamtime Settings</h3>
@@ -120,7 +121,7 @@ function sub(e) {
         <li>Enforcing Run Coordinators on shift before shift workers can subscribe to shifts on a day is {{{ $beamtime->enforce_rc ? '' : 'not' }}} activated</li>
         <li>Experience blocking for shift subscriptions to prevent two inexperienced users on a shift is {{{ $beamtime->experience_block ? '' : 'not' }}} enabled (current limit: {{{ Shift::EXPERIENCE_BLOCK }}} shifts)</li>
         <li>
-          {{ $beamtime->subscription_start_string() }}@if($beamtime->enforce_subscription)<br />
+          {{ $beamtime->subscription_start_string() }}@if($beamtime->enforce_subscription)<?php $rules_shown = true; ?><br />
           (workgroups from Europe are allowed to subscribe after {{{ BEAMTIME::SUBSCRIPTION_WAITING_DAYS_EUROPE }}} day, the local group is allowed to subscribe after {{{ BEAMTIME::SUBSCRIPTION_WAITING_DAYS_LOCAL }}} days)@endif
         </li>
       </ul></p>
@@ -165,7 +166,10 @@ function sub(e) {
       	$sub = new DateTime($beamtime->subscription_start);
       ?></h4>
       <p class="text-primary">Beamtime shift subscription overall start{{ ($sub < $now) ? 'ed' : 's' }} on {{ $sub->format('l jS F Y \a\t g:i A \(T\)') }}</p>
-      @endif
+      @if (!$rules_shown)
+      <p class="text-muted" style="margin-top: -8px;">(workgroups from Europe are allowed to subscribe after {{{ BEAMTIME::SUBSCRIPTION_WAITING_DAYS_EUROPE }}} day, the local group is allowed to subscribe after {{{ BEAMTIME::SUBSCRIPTION_WAITING_DAYS_LOCAL }}} days)</p>
+      @endif  {{-- subscription rules shown --}}
+      @endif  {{-- enforce subscription check --}}
       @elseif ($now > $end)
       <?php $diff = $now->diff($end); ?>
       <p class="text-success">Beamtime ended {{{ $diff->format('%a days ago') }}}.</p>
