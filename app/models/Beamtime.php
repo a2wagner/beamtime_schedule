@@ -163,6 +163,8 @@ class Beamtime extends \Eloquent {
 	*/
 	public function is_year($year)
 	{
+		if (!$this->shifts->count())
+			return NULL;
 		return $this->shifts->first()->is_year($year);
 	}
 
@@ -212,6 +214,8 @@ class Beamtime extends \Eloquent {
 	 */
 	public function start()
 	{
+		if (!$this->shifts->count())
+			return NULL;
 		return new DateTime($this->shifts->first()->start);
 	}
 
@@ -222,6 +226,8 @@ class Beamtime extends \Eloquent {
 	 */
 	public function start_string()
 	{
+		if (!$this->shifts->count())
+			return NULL;
 		return $this->shifts->first()->start;
 	}
 
@@ -232,6 +238,8 @@ class Beamtime extends \Eloquent {
 	 */
 	public function end()
 	{
+		if (!$this->shifts->count())
+			return NULL;
 		return $this->shifts->last()->end();
 	}
 
@@ -242,6 +250,8 @@ class Beamtime extends \Eloquent {
 	 */
 	public function end_string()
 	{
+		if (!$this->shifts->count())
+			return NULL;
 		return $this->shifts->last()->end()->format('Y-m-d H:i:s');
 	}
 
