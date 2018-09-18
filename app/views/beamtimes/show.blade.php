@@ -164,7 +164,7 @@ function sub(e) {
       	}
       	$sub = new DateTime($beamtime->subscription_start);
       ?></h4>
-      <p class="text-primary">Beamtime shift subscription overall start{{ ($sub < $now) ? 'ed' : 's' }} on {{ $sub->format('l jS F Y \a\t g:i A') }}</p>
+      <p class="text-primary">Beamtime shift subscription overall start{{ ($sub < $now) ? 'ed' : 's' }} on {{ $sub->format('l jS F Y \a\t g:i A \(T\)') }}</p>
       @endif
       @elseif ($now > $end)
       <?php $diff = $now->diff($end); ?>
