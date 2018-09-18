@@ -163,7 +163,7 @@
 				$list_class = "list-group-item";
 				if (Auth::user()->username === $user[0]) {
 					$found = true;
-					$user[1] = "<b>You</b>";
+					$user[1] = "You";
 					$list_class .= " list-group-item-success";
 				}
 				echo '<a href="/users/' . $user[0] . "\" class=\" . $list_class . \">\n"
@@ -174,7 +174,7 @@
 				echo "<a href=\"#\" class=\"list-group-item disabled\">&hellip;</a>\n";
 				echo '<a href="/users/' . Auth::user()->username . "\" class=\"list-group-item\">\n"
 					. '<span class="badge">' . $count . "</span>\n"
-					. "<b>You</b></a>\n";
+					. "You</a>\n";
 			}
 		}
 	  ?>
