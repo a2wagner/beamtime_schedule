@@ -115,16 +115,26 @@ class Beamtime extends \Eloquent {
 		}
 
 		/* create the normal shifts */
+		// PHP and DateTime/DateInterval has a funny bug regarding DST changes. Though the transition from "winter" to summer time works fine,
+		// the additional hour by switching end of October produces some funny problems with PHP. Fix this by checking if we switched from
+		// summertime to wintertime and add one additional hour manually. The check following returns 1 or 0. Exploit this as some int by
+		// incrementing $summertime to 2 and use this to check if the additional hour has been added.
+		$summertime = date("I", $start->getTimestamp());
 		while ($start < $end) {
+			$summertime = date("I", $start->getTimestamp());
 			$begin = clone($start);  // start gets modified with the add method, store it in another variable for later (database) usage
 			$dur = 'PT' . $length . 'H';
 			$start->add(new DateInterval($dur));  // add the legnth of the shifts in hours to the start date
+			if ($summertime && !date("I", $start->getTimestamp())) {
+				$summertime++;
+				$start->add(new DateInterval('PT1H'));
+			}
 			$interval = $begin->diff($end);
 			// when there are less hours than the defined shift length remaining, change the length of this last shift to the remaining time
 			if ($interval->d == 0 && $interval->h < $duration)
 				$length = $interval->h;
 			//echo $start->format('Y-m-d H:i:s') . " - duration " . $length . " hours<br />\n";
-			$shifts[] = array('start' => $begin->format('Y-m-d H:i:s'), 'duration' => $length, 'n_crew' => '2');
+			$shifts[] = array('start' => $begin->format('Y-m-d H:i:s'), 'duration' => ($summertime === 2) ? $length+1 : $length, 'n_crew' => '2');
 		}
 
 		/* create the run coordinator shifts now */
@@ -132,18 +142,23 @@ class Beamtime extends \Eloquent {
 		$start = clone($_start);
 		// create shifts
 		while ($start < $end) {
+			$summertime = date("I", $start->getTimestamp());
 			$begin = clone($start);  // start gets modified with the add method, store it in another variable for later (database) usage
 			// in case the first run coordinator shift must have a different length to match the usual pattern, changed it
 			if ($rc_length_first != 0)
 				$rc_length = $rc_length_first;
 			$dur = 'PT' . $rc_length . 'H';
 			$start->add(new DateInterval($dur));  // add the legnth of the shifts in hours to the start date
+			if ($summertime && !date("I", $start->getTimestamp())) {
+				$summertime++;
+				$start->add(new DateInterval('PT1H'));
+			}
 			$interval = $begin->diff($end);
 			// when there are less hours than the defined rc shift length remaining, change the length of this last shift to the remaining time
 			if ($interval->d == 0 && $interval->h < $rc_length)
 				$rc_length = $interval->h;
 
-			$rc_shifts[] = array('start' => $begin->format('Y-m-d H:i:s'), 'duration' => $rc_length);
+			$rc_shifts[] = array('start' => $begin->format('Y-m-d H:i:s'), 'duration' => ($summertime === 2) ? $rc_length+1 : $rc_length);
 
 			// if this is the first loop run and the first shift length is different, change $rc_length so that the stored value in the array is correct
 			if ($rc_length_first != 0) {
