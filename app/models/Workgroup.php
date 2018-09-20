@@ -1,7 +1,7 @@
 <?php
 
 class Workgroup extends \Eloquent {
-	protected $fillable = ['name', 'country', 'region'];
+	protected $fillable = ['name', 'country', 'short', 'region'];
 
 	// Do not use timestamps for this model
 	public $timestamps = false;
