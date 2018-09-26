@@ -380,7 +380,7 @@ function sub(e) {
       @else
       <p>Total shifts: {{{ $shifts_total }}}, {{{ $shifts->count() - $shifts_total }}} maintenance shifts, individual shifts: {{{ $individual }}}, all shifts filled</p>
       @endif
-      <p>Download your shifts as calendar file:&ensp;{{ link_to("/beamtimes/$beamtime->id/ics", 'iCal', ['class' => 'btn btn-success btn-xs']) }}</p>
+      <p class="hidden-print">Download your shifts as calendar file:&ensp;{{ link_to("/beamtimes/$beamtime->id/ics", 'iCal', ['class' => 'btn btn-success btn-xs']) }}</p>
     </div>
     @else
     <h3 class="text-danger">Beamtime not found!</h3>
