@@ -153,11 +153,11 @@
 				{
 					if (Auth::user()->username === $user_shifts[0]->username)
 						$count = count($user_shifts);
-					array_push($shifts_user, [$user_shifts[0]->username, $user_shifts[0]->get_full_name(), count($user_shifts)]);
+					array_push($shifts_user, [$user_shifts[0]->username, $user_shifts[0]->get_full_name(), $user_shifts[0]->workgroup->short, count($user_shifts)]);
 				});
 			uasort($shifts_user, function($a, $b)
 				{
-					return $a[2] < $b[2];
+					return $a[3] < $b[3];
 				});
 			$shifts_user = array_slice($shifts_user, 0, 3, true);
 			$found = false;
@@ -169,8 +169,8 @@
 					$list_class .= " list-group-item-success";
 				}
 				echo '<a href="/users/' . $user[0] . "\" class=\" . $list_class . \">\n"
-					. '<span class="badge">' . $user[2] . "</span>\n"
-					. $user[1] . "</a>\n";
+					. '<span class="badge">' . $user[3] . "</span>\n"
+					. $user[1] . ' (' . $user[2] . ")</a>\n";
 			};
 			if (!$found) {
 				echo "<a href=\"#\" class=\"list-group-item disabled\">&hellip;</a>\n";
