@@ -149,6 +149,7 @@
 		else {
 			$shifts_user = array();
 			$count = 0;
+			$covered = 0;
 			$beamtimes->shifts->users->groupBy('id')->each(function($user_shifts) use(&$shifts_user, &$count)
 				{
 					if (Auth::user()->username === $user_shifts[0]->username)
@@ -159,9 +160,19 @@
 				{
 					return $a[3] < $b[3];
 				});
-			$shifts_user = array_slice($shifts_user, 0, 3, true);
+
+			// take the top 5 to calculate the percentage they cover and check if users have the same amount of shifts
+			$shifts_user = array_slice($shifts_user, 0, 5, true);
 			$found = false;
-			foreach($shifts_user as $user) {
+			// prev and counter are used to determine if the fourth (or even fifth) user has the same amount of shifts as the third one
+			$prev = 0;
+			$counter = 0;
+			foreach ($shifts_user as $user) {
+				$covered += $user[3];
+				// if the top third user has the same amount of shifts as the following, then show them as well, if not continue to at least get all the covered shits of the top 5
+				if ($counter >= 3 && $user[3] < $prev)
+					continue;
+
 				$list_class = "list-group-item";
 				if (Auth::user()->username === $user[0]) {
 					$found = true;
@@ -171,6 +182,9 @@
 				echo '<a href="/users/' . $user[0] . "\" class=\" . $list_class . \">\n"
 					. '<span class="badge">' . $user[3] . "</span>\n"
 					. $user[1] . ' (' . $user[2] . ")</a>\n";
+
+				$prev = $user[3];
+				$counter++;
 			};
 			if (!$found) {
 				echo "<a href=\"#\" class=\"list-group-item disabled\">&hellip;</a>\n";
@@ -181,6 +195,13 @@
 		}
 	  ?>
     </div>
+    {{-- the variable covered is only declared if we have beamtimes in this period as well as users taken shifts in those beamtimes --}}
+    @if (isset($covered))
+    <p>
+        The top 5 users covered {{{ round($covered/$beamtimes->shifts->users->count()*100, 1) }}}% of all the taken individual shifts within this period.<br />
+        (Total shift coverage is {{{ round($beamtimes->shifts->users->count()/$beamtimes->shifts->sum('n_crew')*100, 1) }}}%)
+    </p>
+    @endif
     @else
     <h4 class="text-danger">No beamtimes found</h4>
     @endif
