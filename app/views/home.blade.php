@@ -144,6 +144,8 @@
 			});
 		if (!$beamtimes->count())
 			echo "No beamtimes within the current 12 months.";
+		else if (!$beamtimes->shifts->users->count())
+			echo "No shifts taken within the current 12 months.";
 		else {
 			$shifts_user = array();
 			$count = 0;
