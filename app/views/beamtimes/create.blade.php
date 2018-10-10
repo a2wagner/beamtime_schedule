@@ -222,7 +222,7 @@ $(".input-number").keydown(function (e) {
                 	@if (Input::old('eTime'))
                     {{ Form::select('eTime', $hours, Input::old('eTime'), array('class' => 'form-control', 'id' => 'inputError2')) }}
                     @else
-                    {{ Form::select('eTime', $hours, '6', array('class' => 'form-control')) }}
+                    {{ Form::select('eTime', $hours, '8', array('class' => 'form-control')) }}
                     @endif
                 </div>
             </div>
