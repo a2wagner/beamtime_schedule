@@ -79,17 +79,22 @@ $(document).ready(function() {
 
   /* datetimepicker for subscription start */
   var d = new Date();
-  d.setDate(d.getDate()-90);
-  $(function () {
-    $('#dtp').datetimepicker({
-      @if ($beamtime->enforce_subscription)
-      defaultDate: new Date("{{{ $beamtime->subscription_start }}}"),
-      @endif
-      minDate: d,
-      maxDate: new Date("{{{ $beamtime->start_string() }}}"),
-      showTodayButton: true
+  var isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
+  if (isIE11) {
+    $('#dtp').val("{{{ $beamtime->subscription_start }}}");
+  } else {
+    d.setDate(d.getDate()-90);
+    $(function () {
+      $('#dtp').datetimepicker({
+        @if ($beamtime->enforce_subscription)
+        defaultDate: new Date("{{{ $beamtime->subscription_start }}}"),
+        @endif
+        minDate: d,
+        maxDate: new Date("{{{ $beamtime->start_string() }}}"),
+        showTodayButton: true
+      });
     });
-  });
+  }
 });
 
 function toggleRadio(id)
@@ -157,13 +162,20 @@ function toggleRadio(id)
         </tr>
         <tr>
           <td height="60px">
-            <div class="form-group col-lg-12 {{{ $errors->has('sub_start') ? 'has-error has-feedback' : '' }}} sub_start_form" {{ Input::old('set_sub') || $beamtime->enforce_subscription ? '' : 'style="display: none;"' }}>
+            <!--[if IE]>
+              <div class="text-danger">
+                Time picker does not work with old and moldy Internet Explorer. Please use a modern web browser instead!
+              </div>
+            <[endif]-->
+            <![if !IE]>
+              <div class="form-group col-lg-12 {{{ $errors->has('sub_start') ? 'has-error has-feedback' : '' }}} sub_start_form" {{ Input::old('set_sub') || $beamtime->enforce_subscription ? '' : 'style="display: none;"' }}>
                 <div class="col-lg-11 col-lg-offset-2">
                     {{ Form::text('sub_start', Input::old('sub_start'), array('class' => 'form-control datepicker', 'id' => 'dtp')) }}
                     {{ $errors->has('sub_start') ? '<span class="glyphicon glyphicon-remove form-control-feedback"></span>' : '' }}
                     <p class="help-block">{{ $errors->first('sub_start') }}</p>
                 </div>
-            </div>
+              </div>
+            <![endif]>
           </td>
         </tr>
       </table>
