@@ -121,7 +121,7 @@ var _0xa215=["\x63\x20\x6D\x28\x65\x29\x7B\x62\x20\x74\x3D\x65\x2D\x35\x3B\x31\x
           </tr>
           {{-- only show the following information to the belonging user or to the same workgrop PI's as well as admins --}}
           @if (Auth::id() == $user->id || Auth::user()->isAdmin() || (Auth::user()->isPI() && Auth::user()->workgroup_id == $user->workgroup_id))
-          @if ($user->start_date !== "0000-00-00 00:00:00")
+          @if ($user->start_date !== "0000-00-00 00:00:00" && !is_null($user->start_date))
           <tr>
             <td>Start Date</td>
             <td>{{ explode(' ', $user->start_date)[0] }}</td>
