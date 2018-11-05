@@ -6,7 +6,7 @@ class WorkgroupAddYork extends Seeder {
 	{
 		$group = Workgroup::create([
 			'name' => 'University of York',
-			'country' => 'Scotland',
+			'country' => 'England',
 			'short' => 'York',
 			'region' => 1
 		]);
