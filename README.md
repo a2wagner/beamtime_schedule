@@ -96,6 +96,76 @@ To get the updates from the remote, save the current state of your installation 
 * In case you change something like paths in the Homestead.yaml, you may see the error "No input file specified". To change the paths etc. in the VM you have to run ``vagrant provision`` to apply the changes to the VM. 
 
 
+## Upgrading to PHP 7.2
+
+The used Laravel version 4.2 relies on the `mcrypt` module of PHP which has been removed with the release of PHP 7.1. So in order to still being able to run the Beamtime Scheduler on a up-to-date system with PHP 7.2 installed, there are a few things which need to be adapted.
+
+### Homestead-specific
+
+You probably wanna first test it in a local development space like Homestead. If you're using Homestead, you need to first update your system. Connect to a running vagrant session and first update some keys to verify packages:
+
+    sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-keys A4A9406876FCBD3C456770C88C718D3B5072E1F5
+	sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-keys B4112585D386EB94
+	sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-keys 696DBE66A72D76DA
+
+Another thing is the PHP repository has changed. You probably see some 403 errors while fetching those packages. To fix this, remove the old name from the apt sources and add the new one:
+
+    sudo rm /etc/apt/sources.list.d/ondrej-php5-5_6-trusty.list
+	sudo add-apt-repository -y ppa:ondrej/php
+
+The last thing before we can upgrade is the redis-server package. I didn't bother fixing this since I didn't need the new version, so I just disabled it from being upgraded: `sudo apt-mark hold redis-server`.
+
+Now updating should work:
+
+    sudo apt-get update
+	sudo apt-get dist-upgrade
+
+If there should be problems during the installation, you can trigger the skipped dpkg steps with `sudo dpkg-reconfigure -phigh -a`, and simply install the packages which made problems again. In my case I had to run `sudo apt-get install ca-certificates nginx-full` in addition to finally upgrade all packages.
+Since some packages were not needed anymore, a final `sudo apt-get autoremove` gets rid of them.
+
+Next thing is upgrading some modules for php7.2 to get the composer working. First I installed some dependencies which seemed to be missing: `sudo apt install zip unzip php7.2-zip`. Additionally I checked which PHP modules had been installed for PHP 5.6 and installed the corresponding versions for 7.2: `sudo apt-get install php7.2-curl php7.2-gd php7.2-ldap php7.2-pgsql php7.2-sqlite php7.2-ssh2 php7.2-fpm php7.2-dev php7.2-apcu`.
+
+To switch system wide to the new PHP version, I chose it after issuing the following command:
+    
+	sudo update-alternatives --config php
+
+You might want to remove the old PHP 5.6 packages with
+    
+	sudo apt-get --remove purge -y php5 php5-cli php5-curl php5-gd php5-intl php5-mcrypt php5-memcached php5-mysqlnd php5-readline php5-sqlite php5-cgi php5-common php5-fpm php5-imagick php5-json php5-memcache php5-mongo php5-pgsql php5-redis
+
+The nginx configuration for Homestead relies on a hardcoded PHP5.6 socket, so we need to change the file `/etc/nginx/sites-available/homestead.app` and replace the line starting with `fastcgi_pass unix:/var/run/php` with the following line:
+
+    fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
+
+Restarting nginx or just restarting the VM should now properly load PHP 7.2 and the new configurations.
+
+### Update Laravel Encrypter
+
+Since Laravel 4.2 relies on the mcrypt module for encryption, we need to replace it. The easiest way is to use the [Laravel 4.2 Encrypter project](https://github.com/tomgrohl/laravel4-php71-encrypter) from Github. To do this, we add it to the `composer.json` file within the `require` block as an additional dependency:
+    
+	"tomgrohl/laravel4-php71-encrypter": "^1.1"
+
+This has already been done for the file(s) in this repository. Additionally we need to register it as a new provider in the file `app/config/app.php` and choose either 'AES-128-CBC' or 'AES-256-CBC' as the new cipher for the project with a key of 16 or 32 bit length respectively. The commit which adds this to this repository is a00664b557880db88ac8b4433a6f157f2e8ef24e.
+
+The next step is to install the mcrypt module with pecl. Theoretically we do not need this anymore since the new Encrypter module we use relies on OpenSSL instead, but there are still a few checks hardcoded within Laravel for this module. This could be removed, but updating stuff with composer might overwrite those changes. To prevent this problem, we need the mcrypt development files which can be installed on systems like Ubuntu with `sudo apt-get install libmcrypt-dev`, as it is the case for Homestead. On other systems replace this with the appropriate package manager and package. 
+
+Then we can compile and install the mcrypt module for php7.2 with:
+    
+	sudo pecl install mcrypt-1.0.1
+
+As a last step we need to add the mcrypt extension to the `php.ini`. On Ubuntu this file is located in `/etc/php/7.2/cli/php.ini`. There simply adding the line `extension=mcrypt.so` does the job.
+
+In my case self-updating composer failed. To upgrade it, I followed the instructions on the [Composer Download page](https://getcomposer.org/download/) and moved the downloaded/installed `composer.phar` from the current directory to /usr/local/bin:
+    
+	sudo mv composer.phar /usr/local/bin/composer
+
+With everything installed and updated, we can finally run
+
+    composer update
+
+to update everything and install the Encrypter module we need.
+
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
