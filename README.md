@@ -145,7 +145,7 @@ Since Laravel 4.2 relies on the mcrypt module for encryption, we need to replace
     
 	"tomgrohl/laravel4-php71-encrypter": "^1.1"
 
-This has already been done for the file(s) in this repository. Additionally we need to register it as a new provider in the file `app/config/app.php` and choose either 'AES-128-CBC' or 'AES-256-CBC' as the new cipher for the project with a key of 16 or 32 bit length respectively. The commit which adds this to this repository is a00664b557880db88ac8b4433a6f157f2e8ef24e.
+This has already been done for the file(s) in this repository. Additionally we need to register it as a new provider in the file `app/config/app.php` and choose either 'AES-128-CBC' or 'AES-256-CBC' as the new cipher for the project with a key of 16 or 32 bit length respectively. The commit which adds this to this repository can be found [here](https://github.com/a2wagner/beamtime_schedule/commit/a00664b557880db88ac8b4433a6f157f2e8ef24e).
 
 The next step is to install the mcrypt module with pecl. Theoretically we do not need this anymore since the new Encrypter module we use relies on OpenSSL instead, but there are still a few checks hardcoded within Laravel for this module. This could be removed, but updating stuff with composer might overwrite those changes. To prevent this problem, we need the mcrypt development files which can be installed on systems like Ubuntu with `sudo apt-get install libmcrypt-dev`, as it is the case for Homestead. On other systems replace this with the appropriate package manager and package. 
 
