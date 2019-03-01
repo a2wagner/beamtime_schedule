@@ -123,7 +123,9 @@ Now updating should work:
 If there should be problems during the installation, you can trigger the skipped dpkg steps with `sudo dpkg-reconfigure -phigh -a`, and simply install the packages which made problems again. In my case I had to run `sudo apt-get install ca-certificates nginx-full` in addition to finally upgrade all packages.
 Since some packages were not needed anymore, a final `sudo apt-get autoremove` gets rid of them.
 
-Next thing is upgrading some modules for php7.2 to get the composer working. First I installed some dependencies which seemed to be missing: `sudo apt install zip unzip php7.2-zip`. Additionally I checked which PHP modules had been installed for PHP 5.6 and installed the corresponding versions for 7.2: `sudo apt-get install php7.2-curl php7.2-gd php7.2-ldap php7.2-pgsql php7.2-sqlite php7.2-ssh2 php7.2-fpm php7.2-dev php7.2-apcu`.
+Next thing is upgrading some modules for php7.2 to get the composer working. First I installed some dependencies which seemed to be missing: `sudo apt install zip unzip php7.2-zip`. Additionally I checked which PHP modules had been installed for PHP 5.6 and installed the corresponding versions for 7.2:
+
+	sudo apt-get install php7.2-curl php7.2-gd php7.2-ldap php7.2-pgsql php7.2-mysql php7.2-sqlite php7.2-ssh2 php7.2-fpm php7.2-dev php7.2-apcu
 
 To switch system wide to the new PHP version, I chose it after issuing the following command:
     
