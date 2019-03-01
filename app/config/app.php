@@ -80,7 +80,7 @@ return array(
 
 	'key' => 'YourSecretKey!!!',
 
-	'cipher' => MCRYPT_RIJNDAEL_128,
+	'cipher' => 'AES-128-CBC',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -122,6 +122,7 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider',
+		'Tomgrohl\Laravel\Encryption\EncryptionServiceProvider',
 
 	),
 

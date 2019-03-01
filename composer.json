@@ -5,7 +5,8 @@
 	"license": "MIT",
 	"require": {
 		"laravel/framework": "4.2.*",
-		"eluceo/ical": ">=0.10.0"
+		"eluceo/ical": ">=0.10.0",
+		"tomgrohl/laravel4-php71-encrypter": "^1.1"
 	},
 	"require-dev": {
 		"way/generators": "~2.0"
