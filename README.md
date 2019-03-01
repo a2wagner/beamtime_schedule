@@ -165,6 +165,22 @@ With everything installed and updated, we can finally run
 
 to update everything and install the Encrypter module we need.
 
+### Troubleshooting
+
+#### Permission denied errors
+
+PHP 7 installs (i.e. on Ubuntu) a `www.conf` file in `/etc/php/7.2/fpm/pool.d`. Within this file a user and group is specified which is `www-data` by default. In Homestead for example the user and group is vagrant, so www-data does not match and the write permissions are denied. To solve this problem, change the user and group in the `www.conf` file according to the user running the Laravel web application and restart php-fpm, on Ubuntu with `sudo service php7.2-fpm restart`. This should solve the problem.
+
+#### mcrypt module still missing
+
+In theory the steps above should be enough to get Laravel running with PHP 7.2. For me the mcrypt module still made some problems, especially within Homestead. When trying to access the upgraded web app, I just saw "Mcrypt PHP extension required." which is issued by `vendor/laravel/framework/src/Illuminate/Foundation/start.php`. Running `php -i | grep mcrypt` shows that the module is there, but the PHP check fails for some reason. Even though installed the not needed mcrypt module should prevent that the checks fail, they still do. So I manually changed some code lines to get everything running again.
+
+First in the already mentioned file `vendor/laravel/framework/src/Illuminate/Foundation/start.php` I removed (or just comment it out) the check if the mcrypt module is loaded, starting with this line (should be line 27):
+
+    if ( ! extension_loaded('mcrypt'))
+
+And in the file `vendor/laravel/framework/src/Illuminate/Encryption/Encrypter.php` I set the variables for `$cipher` and `$mode` to empty strigns: `""`. This should make Laravel work again without the mcrypt dependencies.
+
 
 ## License
 
