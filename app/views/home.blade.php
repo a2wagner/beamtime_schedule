@@ -131,7 +131,8 @@
     <div class="page-header" style="padding-top:10%;">
         <h2>Top Users in the Current 12 Months</h2>
 	</div>
-    <div class="list-group" style="width:30%;">
+    <div class="list-group clearfix">
+    <div class="col-sm-6 col-md-5" style="padding:0;">
       <a href="#" class="list-group-item disabled">
         <span class="badge">#Shifts</span> User
       </a>
@@ -194,6 +195,7 @@
 			}
 		}
 	  ?>
+    </div>
     </div>
     {{-- the variable covered is only declared if we have beamtimes in this period as well as users taken shifts in those beamtimes --}}
     @if (isset($covered))
