@@ -132,7 +132,7 @@
         <h2>Top Users in the Current 12 Months</h2>
 	</div>
     <div class="list-group clearfix">
-    <div class="col-sm-6 col-md-5" style="padding:0;">
+    <div class="col-sm-5 col-md-4" style="padding:0;">
       <a href="#" class="list-group-item disabled">
         <span class="badge">#Shifts</span> User
       </a>
