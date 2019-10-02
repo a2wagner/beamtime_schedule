@@ -139,6 +139,12 @@ class WorkgroupTableSeeder extends Seeder {
 			'country' => 'USA', 
 			'short' => 'CUA'
 		]);
+
+		$group = Workgroup::create([
+			'name' => 'University of York',
+			'country' => 'England',
+			'short' => 'York',
+		]);
 	}
 
 }

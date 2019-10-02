@@ -79,6 +79,10 @@ class WorkgroupRegionSeeder extends Seeder {
 		$group = Workgroup::whereName('The Catholic University of America')->first();
 		$group->region = 2;
 		$group->save();
+
+		$group = Workgroup::whereName('University of York')->first();
+		$group->region = 1;
+		$group->save();
 	}
 
 }
