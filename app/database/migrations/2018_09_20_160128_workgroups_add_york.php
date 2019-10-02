@@ -11,7 +11,8 @@ class WorkgroupsAddYork extends Migration {
 	 */
 	public function up()
 	{
-		if (!Workgroup::whereName('University of York')->count()) {
+		if (Workgroup::all()->count() &&  // make sure db:seed ran already to prevent just adding this workgroup while migrating
+				!Workgroup::whereName('University of York')->count()) {
 			Artisan::call('db:seed', [
 				'--class' => 'WorkgroupAddYork',
 				'--force' => true
@@ -27,7 +28,8 @@ class WorkgroupsAddYork extends Migration {
 	public function down()
 	{
 		$group = Workgroup::whereName('University of York')->first();
-		$group->delete();
+		if (!is_null($group))  // workgroup not found in case the seeder didn't run
+			$group->delete();
 	}
 
 }
