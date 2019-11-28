@@ -103,18 +103,20 @@ class ShiftsController extends \BaseController {
 				$msg = 'Subscribed to shift';
 				// in case an unexperienced user subscribed, automatically extend the shift to a two person shift
 				$extended = false;
+				/* Don't use this feature for the Beertime Scheduler
 				if (!$shift->users->count() && !$experienced) {
 					$shift->n_crew = 2;
 					$shift->save();
 					$extended = true;
 					$msg = 'Subscribed; shift modified for two persons due to low shift experience';
-				}
+				}*/
 				$shift->users()->attach(Auth::user()->id);
 				// shorter
 				//Shift::find($shift_id)->users()->attach($user_id);
 				// check if the user subscribed to another shift within 24 hours
 				$start = new DateTime($shift->start);
 				$end = $shift->end();
+				/* Don't check for other shifts within 24 hours for the Beertime Scheduler
 				foreach (Auth::user()->shifts as $s) {
 					$diffStart = abs($start->getTimestamp() - $s->end()->getTimestamp())/3600;
 					$diffEnd = abs($end->getTimestamp() - strtotime($s->start))/3600;
@@ -124,8 +126,9 @@ class ShiftsController extends \BaseController {
 						if ($extended)
 							$msg = 'You subscribed to another shift within 24 hours!<br />Shift modified for two persons due to low shift experience.';
 					}
-				}
+				}*/
 				// warn unexperienced users if they subscribe to solo shifts
+				/* Also don't warn here in case of the Beertime Scheduler
 				if ($shift->n_crew === 1 && Auth::user()->rating < 3) {
 					if ($type === 'warning')
 						$msg = 'You subscribed to a <b>solo</b> shift while having another shift <b>within 24 hours</b>!';
@@ -133,7 +136,7 @@ class ShiftsController extends \BaseController {
 						$type = 'warning';
 						$msg = 'You subscribed to a <b>solo</b> shift';
 					}
-				}
+				}*/
 			} else {
 				return ['danger', "The shift you wanted to subscribe to is already full!"];
 			}
@@ -144,8 +147,8 @@ class ShiftsController extends \BaseController {
 			$start = new DateTime($shift->start);
 			$diff = $start->getTimeStamp() - time();
 			$diff /= 86400;
-			// if the shift will start in less than 14 days, send an email to the run coordinators of the corresponding day
-			if ($diff < 14) {
+			// if the shift will start in less than 7 days, send an email to the run coordinators of the corresponding day
+			if ($diff < 7) {
 				$date = strtok($shift->start, ' ');
 				$rc = RCShift::where('start', 'LIKE', $date.'%')->get()->user->unique();
 				$beamtime = $shift->beamtime;
@@ -161,7 +164,7 @@ class ShiftsController extends \BaseController {
 				{
 					$success &= $user->mail($subject, str_replace(array('[USER]'), array($user->first_name), $msg));
 				});
-				return ['warning', 'You unsubscribed from a shift which will start in less than two weeks!'];
+				return ['warning', 'You unsubscribed from a shift which will start in less than one week!'];
 			}
 		}
 

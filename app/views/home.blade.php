@@ -11,6 +11,12 @@
 
 @section('content')
 @if (!Auth::check())
+@section('css')
+@parent
+{{ HTML::style('css/xmas.css') }}
+@stop
+<div class="xmasTree"></div>
+
 <div class="col-lg-8 col-lg-offset-2">
     <div class="page-header">
         <h2>Welcome to the A2 Beamtime Management</h2>
@@ -30,7 +36,7 @@
 @else
 <div class="col-lg-10 col-lg-offset-1">
     <div class="page-header">
-        <h2>Most Recent Beamtimes</h2>
+        <h2>Christmas Party Shift Schedules</h2>
     </div>
     <?php
     	$beamtimes = Beamtime::all();

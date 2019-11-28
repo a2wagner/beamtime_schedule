@@ -55,7 +55,7 @@
                     </a>
 
                     @if (!Auth::check())
-                    <span class="navbar-brand">A2 Beamtime Scheduler</span>
+                    <span class="navbar-brand"> <s>Beam</s>Beertime Scheduler</span>
                     @endif
                 </div>
                 <!-- Everything you want hidden at 940px or less, place within here -->

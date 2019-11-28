@@ -6,14 +6,14 @@ class Beamtime extends \Eloquent {
 	 *
 	 * @var int
 	 */
-	const SUBSCRIPTION_WAITING_DAYS_EUROPE = 1;
+	const SUBSCRIPTION_WAITING_DAYS_EUROPE = 0;
 
 	/**
 	 * Number of days the local working group has to wait after subscription started before they're allowed to subscribe to shifts
 	 *
 	 * @var int
 	 */
-	const SUBSCRIPTION_WAITING_DAYS_LOCAL = 2;
+	const SUBSCRIPTION_WAITING_DAYS_LOCAL = 0;
 
 	protected $fillable = ['name', 'description', 'enforce_subscription', 'subscription_start', 'enforce_rc', 'experience_block'];
 
