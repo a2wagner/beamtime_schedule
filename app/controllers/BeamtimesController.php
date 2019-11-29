@@ -70,11 +70,14 @@ class BeamtimesController extends \BaseController {
 
 		// check if entered data is correct
 		$now = date("Y-m-d H:i:s");
+		// allow beamtime ending on the same day (by setting the date_check to one day earlier, the check for end with after becomes effectively an equal or after check which is desired)
+		$date_check = (Input::has('start')) ? Input::get('start') : $now;
+		$date_check = date('Y-m-d', strtotime($date_check . ' -1 day'));
 		$rules = [
 			'name' => 'required|max:100',
 			'description' => 'max:500',
 			'start' => 'required|date|after:'.$now,
-			'end' => 'required|date|after:'.((Input::has('start')) ? Input::get('start') : $now),
+			'end' => 'required|date|after:'.$date_check,
 			'duration' => 'required|integer|max:10'
 		];
 
