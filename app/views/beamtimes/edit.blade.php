@@ -236,6 +236,21 @@ function toggleRadio(id)
                 <?php echo Form::radio("n_crew[" . $shift->id . "]", '2', ($shift->n_crew == 2 ? true : false), array('id' => 'optionsRadios2')); ?>
                 2
               </label>
+              &nbsp;&nbsp;&nbsp;
+              <label>
+                <?php echo Form::radio("n_crew[" . $shift->id . "]", '3', ($shift->n_crew == 3 ? true : false), array('id' => 'optionsRadios3')); ?>
+                3
+              </label>
+              &nbsp;&nbsp;&nbsp;
+              <label>
+                <?php echo Form::radio("n_crew[" . $shift->id . "]", '4', ($shift->n_crew == 4 ? true : false), array('id' => 'optionsRadios4')); ?>
+                4
+              </label>
+              &nbsp;&nbsp;&nbsp;
+              <label>
+                <?php echo Form::radio("n_crew[" . $shift->id . "]", '5', ($shift->n_crew == 5 ? true : false), array('id' => 'optionsRadios5')); ?>
+                5
+              </label>
             </div>
           </td>
           {{ $td }}{{ Form::text('remarks[' . $shift->id . ']', $shift->remark, array('class' => 'form-control input-sm')) }}</td>

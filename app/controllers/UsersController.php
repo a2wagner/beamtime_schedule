@@ -125,6 +125,8 @@ class UsersController extends \BaseController {
 			return Redirect::back()->withInput()->withErrors($this->user->errors);
 
 		$this->user->password = Hash::make(Input::get('password'));
+		// enable all users automatically for the Beertime Scheduler (only accessible from within the KPH)
+		$this->user->enable();
 		$this->user->save();
 
 		// if this is the first user, we set him as an admin and enable him by default
