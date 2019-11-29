@@ -290,7 +290,7 @@ function sub(e) {
           	$start = new DateTime($shift->start);
           	$end = $shift->end();
           ?>
-          {{ $td }}{{ $start->diff($end)->h }} hours</td>
+          {{ $td }}{{ $start->diff($end)->h }} hour{{ $start->diff($end)->h > 1 ? 's' : ''}}</td>
           {{-- check if users subscribed to this shift and it's not maintenance --}}
           @if ($shift->users->isEmpty() && !$shift->maintenance)
           {{-- if not, then display this --}}
@@ -299,7 +299,7 @@ function sub(e) {
           {{-- otherwise show the subscribed users and display open shifts --}}
           <td><?php $shift->users->each(function($user) use($shift)  // $shift->users returns a Collection of User objects which are connected to the current Shift object via the corresponding pivot table; with Collection::each we can iterate over this Collection instead of creating a foreach loop
           {
-          	echo '<span rel="tooltip" data-toggle="tooltip" data-placement="top" title="Rating: ' . $user->rating . '">' . link_to("/users/$user->username", $user->get_full_name(), ['style' => 'color: inherit; text-decoration: none;']) . '</span><span class="hidden-print"> (' . $user->workgroup->name . ')</span><br />';
+          	echo '<span rel="tooltip" data-toggle="tooltip" data-placement="top" title="Rating: ' . $user->rating . '">' . link_to("/users/$user->username", $user->get_full_name(), ['style' => 'color: inherit; text-decoration: none;']) . '</span><br />';
           });
           ?></td>
           @endif
