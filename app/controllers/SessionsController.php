@@ -118,6 +118,9 @@ class SessionsController extends \BaseController {
 				Auth::login($user);
 				$user->store_login();
 				return Redirect::intended('')->with('success', 'You have logged in successfully');
+			} elseif (!User::whereUsername($userdata['username'])->count()) {
+				// this case is triggered if a user logs in for the first time with a LDAP account, but the used password is wrong
+				return Redirect::to('login')->withErrors(array('password' => 'Wrong password'))->withInput(Input::except('password'));  // most liekly a wrong password
 			} elseif (User::whereUsername($userdata['username'])->first()->password !== 'ldap') {  // if the user has a LDAP account, but a different password
 				if (Auth::attempt($userdata)) {
 					// save last login timestamp
