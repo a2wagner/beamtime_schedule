@@ -147,15 +147,6 @@
         <!-- Container -->
         <div class="container">
 
-            @if (Auth::user() && !Auth::user()->ldap_id)
-            <div class="alert alert-warning hidden-print">
-                <h4>Important</h4>
-                <p>You do not have a KPH account yet. Please request an account with <a style="color: black;" href="https://info.kph.uni-mainz.de/registration/">this form</a>.<br />
-                More information and services can be found <a style="color: black;" href="https://it-kph.uni-mainz.de/accounts/">here</a>.</p>
-                <p>If you have a KPH account, please contact one of the admins to change your account accordingly.</p>
-            </div>
-            @endif
-
             <!-- Success-Messages -->
             @if ($message = Session::get('success'))
             <div class="alert alert-success alert-dismissable fade in hidden-print">
