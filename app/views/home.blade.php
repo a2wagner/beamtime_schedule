@@ -168,14 +168,18 @@
 					return $a[3] < $b[3];
 				});
 
-			// take the top 5 to calculate the percentage they cover and check if users have the same amount of shifts
-			$shifts_user = array_slice($shifts_user, 0, 5, true);
+			// take the top 10 to calculate coverage percentages and determine the top 3 users and check if users have the same amount of shifts
+			$shifts_user = array_slice($shifts_user, 0, 10, true);
 			$found = false;
 			// prev and counter are used to determine if the fourth (or even fifth) user has the same amount of shifts as the third one
 			$prev = 0;
 			$counter = 0;
+			// cov_cnt is used to track the shift covered of the top 5 users
+			$cov_cnt = 0;
 			foreach ($shifts_user as $user) {
-				$covered += $user[3];
+				if ($cov_cnt < 5)
+					$covered += $user[3];
+				$cov_cnt++;
 				// if the top third user has the same amount of shifts as the following, then show them as well, if not continue to at least get all the covered shits of the top 5
 				if ($counter >= 3 && $user[3] < $prev)
 					continue;
