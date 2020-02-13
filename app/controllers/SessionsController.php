@@ -120,7 +120,7 @@ class SessionsController extends \BaseController {
 				return Redirect::intended('')->with('success', 'You have logged in successfully');
 			} elseif (!User::whereUsername($userdata['username'])->count()) {
 				// this case is triggered if a user logs in for the first time with a LDAP account, but the used password is wrong
-				return Redirect::to('login')->withErrors(array('password' => 'Wrong password'))->withInput(Input::except('password'));  // most liekly a wrong password
+				return Redirect::to('login')->withErrors(array('password' => 'Wrong password'))->withInput(Input::except('password'));  // most likely a wrong password
 			} elseif (User::whereUsername($userdata['username'])->first()->password !== 'ldap') {  // if the user has a LDAP account, but a different password
 				if (Auth::attempt($userdata)) {
 					// save last login timestamp
@@ -135,7 +135,12 @@ class SessionsController extends \BaseController {
 				// Redirect to the login page
 				return Redirect::back()->withErrors(array('password' => 'Password invalid'))->withInput(Input::except('password'));
 			}
+		// this else branch handles the non-LDAP case
 		} else {
+			// if neither a LDAP user nor a local user with the provided username is found, return with an error
+			if (!$user_localDB && !$user_LDAP)
+				return Redirect::back()->withErrors(array('username' => 'Username not found'))->withInput(Input::except('password'));
+			// otherwise try to authenticate the provided credentials against the local database
 			if (Auth::attempt($userdata)) {
 				// save last login timestamp
 				Auth::user()->store_login();
