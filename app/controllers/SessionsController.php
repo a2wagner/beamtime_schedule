@@ -68,6 +68,10 @@ class SessionsController extends \BaseController {
 			if ($ld->user_exists($userdata['username']))
 				$user_LDAP = true;
 
+		// if neither a LDAP user nor a local user with the provided username is found, return with an error
+		if (!$user_localDB && !$user_LDAP)
+			return Redirect::back()->withErrors(array('username' => 'Username not found'))->withInput(Input::except('password'));
+
 		// Check if the user got enabled after registration, redirect him to home with an error otherwise
 		if ($user_localDB && !User::whereUsername(Input::get('username'))->first()->isEnabled())
 			return Redirect::to('')->with('error', 'You\'re not enabled yet. Please wait until your account gets activated.');
@@ -135,12 +139,14 @@ class SessionsController extends \BaseController {
 				// Redirect to the login page
 				return Redirect::back()->withErrors(array('password' => 'Password invalid'))->withInput(Input::except('password'));
 			}
-		// this else branch handles the non-LDAP case
+		// this else branch handles the non-LDAP case (variable $user_localDB has to be true)
 		} else {
-			// if neither a LDAP user nor a local user with the provided username is found, return with an error
-			if (!$user_localDB && !$user_LDAP)
-				return Redirect::back()->withErrors(array('username' => 'Username not found'))->withInput(Input::except('password'));
-			// otherwise try to authenticate the provided credentials against the local database
+			// this case is only triggered if a KPH account doesn't exist anymore (given the LDAP server is reachable) and the LDAP password from this account is used
+			if (!is_null(User::whereUsername($userdata['username'])->first()->ldap_id) && User::whereUsername($userdata['username'])->first()->password === 'ldap')
+				return Redirect::back()->withErrors(array('username' => 'KPH account with username not found'))->withInput(Input::except('password'))
+						->with('error', 'It seems your username doesn\'t exist anymore on the LDAP server. Maybe there\'s some connection problem, please try it again later.'
+								. 'If this problem persists, or your KPH account has been deleted, please contact an admin to change your password.');
+			// try to authenticate the provided credentials against the local database
 			if (Auth::attempt($userdata)) {
 				// save last login timestamp
 				Auth::user()->store_login();
